@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "659006210414",
+    "firebase_url": "https://persefone-9305b.firebaseio.com",
+    "project_id": "persefone-9305b",
+    "storage_bucket": "persefone-9305b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:659006210414:android:7369b4d7366c6d9d4a817f",
+        "android_client_info": {
+          "package_name": "com.persefone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "659006210414-8u6dsf9ig0jnq8oaa5b4k6gvnql1nn2j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.persefone",
+            "certificate_hash": "1ecf375f287683794ef489bf91aedda8c16ad692"
+          }
+        },
+        {
+          "client_id": "659006210414-ed0m6p04alslgoav08c7c4cb3qdr1npb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBW9DGF-LAGbNKT1vYg88q7YndfN9r2Zzk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "659006210414-ed0m6p04alslgoav08c7c4cb3qdr1npb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
