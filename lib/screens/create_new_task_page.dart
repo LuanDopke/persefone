@@ -52,7 +52,7 @@ class CreateNewTaskPage extends StatelessWidget {
                               icon: downwardIcon,
                             ),
                           ),
-                          HomePage.calendarIcon(),
+                          HomePage.addPlantIcon(),
                         ],
                       )
                     ],

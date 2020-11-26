@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:persefone/screens/home_page.dart';
 import 'package:persefone/theme/colors/light_colors.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: LightColors.kLightYellow, // navigation bar color
-    statusBarColor: Color(0xffffb969), // status bar color
+    statusBarColor:Colors.lightGreen, // status bar color
   ));
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+ // FirebaseFirestore.instance.collection("clientes").doc().set({"nomeCliente":"Funcionou hoje","emailCliente":"teste@funcionou.com.br"});
 
   return runApp(MyApp());
 }

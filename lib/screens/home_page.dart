@@ -5,6 +5,8 @@ import 'package:persefone/theme/colors/light_colors.dart';
 import 'package:persefone/widgets/task_column.dart';
 import 'package:persefone/widgets/active_project_card.dart';
 import 'package:persefone/widgets/top_container.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class HomePage extends StatelessWidget {
   Text subheading(String title) {
@@ -18,12 +20,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  static CircleAvatar calendarIcon() {
+  static CircleAvatar addPlantIcon() {
     return CircleAvatar(
       radius: 25.0,
       backgroundColor: LightColors.kGreen,
       child: Icon(
-        Icons.calendar_today,
+        Icons.add,
         size: 20.0,
         color: Colors.white,
       ),
@@ -108,6 +110,7 @@ class HomePage extends StatelessWidget {
                     )
                   ]),
             ),
+
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -161,50 +164,68 @@ class HomePage extends StatelessWidget {
                         ],
                       ),
                     ),
+                Container(color: Colors.transparent,
+                  padding: EdgeInsets.only(left: 20.0, right: 20, bottom: 0, top: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          subheading('Plantas'),
+                          GestureDetector(
+                                onTap: () {
+                                  /*Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CalendarPage()),
+                                  );*/
+                                },
+                                child: addPlantIcon(),
+                              ),
+                        ],
+                      )
+                ),
                     Container(
                       color: Colors.transparent,
                       padding: EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 10.0),
-                      child: Column( //aqui o stream builder
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          subheading('Plantas'),
-                          SizedBox(height: 5.0),
-                          Row(
-                            children: <Widget>[
-                              ActiveProjectsCard(
-                                cardColor: LightColors.kGreen,
-                                loadingPercent: 0.25,
-                                title: 'Nome Planta',
-                                subtitle: 'nome cientifico',
-                              ),
-                              /*SizedBox(width: 20.0),
-                              ActiveProjectsCard(
-                                cardColor: LightColors.kRed,
-                                loadingPercent: 0.6,
-                                title: 'Nome Planta',
-                                subtitle: 'nome cientifico',
-                              ),*/
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              ActiveProjectsCard(
-                                cardColor: LightColors.kDarkYellow,
-                                loadingPercent: 0.45,
-                                title: 'Nome Planta',
-                                subtitle: 'nome cientifico',
-                              ),
-                              /*  SizedBox(width: 20.0),
-                             ActiveProjectsCard(
-                                cardColor: LightColors.kBlue,
-                                loadingPercent: 0.9,
-                                title: 'Nome Planta',
-                                subtitle: 'nome cientifico',
-                              ),*/
-                            ],
-                          ),
-                        ],
+                      child: StreamBuilder(
+                          stream: FirebaseFirestore.instance.collection("planta").orderBy("nome", descending:false).snapshots(),
+                          builder: (context, snapshot){
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.none:
+                              case ConnectionState.done:
+                              case ConnectionState.waiting:
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              default:
+                                if (snapshot.data.documents.length == 0) {
+                                  //
+                                  return Center(
+                                    child: Text(
+                                      "Cadastre Plantas!",
+                                      style: TextStyle(
+                                          color: Colors.redAccent, fontSize: 20),
+                                    ),
+                                  );
+                                }
+                                return GridView.builder(
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                                    itemCount: snapshot.data.documents.length,
+                                    //scrollDirection: Axis.vertical,
+                                    physics: NeverScrollableScrollPhysics(),
+
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index){
+                                      return ActiveProjectsCard(
+                                        cardColor: LightColors.kDarkYellow,
+                                        loadingPercent: 0.45,
+                                        title: snapshot.data.documents[index].data()["nome"].toString(),
+                                        subtitle:snapshot.data.documents[index].data()["nomecientifico"].toString(),
+                                      );
+                                    });
+                            }
+                          }
                       ),
                     ),
                   ],
