@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:persefone/theme/colors/light_colors.dart';
+import 'package:persefone/widgets/my_date_field.dart';
 import 'package:persefone/widgets/top_container.dart';
 import 'package:persefone/widgets/back_button.dart';
 import 'package:persefone/widgets/my_text_field.dart';
@@ -11,7 +12,7 @@ class CreateNewPlantPage extends StatelessWidget {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController nome = TextEditingController();
   TextEditingController nomecientifico = TextEditingController();
-  TextEditingController data = TextEditingController(text: "21");
+  TextEditingController data = TextEditingController(text:  DateTime.now().day.toString() + '/' +  DateTime.now().month.toString() + '/'+ DateTime.now().year.toString());
   TextEditingController descricao = TextEditingController();
 
   @override
@@ -100,10 +101,9 @@ class CreateNewPlantPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Expanded(
-                            child: MyTextField(
+                            child: MyDateField(
                           label: 'Data',
                           controller: data,
-                          tipo: TextInputType.datetime,
                           // icon: downwardIcon,
                         )),
                         /*SizedBox(width: 40),
