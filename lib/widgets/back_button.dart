@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:persefone/theme/colors/light_colors.dart';
 
 class MyBackButton extends StatelessWidget {
- 
+  final VoidCallback funcao;
+
+  MyBackButton({this.funcao = null});
 
   @override
   Widget build(BuildContext context) {
     return Hero(
       tag: 'backButton',
         child: GestureDetector(
-        onTap: (){
+        onTap: this.funcao != null ? funcao : (){
           Navigator.pop(context);
         },
           child: Align(

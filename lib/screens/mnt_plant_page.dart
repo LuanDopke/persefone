@@ -1,19 +1,100 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:persefone/screens/plant_info.dart';
 import 'package:persefone/theme/colors/light_colors.dart';
 import 'package:persefone/widgets/my_date_field.dart';
 import 'package:persefone/widgets/top_container.dart';
 import 'package:persefone/widgets/back_button.dart';
 import 'package:persefone/widgets/my_text_field.dart';
 import 'package:persefone/screens/home_page.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+//import 'package:flutter_widgets/plugins/firetop/storage/fire_storage_service.dart';
 
-class CreateNewPlantPage extends StatelessWidget {
+class CreateNewPlantPage extends StatefulWidget{
+  final DocumentSnapshot dadosPlanta;
+  CreateNewPlantPage(this.dadosPlanta);
+
+  @override
+  CreateNewPlantPageState createState() => CreateNewPlantPageState();
+}
+
+class CreateNewPlantPageState extends  State<CreateNewPlantPage>  {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController nome = TextEditingController();
   TextEditingController nomecientifico = TextEditingController();
-  TextEditingController data = TextEditingController(text:  DateTime.now().day.toString() + '/' +  DateTime.now().month.toString() + '/'+ DateTime.now().year.toString());
+  TextEditingController data = TextEditingController(text: DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString());
   TextEditingController descricao = TextEditingController();
+
+  File _imageFile;
+
+  final picker = ImagePicker();
+
+  Future pickImage() async {
+    final pickedFile = await picker.getImage(source:  ImageSource.gallery);
+
+    setState(() {
+      _imageFile = File(pickedFile.path);
+    });
+  }
+
+  Future uploadImageToFirebase(BuildContext context) async {
+    String fileName = basename(_imageFile.path);
+    var firebaseStorageRef =
+    FirebaseStorage.instance.ref().child('planta/$fileName');
+    firebaseStorageRef.putFile(_imageFile);
+
+    if ( widget.dadosPlanta != null) {
+      FirebaseFirestore.instance
+          .collection("planta")
+          .doc( widget.dadosPlanta.id)
+          .update({
+        "nome": nome.text,
+        "nomecientifico": nomecientifico.text,
+        "descricao": descricao.text,
+        "data": data.text,
+        "imagem" : fileName
+      }).then((value) => {
+        FirebaseFirestore.instance.collection("planta").doc(widget.dadosPlanta.id).get().then((doc) => {
+          //  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlantInfo(doc)))
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlantInfo(doc)))
+          /*   Navigator.push((context), MaterialPageRoute(builder: (context) => PlantInfo(doc)))*/
+        })
+      });
+    } else {
+      FirebaseFirestore.instance
+          .collection("planta")
+          .add({
+        "nome": nome.text,
+        "nomecientifico": nomecientifico.text,
+        "descricao": descricao.text,
+        "data": data.text,
+        "imagem" : fileName
+      }).then((value) => {
+        FirebaseFirestore.instance.collection("planta").doc(value.id).get().then((doc) => {
+          Navigator.pushReplacement((context), MaterialPageRoute(builder: (context) => PlantInfo(doc)))
+        })
+      });
+    }
+  }
+
+
+  @override
+  void initState() {
+    if (widget.dadosPlanta != null) {
+      super.initState();
+      // é uma alteração
+      nome.text = widget.dadosPlanta.data()["nome"];
+      nomecientifico.text =  widget.dadosPlanta.data()["nomecientifico"];
+      data.text =  widget.dadosPlanta.data()["data"];
+      descricao.text =  widget.dadosPlanta.data()["descricao"];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +153,26 @@ class CreateNewPlantPage extends StatelessWidget {
                   children: <Widget>[
                     Container(
                         child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
+                        Container(
+                          height: 140,
+                          margin: const EdgeInsets.only(
+                              left: 0, right: 0, top: 15.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30.0),
+                            child: _imageFile != null
+                                ? Image.file(_imageFile)
+                                : FlatButton(
+                              child: Icon(
+                                Icons.add_a_photo,
+                                size: 50,
+                              ),
+                              onPressed: pickImage,
+                              color: LightColors.kCInza,
+                            ),
+                          ),
+                        ),
                         MyTextField(
                           label: 'Nome',
                           controller: nome,
@@ -136,16 +235,7 @@ class CreateNewPlantPage extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       if (formKey.currentState.validate()) {
-                        FirebaseFirestore.instance
-                            .collection("planta")
-                            .doc()
-                            .set({
-                          "nome": nome.text,
-                          "nomecientifico": nomecientifico.text,
-                          "descricao": descricao.text,
-                          "data": data.text
-                        });
-                        Navigator.pop(context);
+                        uploadImageToFirebase(context);
                       }
                     },
                     child: Container(

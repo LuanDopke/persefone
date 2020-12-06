@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:persefone/screens/mnt_plant_page.dart';
+import 'package:persefone/screens/plant_option.dart';
 //import 'package:persefone/screens/calendar_page.dart';
 import 'package:persefone/theme/colors/light_colors.dart';
+import 'package:persefone/widgets/back_button.dart';
 //import 'package:percent_indicator/percent_indicator.dart';
 import 'package:persefone/widgets/task_column.dart';
 import 'package:persefone/widgets/active_project_card.dart';
@@ -9,12 +11,16 @@ import 'package:persefone/widgets/top_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-class HomePage extends StatefulWidget {
+class PlantInfo extends StatefulWidget {
+  final DocumentSnapshot dadosPlanta;
+  PlantInfo(this.dadosPlanta);
+
   @override
-  _HomePageState createState() => _HomePageState();
+  _PlantInfoState createState() => _PlantInfoState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _PlantInfoState extends  State<PlantInfo>  {
+
   Text subheading(String title) {
     return Text(
       title,
@@ -57,14 +63,15 @@ class _HomePageState extends State<HomePage> {
                           horizontal: 0, vertical: 0.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
+                          MyBackButton(),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Container(
                                 child: Text(
-                                  'Perséfone',
+                                  widget.dadosPlanta.data()["nome"],
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontSize: 22.0,
@@ -75,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               Container(
                                 child: Text(
-                                  'Cuidados com plantas',
+                                  widget.dadosPlanta.data()["nomecientifico"] == "" ? "Perséfone" :widget.dadosPlanta.data()["nomecientifico"],
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontSize: 16.0,
@@ -85,6 +92,25 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                             ],
+                          ),
+                          Hero(
+                            tag: 'optionbutton',
+                            child: GestureDetector(
+                              onTap: (){
+                               // Navigator.pushReplacement((context), MaterialPageRoute(builder: (context) => PlantOption(widget.dadosPlanta)));
+                                Navigator.push(
+                                    (context),
+                                    MaterialPageRoute(builder: (context) => PlantOption(widget.dadosPlanta)));
+                              },
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Icon(
+                                  Icons.edit,
+                                  size: 25,
+                                  color: LightColors.kDarkBlue,
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -106,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               subheading('Informações'),
-                              /*GestureDetector(
+                              GestureDetector(
                                 onTap: () {
                                   /*Navigator.push(
                                     context,
@@ -114,15 +140,15 @@ class _HomePageState extends State<HomePage> {
                                         builder: (context) => CalendarPage()),
                                   );*/
                                 },
-                                child: calendarIcon(),
-                              ),*/
+                                child: addPlantIcon(),
+                              ),
                             ],
                           ),
                           SizedBox(height: 15.0),
                           TaskColumn(
                             icon: Icons.alarm,
                             iconBackgroundColor: LightColors.kRed,
-                            title: 'Regar',
+                            title: 'Rega',
                             subtitle: 'lorem ipsum',
                           ),
                           SizedBox(
@@ -131,14 +157,14 @@ class _HomePageState extends State<HomePage> {
                           TaskColumn(
                             icon: Icons.blur_circular,
                             iconBackgroundColor: LightColors.kDarkYellow,
-                            title: 'Adubar',
+                            title: 'Luminosidade',
                             subtitle: 'lorem ipsum',
                           ),
                           SizedBox(height: 15.0),
                           TaskColumn(
                             icon: Icons.check_circle_outline,
                             iconBackgroundColor: LightColors.kBlue,
-                            title: 'Trocar Vaso',
+                            title: 'Adubo',
                             subtitle: 'lorem ipsum',
                           ),
                         ],
@@ -152,37 +178,10 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            subheading('Plantas'),
-                            Container(
-                              height: 40.0,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                color: LightColors.kGreen,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: FlatButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CreateNewPlantPage(null),
-                                    ),
-                                  );
-                                },
-                                child: Center(
-                                  child: Text(
-                                    'Adicionar',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            subheading('Linha do Tempo'),
                           ],
                         )),
-                    Container(
+                    /*Container(
                       color: Colors.transparent,
                       padding: EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 10.0),
@@ -204,9 +203,9 @@ class _HomePageState extends State<HomePage> {
                                   //
                                   return Center(
                                     child: Text(
-                                      "Cadastre Plantas!",
+                                      "Sem registros!",
                                       style: TextStyle(
-                                          color: Colors.redAccent,
+                                          color: Colors.deepOrange,
                                           fontSize: 20),
                                     ),
                                   );
@@ -223,7 +222,6 @@ class _HomePageState extends State<HomePage> {
                                       return ActiveProjectsCard(
                                         cardColor: LightColors.kDarkYellow,
                                         loadingPercent: 0.45,
-                                        planta: snapshot.data.documents[index],
                                         title: snapshot.data.documents[index]
                                             .data()["nome"]
                                             .toString(),
@@ -234,7 +232,7 @@ class _HomePageState extends State<HomePage> {
                                     });
                             }
                           }),
-                    ),
+                    ),*/
                   ],
                 ),
               ),
@@ -244,4 +242,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+
 }

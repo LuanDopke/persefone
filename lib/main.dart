@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persefone/screens/home_page.dart';
+import 'package:persefone/screens/plant_info.dart';
 import 'package:persefone/theme/colors/light_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,11 +15,20 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
  // FirebaseFirestore.instance.collection("clientes").doc().set({"nomeCliente":"Funcionou hoje","emailCliente":"teste@funcionou.com.br"});
-
-  return runApp(MyApp());
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarDividerColor: Colors.red
+  ));
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends  State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
