@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    Container(
+                    /*Container(
                       color: Colors.transparent,
                       padding: EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 10.0),
@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                    ),
+                    ),*/
                     Container(
                         color: Colors.transparent,
                         padding: EdgeInsets.only(

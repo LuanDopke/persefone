@@ -20,6 +20,8 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
       systemNavigationBarDividerColor: Colors.red
   ));
+
+
   runApp(MyApp());
 }
 

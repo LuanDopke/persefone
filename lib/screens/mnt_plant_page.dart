@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+//import 'package:persefone/plugins/firetop/storage/fire_storage_service.dart';
 import 'package:persefone/screens/plant_info.dart';
 import 'package:persefone/theme/colors/light_colors.dart';
 import 'package:persefone/widgets/my_date_field.dart';
@@ -14,6 +16,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:octo_image/octo_image.dart';
 //import 'package:flutter_widgets/plugins/firetop/storage/fire_storage_service.dart';
 
 class CreateNewPlantPage extends StatefulWidget{
@@ -82,6 +85,25 @@ class CreateNewPlantPageState extends  State<CreateNewPlantPage>  {
       });
     }
   }
+
+  /*Future<Widget> _getImage(BuildContext context, String image) async {
+    Image m;
+    await FireStorageService.loadFromStorage(context, image)
+        .then((downloadUrl) {
+      m = Image.network(
+        downloadUrl.toString(),
+        fit: BoxFit.scaleDown,
+      );
+    });
+      return m;
+  }*/
+
+    Future<String> ReturnImage(String filename) async {
+      final ref = FirebaseStorage.instance.ref().child(filename);
+      String url = await ref.getDownloadURL();
+      return url;
+    }
+
 
 
   @override
@@ -161,15 +183,37 @@ class CreateNewPlantPageState extends  State<CreateNewPlantPage>  {
                               left: 0, right: 0, top: 15.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(30.0),
-                            child: _imageFile != null
-                                ? Image.file(_imageFile)
-                                : FlatButton(
-                              child: Icon(
-                                Icons.add_a_photo,
-                                size: 50,
-                              ),
-                              onPressed: pickImage,
-                              color: LightColors.kCInza,
+                            child: FutureBuilder(
+                              future: ReturnImage('planta/' + (widget.dadosPlanta != null ?widget.dadosPlanta.data()["imagem"].toString() : '')), //image_picker1298838979554052164
+                              builder: (context, AsyncSnapshot<String> snapshot) {
+                                //print(widget.dadosPlanta.data()["imagem"].toString());
+                                if (snapshot.hasData) {
+                                  return Container(
+                                      padding: EdgeInsets.all(10),
+                                      height: 282,
+                                      child: OctoImage(
+                                        image: CachedNetworkImageProvider(snapshot.data),
+                                        placeholderBuilder: OctoPlaceholder.blurHash(
+                                          'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
+                                        ),
+                                        errorBuilder: OctoError.icon(color: Colors.blue),
+                                        fit: BoxFit.cover,
+                                        height: 89,
+                                      )
+                                  );
+                                } else {
+                                  return _imageFile != null
+                                      ? Image.file(_imageFile)
+                                      : FlatButton(
+                                    child: Icon(
+                                      Icons.add_a_photo,
+                                      size: 50,
+                                    ),
+                                    onPressed: pickImage,
+                                    color: LightColors.kCInza,
+                                  );
+                                }
+                              },
                             ),
                           ),
                         ),
