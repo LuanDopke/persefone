@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class LightColors  {
   static const Color kLightYellow = Color(0xFFFFF9EC);
-  static const Color kLightYellow2 = Color(0xFFFFE4C7);
+  static const Color kLightYellow2 = Color(0xFFffb640);
   static const Color kDarkYellow = Colors.lightGreen;
   static const Color kCInza = Color(0xFFcce2e3);
 

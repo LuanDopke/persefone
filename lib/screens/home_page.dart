@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persefone/screens/mnt_plant_page.dart';
+import 'package:persefone/screens/plant_info.dart';
 //import 'package:persefone/screens/calendar_page.dart';
 import 'package:persefone/theme/colors/light_colors.dart';
 //import 'package:percent_indicator/percent_indicator.dart';
@@ -15,6 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String queryString = "";
+
   Text subheading(String title) {
     return Text(
       title,
@@ -36,6 +39,12 @@ class _HomePageState extends State<HomePage> {
         color: Colors.white,
       ),
     );
+  }
+
+  void updateSearchQuery(String newQuery) {
+    setState(() {
+      queryString = newQuery;
+    });
   }
 
   @override
@@ -181,13 +190,36 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           ],
-                        )),
+                        ),
+                    ),
+                Container(
+                  margin: EdgeInsets.only(left:25,top:5,right:25,bottom:10.0),
+                  child: TextFormField(
+                          style: TextStyle(color: Colors.black87),
+                          onChanged: (value) {
+                            updateSearchQuery(value);
+                          },
+                          autofocus: false,
+                          decoration: InputDecoration(
+                          labelText: "Pesquisar",
+                          labelStyle: TextStyle(color: Colors.black45),
+                          focusedBorder:
+                          UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                          border:
+                          UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey))),
+                      ),
+                    ),
                     Container(
                       color: Colors.transparent,
                       padding: EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 10.0),
                       child: StreamBuilder(
-                          stream: FirebaseFirestore.instance
+                          stream: queryString != "" ? FirebaseFirestore.instance
+                              .collection("planta")
+                              .where("nome", isEqualTo: queryString)
+                              //.orderBy("nome", descending: false)
+                              .snapshots() :
+                          FirebaseFirestore.instance
                               .collection("planta")
                               .orderBy("nome", descending: false)
                               .snapshots(),
@@ -200,11 +232,11 @@ class _HomePageState extends State<HomePage> {
                                   child: CircularProgressIndicator(),
                                 );
                               default:
-                                if (snapshot.data.documents.length == 0) {
+                                if (!snapshot.hasData || snapshot.data.documents.length == 0) {
                                   //
                                   return Center(
                                     child: Text(
-                                      "Cadastre Plantas!",
+                                      "Não encontrado, tente pesquisar pelo nome completo diferenciando maiúsculas de minusculas",
                                       style: TextStyle(
                                           color: Colors.redAccent,
                                           fontSize: 20),
@@ -223,6 +255,11 @@ class _HomePageState extends State<HomePage> {
                                       return ActiveProjectsCard(
                                         cardColor: LightColors.kDarkYellow,
                                         loadingPercent: 0.45,
+                                        funcao: () => {
+                                          Navigator.push(
+                                              (context),
+                                              MaterialPageRoute(builder: (context) => PlantInfo(snapshot.data.documents[index])))
+                                        },
                                         planta: snapshot.data.documents[index],
                                         title: snapshot.data.documents[index]
                                             .data()["nome"]

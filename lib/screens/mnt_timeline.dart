@@ -19,18 +19,16 @@ import 'package:path/path.dart';
 import 'package:octo_image/octo_image.dart';
 //import 'package:flutter_widgets/plugins/firetop/storage/fire_storage_service.dart';
 
-class CreateNewPlantPage extends StatefulWidget {
+class AddTimeLine extends StatefulWidget {
   final DocumentSnapshot dadosPlanta;
-  CreateNewPlantPage(this.dadosPlanta);
+  AddTimeLine(this.dadosPlanta);
 
   @override
-  CreateNewPlantPageState createState() => CreateNewPlantPageState();
+  AddTimeLineState createState() => AddTimeLineState();
 }
 
-class CreateNewPlantPageState extends State<CreateNewPlantPage> {
+class AddTimeLineState extends State<AddTimeLine> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  TextEditingController nome = TextEditingController();
-  TextEditingController nomecientifico = TextEditingController();
   TextEditingController data = TextEditingController(
       text: DateTime.now().day.toString().length == 2 ? DateTime.now().day.toString() : ('0' +DateTime.now().day.toString()) +
           '/' +
@@ -38,9 +36,6 @@ class CreateNewPlantPageState extends State<CreateNewPlantPage> {
           '/' +
           DateTime.now().year.toString());
   TextEditingController descricao = TextEditingController();
-  TextEditingController rega = TextEditingController();
-  TextEditingController luz = TextEditingController();
-  TextEditingController adubo = TextEditingController();
 
   File _imageFile;
 
@@ -59,80 +54,23 @@ class CreateNewPlantPageState extends State<CreateNewPlantPage> {
     if (_imageFile != null) {
       fileName = basename(_imageFile.path);
       var firebaseStorageRef =
-          FirebaseStorage.instance.ref().child('planta/$fileName');
+          FirebaseStorage.instance.ref().child('timeline/$fileName');
       firebaseStorageRef.putFile(_imageFile);
     }
-    if (widget.dadosPlanta != null) {
-      FirebaseFirestore.instance
-          .collection("planta")
-          .doc(widget.dadosPlanta.id)
-          .update({
-        "nome": nome.text,
-        "nomecientifico": nomecientifico.text,
-        "descricao": descricao.text,
-        "data": data.text,
-        //"imagem" : fileName, depois eu vejo
-        "rega": rega.text,
-        "luz": luz.text,
-        "adubo": adubo.text,
-      }).then((value) => {
-                FirebaseFirestore.instance
-                    .collection("planta")
-                    .doc(widget.dadosPlanta.id)
-                    .get()
-                    .then((doc) => {
-                          //  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlantInfo(doc)))
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PlantInfo(doc)))
-                          /*   Navigator.push((context), MaterialPageRoute(builder: (context) => PlantInfo(doc)))*/
-                        })
-              });
-    } else {
-      FirebaseFirestore.instance.collection("planta").add({
-        "nome": nome.text,
-        "nomecientifico": nomecientifico.text,
+      FirebaseFirestore.instance.collection("timeline").add({
         "descricao": descricao.text,
         "data": data.text,
         "imagem": fileName,
-        "rega": rega.text,
-        "luz": luz.text,
-        "adubo": adubo.text,
+        "planta": widget.dadosPlanta.id
       }).then((value) => {
-            FirebaseFirestore.instance
-                .collection("planta")
-                .doc(value.id)
-                .get()
-                .then((doc) => {
-                      Navigator.pushReplacement(
-                          (context),
-                          MaterialPageRoute(
-                              builder: (context) => PlantInfo(doc)))
-                    })
-          });
-    }
+        Navigator.pop(context)
+        });
   }
 
   Future<String> ReturnImage(String filename) async {
     final ref = FirebaseStorage.instance.ref().child(filename);
     String url = await ref.getDownloadURL();
     return url;
-  }
-
-  @override
-  void initState() {
-    if (widget.dadosPlanta != null) {
-      super.initState();
-      // é uma alteração
-      nome.text = widget.dadosPlanta.data()["nome"];
-      nomecientifico.text = widget.dadosPlanta.data()["nomecientifico"];
-      data.text = widget.dadosPlanta.data()["data"];
-      descricao.text = widget.dadosPlanta.data()["descricao"];
-      rega.text = widget.dadosPlanta.data()["rega"];
-      luz.text = widget.dadosPlanta.data()["luz"];
-      adubo.text = widget.dadosPlanta.data()["adubo"];
-    }
   }
 
   @override
@@ -158,7 +96,7 @@ class CreateNewPlantPageState extends State<CreateNewPlantPage> {
                     children: <Widget>[
                       MyBackButton(),
                       Text(
-                        'Nova Planta',
+                        'Novo Evento',
                         style: TextStyle(
                             fontSize: 22.0, fontWeight: FontWeight.w700),
                       ),
@@ -196,72 +134,22 @@ class CreateNewPlantPageState extends State<CreateNewPlantPage> {
                           const EdgeInsets.only(left: 0, right: 0, top: 15.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(30.0),
-                        child: FutureBuilder(
-                          future: ReturnImage('planta/' +
-                              (widget.dadosPlanta != null
-                                  ? widget.dadosPlanta
-                                      .data()["imagem"]
-                                      .toString()
-                                  : '')), //image_picker1298838979554052164
-                          builder: (context, AsyncSnapshot<String> snapshot) {
-                            //print(widget.dadosPlanta.data()["imagem"].toString());
-                            if (snapshot.hasData) {
-                              return Container(
-                                  padding: EdgeInsets.all(10),
-                                  height: 282,
-                                  child: OctoImage(
-                                    image: CachedNetworkImageProvider(
-                                        snapshot.data),
-                                    placeholderBuilder:
-                                        OctoPlaceholder.blurHash(
-                                      'LEHV6nWB2yk8pyo0adR*.7kCMdnj',
-                                    ),
-                                    errorBuilder:
-                                        OctoError.icon(color: Colors.blue),
-                                    fit: BoxFit.cover,
-                                    height: 89,
-                                  ));
-                            } else {
-                              return _imageFile != null
-                                  ? Image.file(_imageFile)
-                                  : FlatButton(
-                                      child: Icon(
-                                        Icons.add_a_photo,
-                                        size: 50,
-                                      ),
-                                      onPressed: pickImage,
-                                      color: LightColors.kCInza,
-                                    );
-                            }
-                          },
+                        child: _imageFile != null
+                            ? Image.file(_imageFile)
+                            : FlatButton(
+                          child: Icon(
+                            Icons.add_a_photo,
+                            size: 50,
+                          ),
+                          onPressed: pickImage,
+                          color: LightColors.kCInza,
                         ),
                       ),
-                    ),
-                    MyTextField(
-                      label: 'Nome',
-                      controller: nome,
-                      obrigatorio: true,
-                    ),
-                    MyTextField(
-                      label: 'Nome Científico',
-                      controller: nomecientifico,
                     ),
                     MyDateField(
                       label: 'Data',
                       controller: data,
                       // icon: downwardIcon,
-                    ),
-                    MyTextField(
-                      label: 'Rega',
-                      controller: rega,
-                    ),
-                    MyTextField(
-                      label: 'Luminosidade',
-                      controller: luz,
-                    ),
-                    MyTextField(
-                      label: 'Adubo',
-                      controller: adubo,
                     ),
                     SizedBox(height: 20),
                     MyTextField(

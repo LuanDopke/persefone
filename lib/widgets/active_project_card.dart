@@ -14,13 +14,17 @@ class ActiveProjectsCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final DocumentSnapshot planta;
+  final VoidCallback funcao;
+  final String tipo;
 
   ActiveProjectsCard({
     this.cardColor,
     this.loadingPercent,
     this.title,
     this.subtitle,
-    this.planta
+    this.planta,
+    this.funcao,
+    this.tipo = 'planta/'
   });
 
   Future<String> ReturnImage(String filename) async {
@@ -33,18 +37,73 @@ class ActiveProjectsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => {
-      Navigator.push(
-      (context),
-      MaterialPageRoute(builder: (context) => PlantInfo(planta)))
-      },
+      onTap: funcao,
       child:FutureBuilder(
-        future: ReturnImage('planta/' + (planta != null ?planta.data()["imagem"].toString() : '')), //image_picker1298838979554052164
+        future: ReturnImage(tipo + (planta != null ?planta.data()["imagem"].toString() : '')), //image_picker1298838979554052164
         builder: (context, AsyncSnapshot<String> snapshot) {
-          //print(widget.dadosPlanta.data()["imagem"].toString());
-        //  if (snapshot.hasData) {
+          print(planta.data()["imagem"].toString());
+          return Container(
+            margin: EdgeInsets.all(10.0),
+//            /padding: EdgeInsets.all(15.0),
+            height: 200,
+            child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: SizedBox(
+              child: Stack(
+                children: [
+                  Container(
 
-            return Container(
+                    decoration: BoxDecoration(
+                      color: cardColor,
+                      //borderRadius: BorderRadius.circular(40.0),
+                      image: snapshot.hasData? DecorationImage(
+                        image: CachedNetworkImageProvider(snapshot.data),
+                        fit: BoxFit.cover,
+                      ) : null,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      height: 50,
+                      color: Colors.black.withOpacity(0.60),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(left: 15, top: 4),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                            Text(
+                              title,
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              subtitle,
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                color: Colors.white60,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],),)
+
+                        ],),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),);
+           /* return Container(
               margin: EdgeInsets.all(10.0),
               padding: EdgeInsets.all(15.0),
               height: 200,
@@ -63,30 +122,34 @@ class ActiveProjectsCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
+                  Container(
+                    color: Colors.white.withOpacity(0.8),
+                    child:
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.white54,
-                          fontWeight: FontWeight.w400,
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Colors.black45,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],)
+
                   ),
                 ],
               ),
-            );
+            );*/
 
         },
       ),
