@@ -1,0 +1,100 @@
+openapi: 3.0.3
+info:
+  title: Persefone - Contrato de acesso por e-mail
+  version: 1.1.0
+paths:
+  /api/auth/access-requests/:
+    post:
+      summary: Solicitar link e código de acesso
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              additionalProperties: false
+              properties:
+                email: {type: string, format: email}
+      responses:
+        '202':
+          description: Resposta neutra, inclusive quando o limite impede nova entrega
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Detail'}
+        '400': {description: Corpo sintaticamente inválido}
+        '503':
+          description: Mensagem não entregue e solicitação removida
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Detail'}
+  /api/auth/access-confirmations/:
+    post:
+      summary: Confirmar acesso pelo link existente
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              additionalProperties: false
+              properties:
+                token: {type: string, minLength: 1}
+      responses:
+        '200':
+          description: Solicitação consumida e sessão emitida
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+        '400':
+          description: Token inválido, expirado ou consumido
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Detail'}
+  /api/auth/code-confirmations/:
+    post:
+      summary: Confirmar acesso na mesma aba por e-mail e código
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, code]
+              additionalProperties: false
+              properties:
+                email: {type: string, format: email}
+                code:
+                  type: string
+                  pattern: '^\s*[0-9]{6}\s*$'
+                  description: Seis dígitos; apenas espaços externos são ignorados.
+      responses:
+        '200':
+          description: Solicitação consumida e sessão emitida
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+        '400':
+          description: Código ou solicitação não utilizável; a resposta não distingue a causa
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Detail'}
+components:
+  schemas:
+    Detail:
+      type: object
+      required: [detail]
+      properties:
+        detail: {type: string}
+    Session:
+      type: object
+      required: [access, email, display_name]
+      properties:
+        access: {type: string}
+        email: {type: string, format: email}
+        display_name: {type: string}
+

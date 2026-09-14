@@ -13,8 +13,22 @@ function parseJwt(token) {
   try { return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); } catch { return null; }
 }
 
+function restoreSession() {
+  const token = localStorage.getItem('access_token');
+  const claims = token && parseJwt(token);
+  if (claims?.exp && claims.exp * 1000 > Date.now()) {
+    const email = localStorage.getItem('access_email') || claims.email;
+    return { token, email, displayName: email?.split('@')[0] };
+  }
+  if (token) {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('access_email');
+  }
+  return null;
+}
+
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState(restoreSession);
 
   const clearSession = useCallback(() => {
     localStorage.removeItem('access_token');
@@ -23,12 +37,6 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    const claims = token && parseJwt(token);
-    if (claims?.exp && claims.exp * 1000 > Date.now()) {
-      const email = localStorage.getItem('access_email') || claims.email;
-      setSession({ token, email, displayName: email?.split('@')[0] });
-    } else if (token) clearSession();
     window.addEventListener('auth:unauthorized', clearSession);
     return () => window.removeEventListener('auth:unauthorized', clearSession);
   }, [clearSession]);

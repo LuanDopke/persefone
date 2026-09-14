@@ -1,0 +1,99 @@
+{
+  "workflow": "companion",
+  "telemetryInstanceId": "babfdff0-2bea-4188-a8e7-33d9d282ae35",
+  "specName": "Cadastro Exemplar",
+  "branch": "master",
+  "selectedAt": "2026-09-14T21:38:00.393Z",
+  "currentStep": "specify",
+  "status": "specified",
+  "history": [
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-14T21:38:00.393Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-14T21:40:31.885Z"
+    }
+  ],
+  "coverage": {
+    "FR-001": {
+      "title": "O sistema DEVE permitir que o usuário pesquise entradas taxonômicas por espécie ou gênero durante o cadastro do exemplar."
+    },
+    "FR-002": {
+      "title": "O sistema DEVE permitir selecionar uma única entrada taxonômica existente para cada exemplar."
+    },
+    "FR-003": {
+      "title": "O sistema DEVE exigir uma espécie ou gênero antes de criar o exemplar."
+    },
+    "FR-004": {
+      "title": "O sistema DEVE permitir criar, dentro do cadastro do exemplar, uma entrada taxonômica ausente usando somente seu nome."
+    },
+    "FR-005": {
+      "title": "O sistema DEVE aceitar um nome em nível de gênero sem espécie determinada, como Begonia sp."
+    },
+    "FR-006": {
+      "title": "O sistema DEVE impedir a criação de entradas taxonômicas duplicadas e oferecer a entrada existente para seleção."
+    },
+    "FR-007": {
+      "title": "O sistema DEVE exigir uma descrição de solo em texto livre para registrar a condição inicial do exemplar."
+    },
+    "FR-008": {
+      "title": "O sistema DEVE exigir que a luminosidade inicial seja uma entre Sombra, Meia sombra e Sol pleno."
+    },
+    "FR-009": {
+      "title": "O sistema DEVE preencher inicialmente a data de aquisição com a data atual do usuário."
+    },
+    "FR-010": {
+      "title": "O sistema DEVE permitir alterar a data de aquisição para qualquer data anterior ou igual à data atual."
+    },
+    "FR-011": {
+      "title": "O sistema DEVE rejeitar uma data de aquisição posterior à data atual."
+    },
+    "FR-012": {
+      "title": "O sistema DEVE permitir um apelido opcional e gerar um nome padrão identificável quando ele não for informado."
+    },
+    "FR-013": {
+      "title": "O sistema DEVE permitir anexar no máximo uma foto durante o cadastro sem tornar a foto obrigatória."
+    },
+    "FR-014": {
+      "title": "O sistema DEVE transformar a foto anexada em primeira entrada da linha do tempo visual do exemplar após o cadastro bem-sucedido."
+    },
+    "FR-015": {
+      "title": "O sistema DEVE criar o exemplar sem entrada visual quando nenhuma foto for anexada."
+    },
+    "FR-016": {
+      "title": "O sistema DEVE impedir confirmações duplicadas enquanto o cadastro estiver sendo processado."
+    },
+    "FR-017": {
+      "title": "O sistema DEVE direcionar o usuário ao detalhe do exemplar recém-criado após o salvamento bem-sucedido."
+    },
+    "FR-018": {
+      "title": "O sistema DEVE apresentar erros de validação no contexto dos respectivos campos sem apagar os demais dados preenchidos."
+    }
+  },
+  "size": "oversized",
+  "classification": {
+    "projectedFiles": 12,
+    "projectedTasks": 16,
+    "scopeSignal": "none",
+    "verdict": "oversized"
+  },
+  "context": [
+    "area: frontend specimen registration and routing",
+    "area: specimen and catalog data lifecycle",
+    "constraint: preserve exact luminosity labels and acquisition date limit"
+  ],
+  "intent": "Permitir que o usuário registre um novo exemplar com identificação taxonômica, condições iniciais e foto opcional para iniciar seu acompanhamento.",
+  "expectations": [
+    "Corrigir, enriquecer ou mesclar entradas taxonômicas existentes.",
+    "Alterar solo ou luminosidade após o cadastro.",
+    "Adicionar fotos além da primeira durante o cadastro."
+  ]
+}

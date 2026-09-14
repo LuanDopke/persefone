@@ -1,0 +1,80 @@
+{
+  "workflow": "speckit",
+  "specName": "Especificação da Funcionalidade: Código de Acesso por E-mail",
+  "branch": "master",
+  "currentStep": "plan",
+  "status": "planned",
+  "history": [
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-14T21:16:17.472Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-14T21:17:15.931Z"
+    },
+    {
+      "step": "plan",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-14T21:17:15.934Z"
+    },
+    {
+      "step": "plan",
+      "substep": "research",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T21:18:38.274Z"
+    },
+    {
+      "step": "plan",
+      "substep": "design",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T21:23:09.751Z"
+    },
+    {
+      "step": "plan",
+      "substep": null,
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T21:23:43.069Z"
+    }
+  ],
+  "telemetryInstanceId": "57ed6aae-0352-4236-be3e-db0c3f3e9bf1",
+  "approach": "Ampliar a solicitação de acesso existente para que link e código compartilhem validade e consumo, com confirmação transacional e limite de tentativas. Preservar o endpoint do link e acrescentar um contrato específico por e-mail e código, enquanto a tela atual passa a ter duas etapas na mesma aba.",
+  "decisions": [
+    {
+      "decision": "Representar link e código na mesma AccessRequest",
+      "why": "Garante expiração e consumo compartilhados de forma atômica",
+      "rejected": "Entidades separadas exigiriam sincronização adicional"
+    },
+    {
+      "decision": "Persistir o código como HMAC-SHA-256 vinculado à solicitação e ao e-mail",
+      "why": "Protege o espaço de seis dígitos contra enumeração offline e separa códigos iguais",
+      "rejected": "Texto puro ou hash sem chave"
+    },
+    {
+      "decision": "Adicionar endpoint próprio para confirmação por código",
+      "why": "Preserva o contrato do link e mantém validação sem ambiguidade",
+      "rejected": "Um endpoint com campos opcionais para dois modos"
+    },
+    {
+      "decision": "Manter o e-mail no estado transitório da tela de acesso",
+      "why": "Permite confirmar na mesma aba sem persistir identidade antes da autenticação",
+      "rejected": "localStorage ou e-mail na URL"
+    }
+  ],
+  "step_summaries": {
+    "plan": {
+      "summary": "Planejado código de seis dígitos com consumo compartilhado ao link, proteção por HMAC, limite transacional de tentativas e fluxo React na mesma aba."
+    }
+  }
+}
