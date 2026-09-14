@@ -10,4 +10,5 @@ urlpatterns = [
     path('api/species/', include('catalog.urls')),
     path('api/', include('specimens.urls')),
     path('api/weather/', include('weather.urls')),
+    path('api/auth/', include('accounts.urls')),
 ]

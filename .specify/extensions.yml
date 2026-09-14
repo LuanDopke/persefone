@@ -1,5 +1,6 @@
 installed:
 - companion
+- fixit
 - tasks-to-project
 settings:
   auto_execute_hooks: true

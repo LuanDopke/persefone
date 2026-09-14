@@ -30,6 +30,38 @@
 
 ---
 
+### Configuração do ambiente e envio de e-mail
+
+O login sem senha envia o link de acesso pelo SMTP do Gmail. Na raiz do projeto,
+copie o arquivo de exemplo e preencha as credenciais locais:
+
+```bash
+cp .env.example .env
+```
+
+Variáveis utilizadas:
+
+```dotenv
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=seu-email@gmail.com
+EMAIL_HOST_PASSWORD=sua-senha-de-app
+DEFAULT_FROM_EMAIL=seu-email@gmail.com
+FRONTEND_URL=http://localhost:5173
+```
+
+A senha deve ser uma [senha de app do Google](https://myaccount.google.com/apppasswords),
+criada em uma conta com verificação em duas etapas. Não use a senha normal da
+conta. O arquivo `.env` é carregado automaticamente pelo backend e está ignorado
+pelo Git; somente `.env.example`, sem credenciais, deve ser versionado.
+
+Se `EMAIL_HOST_USER` ou `EMAIL_HOST_PASSWORD` não estiverem definidos, o ambiente
+de desenvolvimento usa o backend de console e imprime o link no terminal do Django.
+
+---
+
 ### 1. Configurando e Executando o Backend (Django DRF)
 
 Navegue até o diretório `backend/`:
@@ -97,6 +129,66 @@ cd frontend
    ```bash
    npm test
    ```
+
+---
+
+## Spec Kit, Fixit e Companion
+
+Este repositório já está inicializado com Spec Kit e usa a integração `agy`.
+Os comandos e skills ficam em `.specify/` e `.agents/skills/`. Execute o agente de
+desenvolvimento a partir da raiz do repositório para que esses arquivos sejam carregados.
+
+### Instalar o Spec Kit
+
+O Spec Kit requer Python 3.11 ou superior. A instalação persistente recomendada usa
+o `uv`:
+
+```bash
+uv tool install specify-cli
+specify version
+specify check
+```
+
+Em um projeto novo, inicialize a integração escolhida. Não execute novamente este
+comando no Persefone, pois ele já está inicializado:
+
+```bash
+specify init <diretorio-do-projeto> --integration <integracao>
+```
+
+### Instalar as extensões
+
+Execute na raiz de um projeto inicializado pelo Spec Kit:
+
+```bash
+specify extension add fixit
+specify extension add companion
+specify extension list
+```
+
+Após instalar ou atualizar extensões, reinicie o agente para recarregar os comandos.
+No Persefone, o Companion registra automaticamente o progresso depois das etapas de
+especificação, plano, tarefas e implementação. O Fixit é acionado manualmente para
+diagnosticar um bug com base em `spec.md`, `plan.md` e `tasks.md` antes de alterar o código.
+
+Fluxo recomendado:
+
+```text
+speckit-specify → revisar spec.md → speckit-plan → revisar plan.md
+→ speckit-tasks → revisar tasks.md → speckit-implement → speckit-converge
+```
+
+Comandos auxiliares:
+
+```text
+speckit-companion-status
+speckit-companion-resume
+speckit-companion-doctor
+speckit-fixit-run <descrição do bug>
+```
+
+Verifique a instalação atual com `specify extension list`. Neste checkout, Fixit e
+Companion já estão habilitados em `.specify/extensions.yml`.
 
 ---
 

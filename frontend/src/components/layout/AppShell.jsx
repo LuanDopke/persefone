@@ -7,14 +7,16 @@
 import { useState } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AppShell({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { displayName, logout } = useAuth();
 
   return (
     <div className="flex min-h-screen flex-col bg-offwhite">
       {/* Top Navbar */}
-      <Navbar onMenuToggle={() => setMobileOpen((prev) => !prev)} />
+      <Navbar onMenuToggle={() => setMobileOpen((prev) => !prev)} displayName={displayName} onLogout={logout} />
 
       <div className="flex flex-1">
         {/* Desktop Sidebar — hidden on mobile */}

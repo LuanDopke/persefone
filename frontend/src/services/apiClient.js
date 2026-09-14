@@ -33,8 +33,9 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired — could redirect to login
       localStorage.removeItem('access_token');
+      localStorage.removeItem('access_email');
+      window.dispatchEvent(new Event('auth:unauthorized'));
     }
     return Promise.reject(error);
   }
