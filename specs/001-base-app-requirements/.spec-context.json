@@ -1,0 +1,18 @@
+{
+  "workflow": "companion",
+  "specName": "001-base-app-requirements",
+  "branch": "001-base-app-requirements",
+  "selectedAt": "2026-09-14T13:59:57.493Z",
+  "currentStep": "specify",
+  "status": "completed",
+  "history": [
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-14T18:03:59.850Z"
+    }
+  ],
+  "telemetryInstanceId": "cfc882f9-e857-49d9-8b0a-4be99773177e"
+}

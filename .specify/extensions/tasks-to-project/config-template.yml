@@ -1,0 +1,44 @@
+# Configuration template for the tasks-to-project extension.
+#
+# After installing the extension this file is materialized as
+# .specify/extensions/tasks-to-project/tasks-to-project-config.yml
+#
+# Set `project.owner` and `project.number` for the target GitHub Project (v2).
+# Leave `project.owner` empty to derive it from the `origin` git remote.
+
+project:
+  # GitHub user or organization that owns the Project (v2).
+  # Empty -> auto-detected from `git remote get-url origin`.
+  owner: ""
+  # Project (v2) number, as shown in the URL: https://github.com/users/<owner>/projects/<number>
+  number: 0
+
+# Publication mode:
+#   issues -> create a real GitHub issue per task in the current repo, then add it to the project.
+#   draft  -> create a draft item directly in the project (no issue is opened).
+mode: "draft"
+
+# Custom field on the Project that holds the kanban column / status.
+# When `default_status` is set, every newly created card is moved to that column
+# (the option must already exist on the field).
+status_field: "Status"
+default_status: "Todo"
+# Option name representing a completed task. Used by `sync` to mark cards as
+# done when the matching task is checked off in tasks.md.
+done_status: "Done"
+
+# Optional custom single-select field that mirrors the user story priority
+# (P1, P2, P3, ...) parsed from spec.md. Leave empty to disable. The option
+# names on the field must match the priority tokens exactly (e.g. "P1").
+priority_field: "Priority"
+
+# When true, the task ID + phase + story label + priority are appended as
+# GitHub labels on issues created in `mode: issues`. Ignored in `mode: draft`.
+add_labels: true
+
+# When true, skip tasks that are already marked as completed in tasks.md ([x]).
+skip_completed: true
+
+# Optional filter: only publish tasks belonging to one of these story IDs (e.g. ["US1", "US2"]).
+# Empty list = publish all tasks regardless of story.
+only_stories: []

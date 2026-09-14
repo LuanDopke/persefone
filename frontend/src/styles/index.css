@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-radius: 0 !important;
+  }
+
+  html {
+    font-family: 'Lexend', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-offwhite text-charcoal antialiased;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold uppercase tracking-tight;
+  }
+
+  /* High-contrast focus rings for accessibility (Constitution Principle II) */
+  :focus-visible {
+    outline: 3px solid #BDFF00;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Neobrutalist base container */
+  .neo-container {
+    @apply border-4 border-charcoal bg-offwhite shadow-hard;
+  }
+
+  /* Active / pressed state for interactive neobrutalist elements */
+  .neo-press {
+    @apply translate-x-[2px] translate-y-[2px] shadow-hard-pressed;
+  }
+
+  /* Owned state (vibrant full color) */
+  .state-owned {
+    @apply bg-lime text-charcoal border-charcoal;
+  }
+
+  /* Missing state (desaturated grayscale) */
+  .state-missing {
+    @apply bg-gray-200 text-gray-500 border-gray-400 grayscale;
+  }
+}

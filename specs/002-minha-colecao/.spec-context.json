@@ -1,0 +1,605 @@
+{
+  "workflow": "companion",
+  "specName": "minha colecao",
+  "branch": "master",
+  "last_action": "frontend validated — install backend requirements to run T018",
+  "currentStep": "implement",
+  "status": "completed",
+  "history": [
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-14T14:52:00.706Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-14T14:52:01.749Z"
+    },
+    {
+      "step": "plan",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-14T14:56:53.964Z"
+    },
+    {
+      "step": "plan",
+      "substep": "research",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T14:58:36.554Z"
+    },
+    {
+      "step": "plan",
+      "substep": "design",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T14:58:36.599Z"
+    },
+    {
+      "step": "plan",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-14T14:58:48.227Z"
+    },
+    {
+      "step": "tasks",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-14T15:08:56.367Z"
+    },
+    {
+      "step": "tasks",
+      "substep": "generate",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:10:49.685Z"
+    },
+    {
+      "step": "tasks",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-14T15:11:03.810Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-14T15:14:03.890Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T001",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:15:21.307Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T003",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:15:21.392Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T002",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:15:47.345Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T004",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:16:33.729Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T009",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:16:33.812Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T012",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:16:33.891Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T005",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:28.453Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T006",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:28.529Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T007",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:28.614Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T008",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:28.705Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T010",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:28.790Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T011",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:28.870Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T013",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:28.964Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T014",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:29.045Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T015",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:29.131Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T016",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:18:29.214Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "task": "T017",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-14T15:20:38.869Z"
+    },
+    {
+      "step": "implement",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-14T18:03:52.874Z"
+    }
+  ],
+  "telemetryInstanceId": "faf59f1d-25f8-49bd-bfa1-0edc39ca3691",
+  "coverage": {
+    "FR-001": {
+      "title": "Exibir um card por espécie da coleção do usuário.",
+      "tasks": [
+        "T002",
+        "T004",
+        "T005",
+        "T007"
+      ],
+      "tests": [
+        "frontend/src/pages/__tests__/SpecimenCatalog.test.jsx::renders Minha Coleção with one species card and accessible fallback image",
+        "backend/specimens/tests/test_api.py::test_collection_groups_active_species_paginates_and_uses_specimen_photo"
+      ]
+    },
+    "FR-002": {
+      "title": "Apresentar identificação, imagem e quantidade de exemplares no card.",
+      "tasks": [
+        "T002",
+        "T004",
+        "T005",
+        "T007"
+      ]
+    },
+    "FR-003": {
+      "title": "Apresentar indicadores agregados de água, nutrientes e luz.",
+      "tasks": [
+        "T004",
+        "T009",
+        "T011"
+      ],
+      "tests": [
+        "frontend/src/pages/__tests__/SpecimenCatalog.test.jsx::shows independent attention and neutral care indicators",
+        "backend/specimens/tests/test_api.py::test_collection_exposes_independent_care_indicators"
+      ]
+    },
+    "FR-004": {
+      "title": "Destacar indicadores com atenção e informar a proporção afetada.",
+      "tasks": [
+        "T004",
+        "T009",
+        "T010",
+        "T011"
+      ]
+    },
+    "FR-005": {
+      "title": "Apresentar como neutros os indicadores sem atenção pendente.",
+      "tasks": [
+        "T004",
+        "T009",
+        "T010",
+        "T011"
+      ]
+    },
+    "FR-006": {
+      "title": "Permitir favoritar e desfavoritar uma espécie diretamente no card.",
+      "tasks": [
+        "T003",
+        "T012",
+        "T013",
+        "T014"
+      ],
+      "tests": [
+        "frontend/src/pages/__tests__/SpecimenCatalog.test.jsx::updates favorite without selecting the card",
+        "backend/specimens/tests/test_api.py::test_collection_filters_and_updates_favorite"
+      ]
+    },
+    "FR-007": {
+      "title": "Apresentar características de referência da espécie quando disponíveis.",
+      "tasks": [
+        "T004",
+        "T005",
+        "T007"
+      ]
+    },
+    "FR-008": {
+      "title": "Levar ao detalhe da espécie ao selecionar o card.",
+      "tasks": [
+        "T015",
+        "T016"
+      ]
+    },
+    "FR-009": {
+      "title": "Filtrar por nome comum ou científico durante a busca.",
+      "tasks": [
+        "T012",
+        "T013",
+        "T014"
+      ]
+    },
+    "FR-010": {
+      "title": "Permitir filtros por atenção, favorita e características de cuidado.",
+      "tasks": [
+        "T012",
+        "T013",
+        "T014"
+      ]
+    },
+    "FR-011": {
+      "title": "Exibir estado vazio e chamada de cadastro sem espécies.",
+      "tasks": [
+        "T015",
+        "T016"
+      ]
+    },
+    "FR-012": {
+      "title": "Exibir estado de nenhum resultado e limpeza de filtros.",
+      "tasks": [
+        "T013",
+        "T014"
+      ]
+    },
+    "FR-013": {
+      "title": "Exibir estado de carregamento durante a obtenção dos dados.",
+      "tasks": [
+        "T015",
+        "T016"
+      ]
+    },
+    "FR-014": {
+      "title": "Exibir erro com nova tentativa quando a coleção falhar.",
+      "tasks": [
+        "T015",
+        "T016"
+      ]
+    },
+    "FR-015": {
+      "title": "Organizar a grade em uma, duas ou três colunas conforme a tela.",
+      "tasks": [
+        "T005",
+        "T007"
+      ]
+    },
+    "FR-016": {
+      "title": "Oferecer ponto de entrada para cadastrar um novo exemplar.",
+      "tasks": [
+        "T015",
+        "T016"
+      ]
+    },
+    "FR-017": {
+      "title": "Carregar coleções extensas progressivamente.",
+      "tasks": [
+        "T002",
+        "T004",
+        "T018"
+      ]
+    },
+    "FR-018": {
+      "title": "Manter espécies sem exemplares ativos como arquivadas após as ativas.",
+      "tasks": [
+        "T002",
+        "T003",
+        "T004"
+      ]
+    }
+  },
+  "size": "normal",
+  "classification": {
+    "projectedFiles": 9,
+    "projectedTasks": 16,
+    "scopeSignal": "none",
+    "verdict": "normal"
+  },
+  "context": [
+    "area: coleção pessoal por espécie",
+    "area: frontend/src/pages/SpecimenCatalog.jsx",
+    "area: backend/specimens",
+    "constraint: separação entre Minha Coleção e Discover"
+  ],
+  "intent": "Permitir que o usuário consulte sua coleção por espécie e priorize cuidados pendentes.",
+  "expectations": [
+    "O detalhe de espécie e o carrossel de exemplares não fazem parte desta entrega.",
+    "O fluxo de cadastro de exemplar não faz parte desta entrega.",
+    "As regras fisiológicas que definem cuidados pendentes não fazem parte desta entrega."
+  ],
+  "approach": "Adicionar uma projeção paginada por espécie no domínio specimens, preservando vínculos taxonômicos e separando espécies ativas das arquivadas. A tela React consumirá essa projeção com TanStack Query, filtros e componentes visuais existentes.",
+  "decisions": [
+    {
+      "decision": "Agregar a coleção no endpoint DRF",
+      "why": "Permite paginação por espécie e centraliza as regras de contagem e atenção.",
+      "rejected": "Agrupar todos os exemplares no cliente"
+    },
+    {
+      "decision": "Persistir favorita e estado ativo localmente",
+      "why": "Mantém preferências e histórico de espécies arquivadas no modelo pessoal atual.",
+      "rejected": "Excluir exemplares ou criar preferência multiusuário fora do escopo"
+    },
+    {
+      "decision": "Projetar a coleção a partir de Species e Specimen",
+      "why": "Preserva histórico arquivado e evita tabela agregada duplicada.",
+      "rejected": "Persistir uma tabela de resumo por espécie"
+    }
+  ],
+  "step_summaries": {
+    "plan": {
+      "summary": "Planejada coleção paginada por espécie com grade React responsiva.",
+      "key_finding": "O aplicativo já possui Specimen e Species, mas a lista é plana e não contém estado de favorita, arquivamento nem agregação."
+    },
+    "tasks": {
+      "summary": "18 tarefas em 7 fases: fundação, quatro histórias e validação final."
+    },
+    "implement": {
+      "summary": "Implementação pronta e frontend validado; validação Django permanece pendente por dependência ausente.",
+      "risks": "Testes e migrações de backend não executados neste ambiente."
+    }
+  },
+  "currentTask": "T018",
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Cobertos os valores padrão de atividade e favorita da coleção.",
+      "files": [
+        "backend/specimens/tests/test_models.py"
+      ]
+    },
+    "T003": {
+      "status": "DONE",
+      "did": "Adicionados estados persistentes de exemplar ativo e espécie favorita, com migração reversível.",
+      "files": [
+        "backend/specimens/models.py",
+        "backend/catalog/models.py",
+        "backend/specimens/migrations/0002_collection_state.py"
+      ]
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "Definidos testes de contrato para agregação, paginação, estados e imagem da coleção.",
+      "files": [
+        "backend/specimens/tests/test_api.py"
+      ]
+    },
+    "T004": {
+      "status": "DONE",
+      "did": "Implementada projeção DRF paginada, filtros e atualização de favorita.",
+      "files": [
+        "backend/specimens/serializers.py",
+        "backend/specimens/views.py"
+      ]
+    },
+    "T009": {
+      "status": "DONE",
+      "did": "Cobertos indicadores independentes e estados neutros no contrato da API.",
+      "files": [
+        "backend/specimens/tests/test_api.py"
+      ]
+    },
+    "T012": {
+      "status": "DONE",
+      "did": "Cobertos busca, filtros e PATCH de favorita no contrato da API.",
+      "files": [
+        "backend/specimens/tests/test_api.py"
+      ]
+    },
+    "T005": {
+      "status": "DONE",
+      "did": "Criados testes de card, título, quantidade, alternativa de imagem e indicadores.",
+      "files": [
+        "frontend/src/pages/__tests__/SpecimenCatalog.test.jsx"
+      ]
+    },
+    "T006": {
+      "status": "DONE",
+      "did": "Atualizados testes de navegação para Minha Coleção e Discover separados.",
+      "files": [
+        "frontend/src/components/layout/__tests__/AppShell.test.jsx"
+      ]
+    },
+    "T007": {
+      "status": "DONE",
+      "did": "Substituída lista plana por grade responsiva de espécies com TanStack Query.",
+      "files": [
+        "frontend/src/pages/SpecimenCatalog.jsx"
+      ]
+    },
+    "T008": {
+      "status": "DONE",
+      "did": "Registradas rotas e navegação separadas para Minha Coleção e Discover.",
+      "files": [
+        "frontend/src/App.jsx",
+        "frontend/src/components/layout/Sidebar.jsx"
+      ]
+    },
+    "T010": {
+      "status": "DONE",
+      "did": "Coberta apresentação de atenção e estado neutro no card.",
+      "files": [
+        "frontend/src/pages/__tests__/SpecimenCatalog.test.jsx"
+      ]
+    },
+    "T011": {
+      "status": "DONE",
+      "did": "Renderizados indicadores agregados independentes no card da coleção.",
+      "files": [
+        "frontend/src/pages/SpecimenCatalog.jsx"
+      ]
+    },
+    "T013": {
+      "status": "DONE",
+      "did": "Cobertos filtros locais, limpeza e favorita otimista na interface.",
+      "files": [
+        "frontend/src/pages/__tests__/SpecimenCatalog.test.jsx"
+      ]
+    },
+    "T014": {
+      "status": "DONE",
+      "did": "Implementados busca, filtros, estado sem resultado e favorita otimista.",
+      "files": [
+        "frontend/src/pages/SpecimenCatalog.jsx"
+      ]
+    },
+    "T015": {
+      "status": "DONE",
+      "did": "Cobertos estado de erro e ação de tentativa novamente.",
+      "files": [
+        "frontend/src/pages/__tests__/SpecimenCatalog.test.jsx"
+      ]
+    },
+    "T016": {
+      "status": "DONE",
+      "did": "Implementados estados de carregamento, erro, vazio e entradas de cadastro e detalhe.",
+      "files": [
+        "frontend/src/pages/SpecimenCatalog.jsx",
+        "frontend/src/App.jsx"
+      ]
+    },
+    "T017": {
+      "status": "DONE",
+      "did": "Documentados paginação, filtros e favorita conforme o contrato implementado.",
+      "files": [
+        "specs/002-minha-colecao/contracts/collection-api.md"
+      ]
+    }
+  },
+  "verified": [
+    {
+      "what": "Testes frontend",
+      "command": "cd frontend && npm test -- --run",
+      "result": "47 testes aprovados",
+      "warnings": [
+        "Avisos de future flags do React Router"
+      ]
+    },
+    {
+      "what": "Build frontend",
+      "command": "cd frontend && npm run build",
+      "result": "Build Vite concluído",
+      "warnings": []
+    },
+    {
+      "what": "Verificação sintática backend",
+      "command": "python3 -m compileall -q backend/specimens backend/catalog",
+      "result": "Concluída sem erros",
+      "warnings": []
+    },
+    {
+      "what": "frontend tests and production build",
+      "command": "npm test -- --run && npm run build",
+      "result": "47 tests passed; Vite production build completed",
+      "warnings": [
+        "React Router v7 future-flag warnings"
+      ]
+    },
+    {
+      "what": "backend migration validation",
+      "command": "venv/bin/python manage.py makemigrations --check --dry-run",
+      "result": "failed before test suite: KeyError for specimens.Species",
+      "warnings": [
+        "migration 0002_collection_state declares Species under specimens while the model belongs to catalog"
+      ]
+    }
+  ],
+  "concerns": [
+    {
+      "note": "Django não está instalado no interpretador atual; migrações e testes de backend não foram executados.",
+      "step": "implement"
+    },
+    {
+      "note": "T018 remains unchecked: backend migration 0002_collection_state cannot build migration state because it targets specimens.Species instead of catalog.Species.",
+      "step": "implement"
+    }
+  ]
+}

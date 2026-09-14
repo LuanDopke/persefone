@@ -1,0 +1,128 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Persefone Botanical Archival API",
+    "version": "1.0.0",
+    "description": "API endpoints for plant specimen care tracking, GBIF taxonomy exploration, and environmental metrics."
+  },
+  "paths": {
+    "/api/species/": {
+      "get": {
+        "summary": "List cached species catalog items",
+        "parameters": [
+          { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Search term for scientific or common name" },
+          { "name": "is_owned", "in": "query", "schema": { "type": "boolean" }, "description": "Filter by owned vs missing status" }
+        ],
+        "responses": {
+          "200": { "description": "List of species entries with computed is_owned status" }
+        }
+      }
+    },
+    "/api/species/search-gbif/": {
+      "get": {
+        "summary": "Search or match species via GBIF API with automatic local DB caching",
+        "parameters": [
+          { "name": "name", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Returns species detail, fetched from local cache or newly cached from GBIF" }
+        }
+      }
+    },
+    "/api/specimens/": {
+      "get": {
+        "summary": "List all user plant specimens",
+        "responses": {
+          "200": { "description": "List of specimen items with current vitals and species detail" }
+        }
+      },
+      "post": {
+        "summary": "Register a new plant specimen",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["species_id", "nickname", "acquired_at"],
+                "properties": {
+                  "species_id": { "type": "integer" },
+                  "nickname": { "type": "string" },
+                  "location_in_home": { "type": "string" },
+                  "acquired_at": { "type": "string", "format": "date" },
+                  "vitality_index": { "type": "integer" },
+                  "soil_moisture": { "type": "integer" },
+                  "lux_intensity": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Specimen registered successfully" }
+        }
+      }
+    },
+    "/api/specimens/{id}/": {
+      "get": {
+        "summary": "Get specimen detail by ID",
+        "responses": {
+          "200": { "description": "Specimen record" }
+        }
+      },
+      "patch": {
+        "summary": "Update specimen vitals or details",
+        "responses": {
+          "200": { "description": "Updated specimen record" }
+        }
+      },
+      "delete": {
+        "summary": "Delete specimen record",
+        "responses": {
+          "204": { "description": "Specimen deleted" }
+        }
+      }
+    },
+    "/api/care-logs/": {
+      "get": {
+        "summary": "List care log history",
+        "parameters": [
+          { "name": "specimen_id", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Care log timeline events" }
+        }
+      },
+      "post": {
+        "summary": "Record a new care log entry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["specimen_id", "type"],
+                "properties": {
+                  "specimen_id": { "type": "string" },
+                  "type": { "type": "string", "enum": ["watering", "fertilizing", "repotting", "observation"] },
+                  "notes": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Care log created" }
+        }
+      }
+    },
+    "/api/weather/current/": {
+      "get": {
+        "summary": "Get current weather metrics (cached)",
+        "responses": {
+          "200": { "description": "Environmental climate stats" }
+        }
+      }
+    }
+  }
+}

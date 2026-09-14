@@ -1,0 +1,45 @@
+schema_version: "1.0"
+
+extension:
+  id: "tasks-to-project"
+  name: "Tasks to GitHub Project"
+  version: "0.2.0"
+  description: "Publish and synchronize Spec Kit tasks as cards on a GitHub Project (v2) kanban board, with priority and status sync."
+  author: "Alessandro Mancini <dott.alessandro.mancini@gmail.com>"
+  repository: "https://github.com/mancioshell/spec-kit-tasks-to-project"
+  homepage: "https://github.com/mancioshell/spec-kit-tasks-to-project"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=0.2.0"
+  tools:
+    - name: "gh"
+      required: true
+    - name: "python3"
+      required: true
+
+provides:
+  commands:
+    - name: "speckit.tasks-to-project.publish"
+      file: "commands/speckit.tasks-to-project.publish.md"
+      description: "Publish the current feature's tasks.md to a GitHub Project (v2) kanban board"
+    - name: "speckit.tasks-to-project.sync"
+      file: "commands/speckit.tasks-to-project.sync.md"
+      description: "Reconcile the current tasks.md against the existing cards on a GitHub Project (v2) board"
+
+hooks:
+  after_tasks:
+    command: speckit.tasks-to-project.publish
+    optional: true
+    description: "Publish generated tasks as cards on a GitHub Project kanban"
+  after_implement:
+    command: speckit.tasks-to-project.sync
+    optional: true
+    description: "Sync completed tasks back to the GitHub Project kanban"
+
+tags:
+  - "github"
+  - "project"
+  - "kanban"
+  - "automation"
+  - "tasks"
