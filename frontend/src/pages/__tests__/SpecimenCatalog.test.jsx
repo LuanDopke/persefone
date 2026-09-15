@@ -34,6 +34,12 @@ describe('SpecimenCatalog page', () => {
     renderWithProviders(); fireEvent.click(await screen.findByRole('button', { name: /favoritar costela/i })); await waitFor(() => expect(apiClient.patch).toHaveBeenCalledWith('/api/specimens/collection/7/favorite/', { is_favorite: true }));
   });
   it('offers error retry action', async () => {
-    apiClient.get.mockRejectedValueOnce(new Error('network')); renderWithProviders(); expect(await screen.findByRole('button', { name: /tentar novamente/i })).toBeInTheDocument();
+    apiClient.get.mockRejectedValueOnce(new Error('network')); renderWithProviders(); expect(await screen.findByRole('alert')).toHaveTextContent(/não foi possível carregar/i); expect(screen.getByRole('button', { name: /tentar novamente/i })).toBeInTheDocument();
+  });
+  it('keeps the page header visible while loading', () => {
+    apiClient.get.mockReturnValueOnce(new Promise(() => {})); renderWithProviders(); expect(screen.getByRole('heading', { level: 1, name: /minha coleção/i })).toBeInTheDocument(); expect(screen.getByRole('status', { name: /carregando minha coleção/i })).toBeInTheDocument();
+  });
+  it('replaces a broken collection image with an accessible fallback', async () => {
+    apiClient.get.mockResolvedValueOnce({ data: { count: 1, results: [{ ...item, image_url: '/broken.avif' }] } }); renderWithProviders(); const image = await screen.findByRole('img', { name: /imagem de costela/i }); fireEvent.error(image); expect(screen.getByRole('img', { name: /imagem indisponível/i })).toBeInTheDocument();
   });
 });

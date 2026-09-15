@@ -4,46 +4,26 @@
  * Constitution Principle II: Desktop sidebar + mobile responsive drawer.
  */
 
-import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import MobileNavigation from './MobileNavigation';
 import { useAuth } from '../../context/AuthContext';
 
 export default function AppShell({ children }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const { displayName, logout } = useAuth();
+  const { pathname } = useLocation();
 
   return (
-    <div className="flex min-h-screen flex-col bg-offwhite">
-      {/* Top Navbar */}
-      <Navbar onMenuToggle={() => setMobileOpen((prev) => !prev)} displayName={displayName} onLogout={logout} />
-
-      <div className="flex flex-1">
-        {/* Desktop Sidebar — hidden on mobile */}
-        <div className="hidden lg:block">
-          <Sidebar />
-        </div>
-
-        {/* Mobile Drawer Overlay */}
-        {mobileOpen && (
-          <div data-testid="mobile-drawer" className="fixed inset-0 z-50 lg:hidden">
-            {/* Backdrop */}
-            <div
-              className="absolute inset-0 bg-charcoal/50"
-              onClick={() => setMobileOpen(false)}
-            />
-            {/* Drawer panel */}
-            <div className="relative z-10 h-full w-64 border-r-4 border-charcoal bg-offwhite shadow-hard-lg">
-              <Sidebar />
-            </div>
-          </div>
-        )}
-
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-auto">
+    <div className="grid h-dvh min-w-0 grid-cols-1 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-offwhite lg:grid-cols-[14rem_minmax(0,1fr)]">
+      <div className="lg:col-start-2"><Navbar displayName={displayName} onLogout={logout} /></div>
+      <div className="hidden min-h-0 lg:row-span-2 lg:row-start-1 lg:block"><Sidebar pathname={pathname} /></div>
+      <div className="min-h-0 min-w-0 lg:col-start-2">
+        <main className="h-full min-w-0 overflow-y-auto overflow-x-hidden pb-20 lg:pb-0">
           {children}
         </main>
       </div>
+      <MobileNavigation pathname={pathname} />
     </div>
   );
 }

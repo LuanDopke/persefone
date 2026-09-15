@@ -11,11 +11,13 @@
 
   html {
     font-family: 'Lexend', system-ui, sans-serif;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-offwhite text-charcoal antialiased;
-    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -24,8 +26,8 @@
 
   /* High-contrast focus rings for accessibility (Constitution Principle II) */
   :focus-visible {
-    outline: 3px solid #BDFF00;
-    outline-offset: 2px;
+    outline: 4px solid #BDFF00;
+    outline-offset: 3px;
   }
 }
 
@@ -48,5 +50,20 @@
   /* Missing state (desaturated grayscale) */
   .state-missing {
     @apply bg-gray-200 text-gray-500 border-gray-400 grayscale;
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

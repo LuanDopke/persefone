@@ -1,0 +1,196 @@
+{
+  "workflow": "companion",
+  "specName": "acompanhar exemplar",
+  "branch": "master",
+  "currentStep": "plan",
+  "status": "planned",
+  "history": [
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-15T19:42:57.639Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-15T19:45:28.391Z"
+    },
+    {
+      "step": "plan",
+      "substep": null,
+      "kind": "start",
+      "by": "extension",
+      "at": "2026-09-15T20:50:48.103Z"
+    },
+    {
+      "step": "plan",
+      "substep": "research",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-15T20:53:21.325Z"
+    },
+    {
+      "step": "plan",
+      "substep": "design",
+      "kind": "complete",
+      "by": "ai",
+      "at": "2026-09-15T20:55:31.357Z"
+    },
+    {
+      "step": "plan",
+      "substep": null,
+      "kind": "complete",
+      "by": "extension",
+      "at": "2026-09-15T20:55:58.539Z"
+    }
+  ],
+  "telemetryInstanceId": "d4a4429d-31f8-411c-80ef-b09547414f32",
+  "last_action": "living specs evaluated — skipped (not configured)",
+  "coverage": {
+    "FR-001": {
+      "title": "O sistema DEVE apresentar uma página individual para acompanhar cada exemplar pertencente à pessoa autenticada."
+    },
+    "FR-002": {
+      "title": "A página DEVE apresentar nome do exemplar, espécie vinculada, identificação, localização, data de aquisição e situação ativa ou arquivada."
+    },
+    "FR-003": {
+      "title": "A página DEVE apresentar a foto representativa e um substituto visual quando nenhuma imagem puder ser exibida."
+    },
+    "FR-004": {
+      "title": "A página DEVE apresentar os valores atuais de vitalidade, umidade do solo e luminosidade com rótulo, escala ou unidade compreensível e indicação da última atualização."
+    },
+    "FR-005": {
+      "title": "A página DEVE reunir linha do tempo visual, ações de cuidado e histórico de atividades em uma hierarquia que permaneça compreensível em telas pequenas e amplas."
+    },
+    "FR-006": {
+      "title": "O sistema DEVE listar as atividades do exemplar por data e hora de ocorrência, da mais recente para a mais antiga."
+    },
+    "FR-007": {
+      "title": "O sistema DEVE permitir registrar atividades dos tipos rega, adubação, replante, poda e observação."
+    },
+    "FR-008": {
+      "title": "Cada atividade DEVE manter o exemplar relacionado, o tipo, a data e hora de ocorrência, a data e hora de registro e uma nota opcional."
+    },
+    "FR-009": {
+      "title": "O sistema DEVE oferecer ações rápidas para os tipos recorrentes e solicitar confirmação antes de concluir o registro."
+    },
+    "FR-010": {
+      "title": "O sistema DEVE permitir informar uma ocorrência passada, mas NÃO DEVE permitir data e hora futuras."
+    },
+    "FR-011": {
+      "title": "A data e hora de ocorrência de uma atividade DEVE permanecer imutável após sua criação para preservar a integridade histórica."
+    },
+    "FR-012": {
+      "title": "O sistema DEVE impedir envios duplicados enquanto uma atividade ou alteração estiver sendo salva."
+    },
+    "FR-013": {
+      "title": "Após registrar uma atividade, o sistema DEVE atualizar o histórico e as informações derivadas sem duplicar entradas."
+    },
+    "FR-014": {
+      "title": "O sistema DEVE preservar os dados informados e oferecer nova tentativa quando o registro de atividade falhar."
+    },
+    "FR-015": {
+      "title": "O sistema DEVE permitir anexar novas fotos ao exemplar sem substituir nem remover automaticamente os registros visuais anteriores."
+    },
+    "FR-016": {
+      "title": "Cada registro visual DEVE manter imagem, data da captura, data do registro e uma observação opcional."
+    },
+    "FR-017": {
+      "title": "O sistema DEVE validar tipo e tamanho da imagem antes de concluir o registro visual e NÃO DEVE criar entrada parcial após uma falha."
+    },
+    "FR-018": {
+      "title": "O sistema DEVE carregar progressivamente linhas do tempo extensas de fotos e atividades."
+    },
+    "FR-019": {
+      "title": "O sistema DEVE permitir alterar nome, localização, data de aquisição, descrição do solo e condição de luz do exemplar."
+    },
+    "FR-020": {
+      "title": "O sistema DEVE permitir atualizar os valores atuais de vitalidade, umidade do solo e luminosidade dentro de seus limites válidos."
+    },
+    "FR-021": {
+      "title": "O sistema DEVE validar todas as alterações antes de aplicá-las e NÃO DEVE persistir uma atualização parcial quando algum campo for inválido."
+    },
+    "FR-022": {
+      "title": "O sistema DEVE permitir arquivar e reativar o exemplar sem apagar seu histórico, suas fotos ou seu vínculo com a espécie."
+    },
+    "FR-023": {
+      "title": "A espécie vinculada NÃO DEVE ser alterada por esta página para evitar troca acidental de identidade taxonômica."
+    },
+    "FR-024": {
+      "title": "Somente a pessoa proprietária DEVE poder visualizar ou alterar o exemplar e criar ou consultar seus registros relacionados."
+    },
+    "FR-025": {
+      "title": "A página DEVE apresentar estados de carregamento, ausência de dados, falha e salvamento sem remover o contexto ou as ações de recuperação aplicáveis."
+    },
+    "FR-026": {
+      "title": "As ações interativas DEVEM possuir rótulos textuais, foco visível, retorno de estado e alvos adequados para interação por toque."
+    },
+    "FR-027": {
+      "title": "A apresentação DEVE reutilizar as diretrizes e os módulos compartilhados do Persefone, preservando bordas retas, contraste, tipografia, cores semânticas e comportamento responsivo."
+    },
+    "FR-028": {
+      "title": "A atualização DEVE preservar os fluxos existentes de cadastro, coleção, autenticação e consulta de exemplares."
+    }
+  },
+  "size": "oversized",
+  "classification": {
+    "projectedFiles": 14,
+    "projectedTasks": 24,
+    "scopeSignal": "larger",
+    "verdict": "oversized"
+  },
+  "context": [
+    "reference: supplied Specimen Visual and Text Log HTML template",
+    "area: specimen detail, care activity log, visual timeline and specimen editing",
+    "constraint: preserve owner isolation, immutable care timestamps and modular layout directives"
+  ],
+  "intent": "Allow an authenticated person to monitor, update and chronologically document care and visual changes for an individual specimen.",
+  "expectations": [
+    "Do not add scheduled reminders, notifications or automated care recommendations.",
+    "Do not allow changing the specimen's linked species or permanently deleting the specimen, care history or photos in this scope.",
+    "Do not copy sample names, data, remote images or navigation from the supplied template."
+  ],
+  "approach": "Ampliar a rota e o domínio specimens existentes com detalhe enxuto, históricos paginados e mutações restritas ao proprietário. Separar instantes de ocorrência e registro, reutilizar o processamento de imagens e coordenar consultas e mutações pelo cache do TanStack Query.",
+  "decisions": [
+    {
+      "decision": "Separar occurred_at ou captured_at de created_at e tornar históricos somente de criação e leitura",
+      "why": "Permite fatos passados e preserva a imutabilidade e a auditoria exigidas",
+      "rejected": "Manter um único timestamp ou permitir edição de eventos"
+    },
+    {
+      "decision": "Consultar atividades e fotos em endpoints paginados separados do detalhe",
+      "why": "Mantém o detalhe limitado e permite carregamento progressivo e estados independentes",
+      "rejected": "Incorporar todos os históricos no detalhe ou usar uma linha polimórfica"
+    },
+    {
+      "decision": "Reutilizar a normalização AVIF e derivar a capa da foto histórica mais recente",
+      "why": "Preserva a linha do tempo e uma única regra de validação de mídia",
+      "rejected": "Sobrescrever a foto do exemplar ou duplicar o processamento"
+    },
+    {
+      "decision": "Proteger atualizações com expected_updated_at e manter metrics_updated_at separado",
+      "why": "Evita sobrescrita silenciosa e informa o instante real das métricas",
+      "rejected": "Último escritor vencer ou usar qualquer updated_at como atualização de métrica"
+    },
+    {
+      "decision": "Arquivar por is_active e remover exclusão permanente da API",
+      "why": "A transição existente é reversível e preserva relações e históricos",
+      "rejected": "Soft delete adicional ou endpoint destrutivo"
+    },
+    {
+      "decision": "Impedir repetição durante o envio com bloqueio síncrono local e revalidar o cache após sucesso",
+      "why": "Fecha a janela de clique repetido, preserva formulários e evita itens duplicados",
+      "rejected": "Limpar antes da resposta ou combinar inserção otimista e refetch"
+    }
+  ],
+  "step_summaries": {
+    "plan": {
+      "summary": "Plano completo para detalhe, edição, atividades e linha visual do exemplar",
+      "key_finding": "Os modelos existem, mas misturam ocorrência com registro e o detalhe atual não oferece históricos paginados nem edição protegida."
+    }
+  }
+}

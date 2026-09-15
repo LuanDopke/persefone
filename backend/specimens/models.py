@@ -6,16 +6,27 @@ Constitution Principle V: Specimen linked to Species, immutable care timestamps.
 import uuid
 
 from django.db import models
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Specimen(models.Model):
     """Individual physical plant belonging to the user."""
 
+    class Light(models.TextChoices):
+        SOMBRA = 'Sombra', 'Sombra'
+        MEIA_SOMBRA = 'Meia sombra', 'Meia sombra'
+        SOL_PLENO = 'Sol pleno', 'Sol pleno'
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='specimens',
     )
     species = models.ForeignKey(
         'catalog.Species',
@@ -25,6 +36,8 @@ class Specimen(models.Model):
     )
     nickname = models.CharField(
         max_length=100,
+        blank=True,
+        default='',
         help_text='Personal name for the specimen',
     )
     location_in_home = models.CharField(
@@ -35,6 +48,16 @@ class Specimen(models.Model):
     )
     acquired_at = models.DateField(
         help_text='Date when the plant was acquired',
+    )
+    initial_soil = models.TextField(
+        default='',
+        help_text='Initial free-text soil description',
+    )
+    initial_light = models.CharField(
+        max_length=20,
+        choices=Light.choices,
+        default=Light.MEIA_SOMBRA,
+        help_text='Initial light condition',
     )
 
     # Vital indicators
@@ -72,6 +95,30 @@ class Specimen(models.Model):
 
     def __str__(self):
         return f'{self.nickname} ({self.species.scientific_name})'
+
+    @property
+    def display_name(self):
+        return self.nickname.strip() or self.species.scientific_name
+
+
+class VisualEntry(models.Model):
+    """Chronological photograph attached to a specimen."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    specimen = models.ForeignKey(
+        Specimen,
+        on_delete=models.CASCADE,
+        related_name='visual_entries',
+    )
+    image = models.ImageField(upload_to='specimens/initial/%Y/%m/%d')
+    captured_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['captured_at', 'created_at']
+
+    def __str__(self):
+        return f'Visual entry for {self.specimen.display_name}'
 
 
 class CareLog(models.Model):

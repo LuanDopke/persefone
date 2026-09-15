@@ -32,3 +32,22 @@
 ## Notes
 
 - Single-pass review completed; no clarification markers remain.
+
+## Implementation Validation — 2026-09-15
+
+- [x] SC-002 — API and smoke tests confirm taxonomy, soil, light and acquisition date in the created specimen detail.
+- [x] SC-003 — Backend and page tests cover the local default date and reject future dates.
+- [x] SC-004 — API tests confirm non-empty, owner-scoped default names.
+- [x] SC-005 — API tests confirm exactly one visual entry with a valid photo and none without a photo.
+- [x] SC-006 — Contract and page tests create and select `Begonia sp.` within the registration flow.
+- [x] SC-007 — Page tests confirm that repeated submission while pending triggers one mutation.
+- [x] SC-008 — All automated acceptance coverage passes: backend 61 tests and frontend 62 tests.
+
+Validation commands:
+
+- `backend/venv/bin/python -m pytest` — 61 passed.
+- `npm test -- --run` — 62 passed; React Router v7 future-flag warnings only.
+- `npm run build` — production build completed.
+- `backend/venv/bin/python backend/manage.py check` — no issues.
+- `backend/venv/bin/python backend/manage.py makemigrations --check --dry-run` — no changes detected.
+- `git diff --check` — no whitespace errors.

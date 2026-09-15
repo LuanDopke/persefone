@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import AppShell from '../AppShell';
 
-function renderShell(children = <p>Content</p>) {
+function renderShell(children = <p>Content</p>, route = '/') {
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[route]}>
       <AppShell>{children}</AppShell>
     </MemoryRouter>
   );
@@ -18,17 +18,18 @@ describe('AppShell component', () => {
     expect(elements.length).toBeGreaterThan(0);
   });
 
-  it('renders navigation links for Dashboard, Minha Coleção, Discover, and Taxonomy', () => {
+  it('renders the same four named destinations in desktop and mobile navigation', () => {
     renderShell();
-    expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /minha coleção/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /discover/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /taxonomy/i })).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /painel/i })).toHaveLength(2);
+    expect(screen.getAllByRole('link', { name: /coleção/i })).toHaveLength(2);
+    expect(screen.getAllByRole('link', { name: /descobrir/i })).toHaveLength(2);
+    expect(screen.getAllByRole('link', { name: /taxonomia/i })).toHaveLength(2);
   });
 
   it('renders children content inside the main area', () => {
     renderShell(<p>Test Page Content</p>);
     expect(screen.getByText('Test Page Content')).toBeInTheDocument();
+    expect(screen.getAllByRole('main')).toHaveLength(1);
   });
 
   it('applies neobrutalist border and shadow styling to sidebar', () => {
@@ -40,18 +41,16 @@ describe('AppShell component', () => {
     }
   });
 
-  it('renders mobile menu toggle button', () => {
-    renderShell();
-    const toggleBtn = screen.getByRole('button', { name: /menu/i });
-    expect(toggleBtn).toBeInTheDocument();
+  it('marks creation and instance routes as Collection in both navigations', () => {
+    renderShell(undefined, '/specimens/instances/abc');
+    const active = screen.getAllByRole('link', { name: /coleção/i });
+    expect(active).toHaveLength(2);
+    active.forEach((link) => expect(link).toHaveAttribute('aria-current', 'page'));
   });
 
-  it('toggles mobile sidebar visibility when menu button is clicked', () => {
+  it('uses a persistent mobile navigation instead of a drawer trigger', () => {
     renderShell();
-    const toggleBtn = screen.getByRole('button', { name: /menu/i });
-    fireEvent.click(toggleBtn);
-    // After click, the mobile drawer should be visible
-    const mobileDrawer = screen.getByTestId('mobile-drawer');
-    expect(mobileDrawer).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: /navegação móvel/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /menu/i })).not.toBeInTheDocument();
   });
 });

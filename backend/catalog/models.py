@@ -3,7 +3,13 @@ Species model — Taxonomic catalog entity cached from GBIF API.
 Constitution Principle V: Strict biological hierarchy and computed ownership.
 """
 
+from django.core.exceptions import ValidationError
 from django.db import models
+
+
+def normalize_taxonomic_name(value):
+    """Return the canonical comparison key for a displayed taxonomic name."""
+    return ' '.join((value or '').split()).casefold()
 
 
 class Species(models.Model):
@@ -20,6 +26,12 @@ class Species(models.Model):
         max_length=255,
         db_index=True,
         help_text='Full binomial scientific name',
+    )
+    normalized_name = models.CharField(
+        max_length=255,
+        unique=True,
+        db_index=True,
+        editable=False,
     )
     common_name = models.CharField(
         max_length=255,
@@ -56,6 +68,13 @@ class Species(models.Model):
 
     def __str__(self):
         return self.scientific_name
+
+    def save(self, *args, **kwargs):
+        self.scientific_name = ' '.join((self.scientific_name or '').split())
+        self.normalized_name = normalize_taxonomic_name(self.scientific_name)
+        if not self.normalized_name:
+            raise ValidationError({'scientific_name': 'Este campo é obrigatório.'})
+        super().save(*args, **kwargs)
 
     @property
     def is_owned(self):

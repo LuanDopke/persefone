@@ -7,6 +7,12 @@
 const STATUS_STYLES = {
   owned: 'bg-lime text-charcoal border-charcoal',
   missing: 'bg-gray-200 text-gray-600 border-gray-400',
+  neutral: 'bg-offwhite text-charcoal border-charcoal',
+  info: 'bg-blue-50 text-charcoal border-info',
+  stable: 'bg-green-50 text-charcoal border-botanical',
+  warning: 'bg-amber-50 text-charcoal border-amber',
+  critical: 'bg-red-50 text-critical border-critical',
+  disabled: 'bg-gray-100 text-gray-600 border-gray-400',
 };
 
 const LABELS = {

@@ -1,12 +1,13 @@
 """API views for Species catalog and GBIF search."""
 
+from django.db import IntegrityError, transaction
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from catalog.models import Species
-from catalog.serializers import SpeciesSerializer, SpeciesListSerializer
+from catalog.serializers import SpeciesSerializer, SpeciesListSerializer, LocalSpeciesCreateSerializer
 from catalog.services import search_gbif_species
 
 
@@ -29,9 +30,9 @@ class SpeciesViewSet(viewsets.ReadOnlyModelViewSet):
         is_owned = self.request.query_params.get('is_owned')
         if is_owned is not None:
             if is_owned.lower() in ('true', '1'):
-                qs = qs.filter(specimens__isnull=False).distinct()
+                qs = qs.filter(specimens__owner=self.request.user).distinct()
             elif is_owned.lower() in ('false', '0'):
-                qs = qs.filter(specimens__isnull=True)
+                qs = qs.exclude(specimens__owner=self.request.user)
         return qs
 
 
@@ -55,3 +56,29 @@ def search_gbif(request):
 
     serializer = SpeciesSerializer(species)
     return Response(serializer.data)
+
+
+def get_or_create_local_species(values):
+    normalized_name = values['normalized_name']
+    existing = Species.objects.filter(normalized_name=normalized_name).first()
+    if existing is not None:
+        return existing, False
+    try:
+        with transaction.atomic():
+            return Species.objects.create(
+                scientific_name=values['scientific_name'],
+                genus=values['genus'],
+            ), True
+    except IntegrityError:
+        return Species.objects.get(normalized_name=normalized_name), False
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_local_species(request):
+    serializer = LocalSpeciesCreateSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    species, created = get_or_create_local_species(serializer.validated_species_values())
+    data = dict(SpeciesListSerializer(species, context={'request': request}).data)
+    data['created'] = created
+    return Response(data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)

@@ -1,19 +1,10 @@
 installed:
 - companion
 - fixit
-- tasks-to-project
 settings:
   auto_execute_hooks: true
 hooks:
   after_tasks:
-  - extension: tasks-to-project
-    command: speckit.tasks-to-project.publish
-    enabled: true
-    optional: true
-    priority: 10
-    prompt: Execute speckit.tasks-to-project.publish?
-    description: Publish generated tasks as cards on a GitHub Project kanban
-    condition: null
   - extension: companion
     command: speckit.companion.after-tasks
     enabled: true
@@ -24,14 +15,6 @@ hooks:
       into .spec-context.json
     condition: null
   after_implement:
-  - extension: tasks-to-project
-    command: speckit.tasks-to-project.sync
-    enabled: true
-    optional: true
-    priority: 10
-    prompt: Execute speckit.tasks-to-project.sync?
-    description: Sync completed tasks back to the GitHub Project kanban
-    condition: null
   - extension: companion
     command: speckit.companion.after-implement
     enabled: true

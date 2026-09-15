@@ -26,6 +26,14 @@ vi.mock('../services/apiClient', () => ({
       response: { use: vi.fn() },
     },
   },
+  createSpecimen: vi.fn(),
+  searchSpecies: vi.fn().mockResolvedValue({ results: [] }),
+  createLocalSpecies: vi.fn(),
+  queryKeys: {
+    species: { all: ['species'], search: (term) => ['species', 'search', term] },
+    specimens: { all: ['specimens'], detail: (id) => ['specimens', 'detail', id] },
+    collection: { all: ['collection'] },
+  },
 }));
 
 import apiClient from '../services/apiClient';
@@ -330,23 +338,20 @@ describe('Scenario 5: Navigation & Responsive Shell', () => {
         <Sidebar />
       </TestWrapper>
     );
-    expect(screen.getByText('Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('Specimens')).toBeInTheDocument();
-    expect(screen.getByText('Taxonomy')).toBeInTheDocument();
+    expect(screen.getByText('Painel')).toBeInTheDocument();
+    expect(screen.getByText('Coleção')).toBeInTheDocument();
+    expect(screen.getByText('Descobrir')).toBeInTheDocument();
+    expect(screen.getByText('Taxonomia')).toBeInTheDocument();
   });
 
-  it('Navbar renders brand name and mobile toggle', () => {
-    const mockToggle = vi.fn();
+  it('Navbar renders brand without a drawer trigger', () => {
     render(
       <TestWrapper>
-        <Navbar onMenuToggle={mockToggle} />
+        <Navbar />
       </TestWrapper>
     );
     expect(screen.getAllByText('Persefone').length).toBeGreaterThan(0);
-    const menuBtn = screen.getByLabelText('Menu');
-    expect(menuBtn).toBeInTheDocument();
-    fireEvent.click(menuBtn);
-    expect(mockToggle).toHaveBeenCalledTimes(1);
+    expect(screen.queryByLabelText('Menu')).not.toBeInTheDocument();
   });
 
   it('full App renders dashboard route by default', () => {
@@ -356,6 +361,44 @@ describe('Scenario 5: Navigation & Responsive Shell', () => {
         <App />
       </TestWrapper>
     );
-    expect(screen.getByText('DASHBOARD')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Painel' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Navegação móvel' })).toBeInTheDocument();
+    expect(screen.queryByText(/controle de pragas|relatórios|lembretes|scanner/i)).not.toBeInTheDocument();
+  });
+
+  it('renders the authenticated specimen registration route', () => {
+    const queryClient = createTestQueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={['/specimens/new']}>
+          <App />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByRole('heading', { name: /cadastrar exemplar/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /cadastrar exemplar/i })).toBeInTheDocument();
+  });
+
+  it('loads the created specimen fields at the protected detail destination', async () => {
+    apiClient.get.mockResolvedValue({ data: {
+      id: 'abc-123', nickname: 'Folhinha', acquired_at: '2026-09-15',
+      initial_soil: 'Substrato drenante', initial_light: 'Meia sombra',
+      species_detail: { scientific_name: 'Begonia sp.' }, initial_visual_entry: null,
+    } });
+    const queryClient = createTestQueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={['/specimens/instances/abc-123']}>
+          <App />
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    expect(await screen.findByRole('heading', { name: 'Folhinha' })).toBeInTheDocument();
+    expect(screen.getByText('Begonia sp.')).toBeInTheDocument();
+    expect(screen.getByText('Substrato drenante')).toBeInTheDocument();
+    expect(screen.getByText('Meia sombra')).toBeInTheDocument();
+    expect(screen.getByText('2026-09-15')).toBeInTheDocument();
   });
 });

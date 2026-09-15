@@ -7,6 +7,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card } from '../ui/Card';
 import apiClient from '../../services/apiClient';
+import Alert from '../ui/Alert';
 
 const WEATHER_CODES = {
   0: { label: 'Clear Sky', icon: '☀️' },
@@ -41,7 +42,7 @@ export default function WeatherWidget({ lat = -23.55, lon = -46.63 }) {
   if (isLoading) {
     return (
       <Card title="Climate">
-        <p className="text-xs font-bold uppercase tracking-wider text-charcoal/40 animate-pulse">
+        <p role="status" className="animate-pulse text-xs font-bold uppercase tracking-wider text-charcoal/60 motion-reduce:animate-none">
           Fetching weather...
         </p>
       </Card>
@@ -51,9 +52,7 @@ export default function WeatherWidget({ lat = -23.55, lon = -46.63 }) {
   if (isError || !data) {
     return (
       <Card title="Climate">
-        <p className="text-xs font-bold uppercase tracking-wider text-red-500">
-          Weather data unavailable
-        </p>
+        <Alert tone="critical">Weather data unavailable</Alert>
       </Card>
     );
   }
@@ -62,10 +61,10 @@ export default function WeatherWidget({ lat = -23.55, lon = -46.63 }) {
 
   return (
     <Card title="Climate" className={data.stale ? 'opacity-70' : ''}>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 xs:grid-cols-3">
         {/* Temperature */}
         <div className="text-center">
-          <p className="text-4xl font-extrabold text-charcoal">
+          <p className="font-mono text-4xl font-extrabold text-charcoal">
             {data.temperature_c?.toFixed(1)}°
           </p>
           <p className="text-[10px] font-bold uppercase tracking-widest text-charcoal/50 mt-1">
@@ -75,7 +74,7 @@ export default function WeatherWidget({ lat = -23.55, lon = -46.63 }) {
 
         {/* Humidity */}
         <div className="text-center">
-          <p className="text-4xl font-extrabold text-charcoal">
+          <p className="font-mono text-4xl font-extrabold text-charcoal">
             {data.humidity_pct}%
           </p>
           <p className="text-[10px] font-bold uppercase tracking-widest text-charcoal/50 mt-1">

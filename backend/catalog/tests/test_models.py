@@ -1,6 +1,8 @@
 """Unit tests for catalog models (Species)."""
 
 import pytest
+from django.db import IntegrityError
+from django.contrib.auth.models import User
 from catalog.models import Species
 
 
@@ -37,7 +39,9 @@ class TestSpeciesModel:
             scientific_name='Epipremnum aureum',
             family='Araceae',
         )
+        owner = User.objects.create_user(username='catalog-owner-1')
         Specimen.objects.create(
+            owner=owner,
             species=species,
             nickname='Golden Pothos',
             acquired_at=date(2024, 1, 15),
@@ -53,7 +57,9 @@ class TestSpeciesModel:
             scientific_name='Calathea orbifolia',
             family='Marantaceae',
         )
+        owner = User.objects.create_user(username='catalog-owner-2')
         specimen = Specimen.objects.create(
+            owner=owner,
             species=species,
             nickname='Prayer Plant',
             acquired_at=date(2024, 3, 10),
@@ -79,3 +85,15 @@ class TestSpeciesModel:
         """__str__ returns the scientific name."""
         species = Species.objects.create(scientific_name='Zamioculcas zamiifolia')
         assert str(species) == 'Zamioculcas zamiifolia'
+
+    def test_normalized_name_collapses_spaces_and_case(self):
+        species = Species.objects.create(scientific_name='  Begonia   sp.  ')
+
+        assert species.scientific_name == 'Begonia sp.'
+        assert species.normalized_name == 'begonia sp.'
+
+    def test_normalized_name_is_unique(self):
+        Species.objects.create(scientific_name='Begonia sp.')
+
+        with pytest.raises(IntegrityError):
+            Species.objects.create(scientific_name='  BEGONIA   SP. ')

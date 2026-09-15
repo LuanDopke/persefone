@@ -104,8 +104,15 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (user uploads)
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Initial specimen photos are normalized before storage.  These values keep
+# uploads suitable for browser display while bounding disk and request usage.
+INITIAL_PHOTO_MAX_BYTES = 10 * 1024 * 1024
+INITIAL_PHOTO_MAX_DIMENSION = 1600
+INITIAL_PHOTO_TARGET_BYTES = 500 * 1024
+INITIAL_PHOTO_AVIF_QUALITY = 55
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

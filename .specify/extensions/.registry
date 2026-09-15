@@ -1,21 +1,6 @@
 {
   "schema_version": "1.0",
   "extensions": {
-    "tasks-to-project": {
-      "version": "0.2.0",
-      "source": "local",
-      "manifest_hash": "sha256:aa941f46e632b61874ac7dbd94df86af269fe0a45254307e69cd88a3c657b22d",
-      "enabled": true,
-      "priority": 10,
-      "registered_commands": {
-        "agy": [
-          "speckit.tasks-to-project.publish",
-          "speckit.tasks-to-project.sync"
-        ]
-      },
-      "registered_skills": [],
-      "installed_at": "2026-09-14T00:55:40.528750+00:00"
-    },
     "companion": {
       "version": "0.21.0",
       "source": "local",

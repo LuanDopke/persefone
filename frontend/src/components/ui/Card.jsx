@@ -4,7 +4,9 @@
  * Constitution Principle III: Modular, reusable with header/body/footer slots.
  */
 
-export function Card({ children, title, footer, className = '', ...props }) {
+const DENSITY = { default: 'p-5', compact: 'p-3' };
+
+export function Card({ children, title, footer, density = 'default', className = '', ...props }) {
   return (
     <div
       className={[
@@ -20,7 +22,7 @@ export function Card({ children, title, footer, className = '', ...props }) {
           </h3>
         </div>
       )}
-      <div className="p-5">
+      <div className={DENSITY[density] || DENSITY.default}>
         {children}
       </div>
       {footer && (

@@ -2,8 +2,10 @@
 
 import pytest
 from datetime import date
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from catalog.models import Species
-from specimens.models import Specimen, CareLog
+from specimens.models import Specimen, CareLog, VisualEntry
 
 
 @pytest.fixture
@@ -17,8 +19,14 @@ def sample_species(db):
 
 
 @pytest.fixture
-def sample_specimen(sample_species):
+def owner(db):
+    return User.objects.create_user(username='model-owner')
+
+
+@pytest.fixture
+def sample_specimen(sample_species, owner):
     return Specimen.objects.create(
+        owner=owner,
         species=sample_species,
         nickname='Monsterina',
         location_in_home='Living Room Window',
@@ -33,9 +41,10 @@ def sample_specimen(sample_species):
 class TestSpecimenModel:
     """Tests for the Specimen model."""
 
-    def test_create_specimen(self, sample_species):
+    def test_create_specimen(self, sample_species, owner):
         """Specimen can be created and linked to a species."""
         specimen = Specimen.objects.create(
+            owner=owner,
             species=sample_species,
             nickname='Test Plant',
             acquired_at=date(2024, 1, 1),
@@ -49,9 +58,10 @@ class TestSpecimenModel:
         assert 'Monsterina' in str(sample_specimen)
         assert 'Monstera deliciosa' in str(sample_specimen)
 
-    def test_vitality_defaults(self, sample_species):
+    def test_vitality_defaults(self, sample_species, owner):
         """Specimen has correct default vital values."""
         specimen = Specimen.objects.create(
+            owner=owner,
             species=sample_species,
             nickname='Defaults',
             acquired_at=date(2024, 1, 1),
@@ -60,9 +70,9 @@ class TestSpecimenModel:
         assert specimen.soil_moisture == 50
         assert specimen.lux_intensity == 1000
 
-    def test_collection_state_defaults(self, sample_species):
+    def test_collection_state_defaults(self, sample_species, owner):
         specimen = Specimen.objects.create(
-            species=sample_species, nickname='Collection default', acquired_at=date(2024, 1, 1),
+            owner=owner, species=sample_species, nickname='Collection default', acquired_at=date(2024, 1, 1),
         )
         assert specimen.is_active is True
         assert sample_species.is_collection_favorite is False
@@ -72,6 +82,43 @@ class TestSpecimenModel:
         species = sample_specimen.species
         with pytest.raises(Exception):
             species.delete()
+
+    def test_registration_fields_and_light_choices(self, sample_species, owner):
+        specimen = Specimen(
+            owner=owner,
+            species=sample_species,
+            nickname='',
+            acquired_at=date(2024, 1, 1),
+            initial_soil='Substrato drenante',
+            initial_light=Specimen.Light.MEIA_SOMBRA,
+        )
+        specimen.full_clean()
+        specimen.save()
+
+        assert specimen.owner == owner
+        assert specimen.initial_light == 'Meia sombra'
+        assert specimen.display_name == 'Monstera deliciosa'
+
+    def test_invalid_initial_light_is_rejected(self, sample_species, owner):
+        specimen = Specimen(
+            owner=owner,
+            species=sample_species,
+            nickname='Teste',
+            acquired_at=date(2024, 1, 1),
+            initial_soil='Solo',
+            initial_light='Luz indireta',
+        )
+
+        with pytest.raises(ValidationError):
+            specimen.full_clean()
+
+    def test_visual_entry_belongs_to_specimen(self, sample_specimen):
+        entry = VisualEntry.objects.create(
+            specimen=sample_specimen,
+            image='specimens/initial/test.jpg',
+        )
+
+        assert list(sample_specimen.visual_entries.all()) == [entry]
 
 
 @pytest.mark.django_db
@@ -89,9 +136,10 @@ class TestCareLogModel:
         assert log.type == 'watering'
         assert log.specimen == sample_specimen
 
-    def test_care_log_cascade_on_specimen_delete(self, sample_species):
+    def test_care_log_cascade_on_specimen_delete(self, sample_species, owner):
         """CareLog is deleted when its specimen is deleted (CASCADE)."""
         specimen = Specimen.objects.create(
+            owner=owner,
             species=sample_species,
             nickname='Temp Plant',
             acquired_at=date(2024, 1, 1),

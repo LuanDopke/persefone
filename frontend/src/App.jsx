@@ -3,18 +3,27 @@ import AppShell from './components/layout/AppShell';
 import SpecimenCatalog from './pages/SpecimenCatalog';
 import AccessPage from './pages/AccessPage';
 import ConfirmAccessPage from './pages/ConfirmAccessPage';
+import SpecimenCreatePage from './pages/SpecimenCreatePage';
+import SpecimenDetailPage from './pages/SpecimenDetailPage';
 import { useAuth } from './context/AuthContext';
+import PageContainer from './components/layout/PageContainer';
+import PageHeader from './components/layout/PageHeader';
+
+function PlaceholderPage({ title, description }) {
+  return <PageContainer><PageHeader title={title} description={description} /></PageContainer>;
+}
 
 function ProtectedApp() {
   const { isAuthenticated } = useAuth(); const location = useLocation();
   if (!isAuthenticated) return <Navigate to="/access" replace state={{ from: location }} />;
   return <AppShell><Routes>
-    <Route path="/" element={<div className="p-6"><h1 className="text-3xl font-bold text-charcoal">DASHBOARD</h1><p className="mt-2 text-charcoal/70">Climate & Care overview coming soon.</p></div>} />
+    <Route path="/" element={<PlaceholderPage title="Painel" description="Visão geral da coleção e dos cuidados." />} />
     <Route path="/collection" element={<SpecimenCatalog />} />
-    <Route path="/specimens" element={<div className="p-6"><h1 className="text-3xl font-bold text-charcoal">DISCOVER</h1></div>} />
-    <Route path="/specimens/:speciesId" element={<div className="p-6"><h1 className="text-3xl font-bold text-charcoal">DETALHE DA ESPÉCIE</h1></div>} />
-    <Route path="/specimens/new" element={<div className="p-6"><h1 className="text-3xl font-bold text-charcoal">CADASTRAR EXEMPLAR</h1></div>} />
-    <Route path="/taxonomy" element={<div className="p-6"><h1 className="text-3xl font-bold text-charcoal">TAXONOMY EXPLORER</h1></div>} />
+    <Route path="/specimens" element={<PlaceholderPage title="Descobrir" />} />
+    <Route path="/specimens/:speciesId" element={<PlaceholderPage title="Detalhe da espécie" />} />
+    <Route path="/specimens/new" element={<SpecimenCreatePage />} />
+    <Route path="/specimens/instances/:specimenId" element={<SpecimenDetailPage />} />
+    <Route path="/taxonomy" element={<PlaceholderPage title="Taxonomia" />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes></AppShell>;
 }

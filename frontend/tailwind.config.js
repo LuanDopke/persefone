@@ -33,12 +33,20 @@ export default {
         },
         offwhite: '#F5F5F0',
         charcoal: '#1A1A1A',
+        botanical: '#247A47',
+        amber: '#D97706',
+        critical: '#B91C1C',
+        info: '#2563EB',
+        surface: '#FFFFFF',
         owned: '#BDFF00',
         missing: '#8A8A8A',
       },
       fontFamily: {
         sans: ['Lexend', 'system-ui', 'sans-serif'],
-        mono: ['Lexend', 'monospace'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+      },
+      spacing: {
+        18: '4.5rem',
       },
       borderWidth: {
         DEFAULT: '2px',
@@ -53,6 +61,9 @@ export default {
         'hard-lime': '4px 4px 0px 0px #BDFF00',
         'hard-pressed': '2px 2px 0px 0px #1A1A1A',
         'none': 'none',
+      },
+      screens: {
+        xs: '360px',
       },
     },
   },

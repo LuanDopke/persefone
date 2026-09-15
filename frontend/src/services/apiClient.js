@@ -51,11 +51,15 @@ export const queryKeys = {
     list: (filters) => ['species', 'list', filters],
     detail: (id) => ['species', 'detail', id],
     gbifSearch: (name) => ['species', 'gbif-search', name],
+    search: (term) => ['species', 'search', term],
   },
   specimens: {
     all: ['specimens'],
     list: (filters) => ['specimens', 'list', filters],
     detail: (id) => ['specimens', 'detail', id],
+  },
+  collection: {
+    all: ['collection'],
   },
   careLogs: {
     bySpecimen: (specimenId) => ['care-logs', specimenId],
@@ -64,6 +68,23 @@ export const queryKeys = {
     current: (lat, lon) => ['weather', lat, lon],
   },
 };
+
+export async function searchSpecies(term) {
+  const response = await apiClient.get('/api/species/', { params: { search: term } });
+  return response.data;
+}
+
+export async function createSpecimen(formData) {
+  const response = await apiClient.post('/api/specimens/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+}
+
+export async function createLocalSpecies(scientificName) {
+  const response = await apiClient.post('/api/species/local/', { scientific_name: scientificName });
+  return response.data;
+}
 
 /**
  * Default QueryClient options for Persefone.

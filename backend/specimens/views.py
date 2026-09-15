@@ -2,6 +2,7 @@
 
 from django.db.models import Prefetch
 from rest_framework import viewsets, filters, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ from catalog.models import Species
 from specimens.serializers import (
     SpecimenListSerializer,
     SpecimenDetailSerializer,
+    SpecimenCreateSerializer,
     CareLogSerializer,
     CollectionSpeciesSerializer,
 )
@@ -29,7 +31,7 @@ def _is_true(value):
 
 def _collection_item(species):
     """Build the API read model without persisting an aggregate table."""
-    specimens = list(species.collection_specimens.all())
+    specimens = list(species.collection_specimens)
     active = [specimen for specimen in specimens if specimen.is_active]
     relevant = active or specimens
     total = len(active)
@@ -43,7 +45,15 @@ def _collection_item(species):
         }
 
     care_metadata = species.native_region.get('care', {}) if isinstance(species.native_region, dict) else {}
-    image = next((specimen.photo for specimen in relevant if specimen.photo), None)
+    image = None
+    for specimen in relevant:
+        first_visual = next(iter(specimen.visual_entries.all()), None)
+        if first_visual is not None:
+            image = first_visual.image.url
+            break
+        if specimen.photo:
+            image = specimen.photo
+            break
     return {
         'species_id': species.id,
         'common_name': species.common_name,
@@ -67,25 +77,33 @@ def _collection_item(species):
 class SpecimenViewSet(viewsets.ModelViewSet):
     """CRUD operations for user plant specimens."""
 
-    queryset = Specimen.objects.select_related('species').prefetch_related('care_logs').all()
+    queryset = Specimen.objects.select_related('species').prefetch_related('care_logs', 'visual_entries').all()
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nickname', 'species__scientific_name', 'species__common_name']
     ordering_fields = ['acquired_at', 'vitality_index', 'nickname']
 
     def get_serializer_class(self):
+        if self.action == 'create':
+            return SpecimenCreateSerializer
         if self.action == 'list':
             return SpecimenListSerializer
         return SpecimenDetailSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
     @action(detail=False, methods=['get'], url_path='collection')
     def collection(self, request):
         """Return a paginated, species-level projection of the collection."""
         species_queryset = (
             Species.objects
-            .filter(specimens__isnull=False)
+            .filter(specimens__owner=request.user)
             .distinct()
-            .prefetch_related(Prefetch('specimens', queryset=Specimen.objects.all(), to_attr='collection_specimens'))
+            .prefetch_related(Prefetch('specimens', queryset=Specimen.objects.filter(owner=request.user).prefetch_related('visual_entries'), to_attr='collection_specimens'))
         )
         items = [_collection_item(species) for species in species_queryset]
         search = request.query_params.get('search', '').strip().casefold()
@@ -112,12 +130,12 @@ class SpecimenViewSet(viewsets.ModelViewSet):
         favorite = request.data.get('is_favorite')
         if not isinstance(favorite, bool):
             return Response({'is_favorite': ['This field must be a boolean.']}, status=status.HTTP_400_BAD_REQUEST)
-        species = Species.objects.filter(pk=species_id, specimens__isnull=False).distinct().first()
+        species = Species.objects.filter(pk=species_id, specimens__owner=request.user).distinct().first()
         if species is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
         species.is_collection_favorite = favorite
         species.save(update_fields=['is_collection_favorite'])
-        species = Species.objects.prefetch_related(Prefetch('specimens', queryset=Specimen.objects.all(), to_attr='collection_specimens')).get(pk=species.pk)
+        species = Species.objects.prefetch_related(Prefetch('specimens', queryset=Specimen.objects.filter(owner=request.user).prefetch_related('visual_entries'), to_attr='collection_specimens')).get(pk=species.pk)
         return Response(CollectionSpeciesSerializer(_collection_item(species)).data)
 
 
@@ -131,8 +149,14 @@ class CareLogViewSet(viewsets.ModelViewSet):
     ordering_fields = ['timestamp']
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super().get_queryset().filter(specimen__owner=self.request.user)
         specimen_id = self.request.query_params.get('specimen_id')
         if specimen_id:
             qs = qs.filter(specimen_id=specimen_id)
         return qs
+
+    def perform_create(self, serializer):
+        specimen = serializer.validated_data['specimen']
+        if specimen.owner_id != self.request.user.id:
+            raise ValidationError({'specimen': ['Exemplar não encontrado.']})
+        serializer.save()
