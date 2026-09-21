@@ -4,7 +4,7 @@
 
 | Rota | Comportamento observável |
 |---|---|
-| `/specimens/instances/:specimenId` | Exibe o acompanhamento autenticado do exemplar, incluindo identificação, situação, métricas, ações, atividades, fotos e edição. |
+| `/specimens/instances/:specimenId` | Exibe o acompanhamento autenticado do exemplar, incluindo identificação, situação, placeholder de métricas, ações, atividades, fotos e edição. |
 
 A feature amplia esta rota; não cria uma página concorrente. Um exemplar arquivado permanece acessível pelo mesmo endereço.
 
@@ -12,20 +12,19 @@ A feature amplia esta rota; não cria uma página concorrente. Um exemplar arqui
 
 A ordem no DOM e em telas pequenas é:
 
-1. PageHeader com nome, espécie e situação.
-2. Resumo com foto representativa, identificação, localização e aquisição.
-3. SpecimenMetrics com vitalidade, umidade, luminosidade e última atualização.
-4. Ações de cuidado e edição.
+1. PageHeader com nome, espécie, descrição ou última observação e situação.
+2. SpecimenMetrics com placeholder para futuras métricas derivadas da taxonomia.
+3. VisualTimeline com cartões inclinados e ação `LOG FOTO`.
+4. Ações de cuidado e resumo do exemplar, com subtítulos em blocos coloridos e divisores fora de contêineres externos.
 5. CareLogTimeline.
-6. VisualTimeline.
 
-Em telas amplas, ResponsiveGrid pode posicionar resumo e métricas lado a lado e ampliar as linhas do tempo, sem mudar a ordem de leitura. A página usa PageContainer e os módulos usam Card; nenhum módulo cria outro `main`.
+Em telas amplas, ResponsiveGrid pode posicionar resumo e métricas lado a lado e ampliar as linhas do tempo, sem mudar a ordem de leitura. A página usa PageContainer; cartões ficam restritos às ações, aos registros individuais e ao placeholder de métricas. As seções de linha do tempo, ações, resumo e histórico usam títulos com divisores, sem contêiner externo adicional; nenhum módulo cria outro `main`.
 
 ## Identificadores testáveis
 
 | Identificador | Papel |
 |---|---|
-| `specimen-edit` | Abre a edição dos dados e métricas permitidos. |
+| `specimen-edit` | Abre a edição dos dados permitidos; as métricas permanecem reservadas para a taxonomia. |
 | `specimen-archive-toggle` | Abre a confirmação para arquivar ou reativar conforme o estado atual. |
 | `quick-care-watering` | Abre confirmação de rega no horário atual. |
 | `quick-care-fertilizing` | Abre confirmação de adubação no horário atual. |
@@ -48,9 +47,6 @@ Em telas amplas, ResponsiveGrid pode posicionar resumo e métricas lado a lado e
 | `specimen-acquired-at` | Edita a data de aquisição. |
 | `specimen-soil` | Edita a descrição do solo. |
 | `specimen-light` | Edita a condição de luz sem permitir troca de espécie. |
-| `vitality-index` | Edita vitalidade entre 0 e 100. |
-| `soil-moisture` | Edita umidade entre 0 e 100. |
-| `lux-intensity` | Edita luminosidade com mínimo 0. |
 | `specimen-save` | Confirma a atualização e fica desabilitado durante o envio. |
 
 Os identificadores são valores de `id` ou seletores acessíveis estáveis. Todos os campos possuem label associado, erros ligados por `aria-describedby` e foco visível.
@@ -59,7 +55,7 @@ Os identificadores são valores de `id` ou seletores acessíveis estáveis. Todo
 
 - **Carregando**: mantém “Detalhe do exemplar” no PageHeader e anuncia o carregamento no conteúdo.
 - **Erro inicial**: mantém o contexto da rota, explica que o exemplar não pôde ser carregado e oferece “Tentar novamente”.
-- **Pronto**: exibe nome, espécie, UUID, localização, aquisição, situação, foto ou fallback e as três métricas.
+- **Pronto**: exibe nome, espécie, descrição ou última observação, UUID, localização, aquisição, situação, foto ou fallback e o placeholder de métricas.
 - **Arquivado**: apresenta rótulo textual “Arquivado”, conserva os históricos e troca a ação para “Reativar exemplar”.
 - **Sem foto representativa**: MediaFrame fornece substituto visual com nome acessível.
 - **Revalidando**: mantém os dados anteriores visíveis; não substitui toda a página por loading.
@@ -76,6 +72,7 @@ Os identificadores são valores de `id` ou seletores acessíveis estáveis. Todo
 ## Formulários
 
 - SpecimenEditForm, CareActivityForm e VisualEntryForm usam Modal, FormField, Input, Button e Alert.
+- SpecimenEditForm não exibe nem envia vitalidade, umidade ou luminosidade; o backend conserva esses campos para uma futura integração com a taxonomia.
 - Abrir um formulário parte dos dados atuais; cancelar não altera o cache.
 - Erros de campo aparecem junto ao controle e erros gerais preservam todos os valores.
 - Nenhum formulário oferece seleção de espécie, remoção de atividade, remoção de foto ou exclusão permanente do exemplar.
@@ -87,6 +84,7 @@ Os identificadores são valores de `id` ou seletores acessíveis estáveis. Todo
 - CareLogTimeline e VisualTimeline mostram os registros mais recentes primeiro.
 - Cada item de atividade mostra tipo em português, ocorrência, nota quando houver e registro como metadado secundário.
 - Cada item visual usa MediaFrame; falha de uma imagem preserva data e observação e mostra fallback apenas naquele item.
+- Cada atividade mostra a data de ocorrência fora do quadro do registro, acima do conteúdo, preservando a leitura cronológica do eixo.
 - Estado vazio mantém o título do módulo e orienta a primeira ação.
 - Erro de uma linha do tempo não remove o restante da página e oferece nova tentativa local.
 - “Carregar mais” acrescenta a próxima página sem repetir itens e desaparece quando `next` for nulo.

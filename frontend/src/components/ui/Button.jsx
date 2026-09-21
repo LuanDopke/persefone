@@ -7,6 +7,7 @@
 const VARIANTS = {
   default: 'bg-offwhite text-charcoal hover:bg-gray-100',
   secondary: 'bg-offwhite text-charcoal hover:bg-gray-100',
+  care: 'bg-offwhite text-charcoal hover:bg-primary-container',
   primary: 'bg-lime text-charcoal hover:bg-lime-300',
   lime: 'bg-lime text-charcoal hover:bg-lime-300',
   danger: 'bg-red-500 text-white hover:bg-red-600',

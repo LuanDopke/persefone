@@ -29,7 +29,7 @@ Esta fase cria os contratos reutilizáveis que bloqueiam a implementação das h
 - [x] **T007** [P] Criar `PageHeader` com título obrigatório e slots opcionais sem lacunas, validando hierarquia e ordem responsiva com RTL · frontend/src/components/layout/PageHeader.jsx
 - [x] **T008** [P] Criar `ContentState` para loading, vazio e erro dentro da região de conteúdo, validando nomes e anúncios acessíveis com RTL · frontend/src/components/ui/ContentState.jsx
 - [x] **T009** [P] Criar `ResponsiveGrid` com variantes estritamente usadas, ordem de DOM preservada e até 12 colunas desktop, validando a API pública com RTL · frontend/src/components/ui/ResponsiveGrid.jsx
-- [x] **T010** [P] Criar `MediaFrame` com `object-fit`, texto alternativo e fallback para URL ausente ou quebrada, validando eventos de erro com RTL · frontend/src/components/ui/MediaFrame.jsx
+- [x] **T010** [P] Criar `MediaFrame` com `object-fit`, texto alternativo e fallback para URL ausente ou quebrada, validando eventos de erro com RTL (FR-018, FR-025) · frontend/src/components/ui/MediaFrame.jsx
 - [x] **T011** [P] Criar `SearchField` com rótulo acessível, limpeza por teclado e estado controlado, validando interação com RTL · frontend/src/components/ui/SearchField.jsx
 - [x] **T012** [P] Criar `FormField` para associar rótulo, ajuda e erro sem controlar formulário, validando `aria-describedby` e estado inválido · frontend/src/components/ui/FormField.jsx
 
@@ -85,7 +85,7 @@ Esta fase cria os contratos reutilizáveis que bloqueiam a implementação das h
 
 - [x] **T020** [P] Migrar catálogo para PageContainer, PageHeader e ResponsiveGrid preservando busca, filtros, favorito, modal, cache e fluxos existentes, validando seus testes de página · frontend/src/pages/SpecimenCatalog.jsx
 - [x] **T021** [P] Migrar cadastro para PageContainer, PageHeader e FormField preservando taxonomia, botões físicos de luminosidade, foto AVIF, validação e envio único, validando seus testes de página · frontend/src/pages/SpecimenCreatePage.jsx
-- [x] **T022** [P] Migrar detalhe para PageContainer, PageHeader e grade responsiva preservando consulta, refetch, foto e linha do tempo, validando seus testes de página · frontend/src/pages/SpecimenDetailPage.jsx
+- [x] **T022** [P] Migrar detalhe para PageContainer, PageHeader e grade responsiva preservando consulta, refetch, foto e linha do tempo; aplicar a composição de identificação, estado, métricas, registros visuais, ações e histórico das diretrizes (FR-023, FR-025, FR-026) · frontend/src/pages/SpecimenDetailPage.jsx
 
 **⟶ Wait for Wave 2 to finish, then:**
 
@@ -104,7 +104,7 @@ Esta fase cria os contratos reutilizáveis que bloqueiam a implementação das h
 **Wave 1 — independent (different files):**
 
 - [x] **T024** [P] Ampliar testes do catálogo para estados, comparação dos cartões, imagem ausente/quebrada e ação de recuperação antes da implementação · frontend/src/pages/__tests__/SpecimenCatalog.test.jsx
-- [x] **T025** [P] Criar testes do detalhe para hierarquia, estados de consulta, foto e histórico antes da implementação · frontend/src/pages/__tests__/SpecimenDetailPage.test.jsx
+- [x] **T025** [P] Criar testes do detalhe para hierarquia, estados de consulta, foto, métricas, ações e histórico antes da implementação (FR-023, FR-024, FR-025, FR-026, FR-027) · frontend/src/pages/__tests__/SpecimenDetailPage.test.jsx
 
 ### Implementation
 
@@ -122,7 +122,7 @@ Esta fase cria os contratos reutilizáveis que bloqueiam a implementação das h
 
 **⟶ Wait for T029 to finish, then:**
 
-- [x] **T030** Integrar ContentState, MediaFrame e tons semânticos ao detalhe sem alterar payloads ou permissões, validando T025 · frontend/src/pages/SpecimenDetailPage.jsx
+- [x] **T030** Integrar ContentState, MediaFrame e tons semânticos ao detalhe sem alterar payloads ou permissões, validando T025 e a composição de exemplar (FR-023, FR-024, FR-025, FR-026, FR-027) · frontend/src/pages/SpecimenDetailPage.jsx
 
 **Checkpoint**: estados e informações densas estão visualmente hierarquizados, acessíveis e comparáveis nas páginas de exemplar.
 
@@ -161,7 +161,7 @@ Esta fase cria os contratos reutilizáveis que bloqueiam a implementação das h
 **Wave 1 — independent (different files):**
 
 - [x] **T038** [P] Alinhar WeatherWidget aos tokens e módulos compartilhados sem alterar cache ou comportamento de falha, validando seus cenários existentes · frontend/src/components/dashboard/WeatherWidget.jsx
-- [x] **T039** [P] Alinhar CareLogTimeline aos tokens, ordem de leitura e movimento reduzido sem alterar dados históricos, validando seus cenários existentes · frontend/src/components/specimen/CareLogTimeline.jsx
+- [x] **T039** [P] Alinhar CareLogTimeline aos tokens, ordem de leitura, tipo, ocorrência, nota e movimento reduzido sem alterar dados históricos, validando seus cenários existentes (FR-026, FR-027) · frontend/src/components/specimen/CareLogTimeline.jsx
 - [x] **T040** [P] Atualizar o smoke test para cobrir estrutura modular, ausência de funcionalidades copiadas do protótipo e regressão das rotas existentes · frontend/src/test/e2e_smoke.test.jsx
 
 **⟶ Wait for Wave 1 to finish, then:**
@@ -170,7 +170,7 @@ Esta fase cria os contratos reutilizáveis que bloqueiam a implementação das h
 
 **⟶ Wait for T041 to finish, then:**
 
-- [x] **T042** Verificar em navegador real as larguras 360, 768, 1024 e 1440px, documentando overflow, navegação, alvos de toque, foco, conteúdo encoberto, movimento reduzido e SC-002/SC-007 · specs/006-diretrizes-layout-modular/validation.md
+- [x] **T042** Verificar em navegador real as larguras 360, 768, 1024 e 1440px, documentando overflow, navegação, alvos de toque, foco, conteúdo encoberto, movimento reduzido e ordem da tela de exemplar (SC-002, SC-007, SC-010) · specs/006-diretrizes-layout-modular/validation.md
 
 ## Dependencies & Execution Order
 

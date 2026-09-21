@@ -10,13 +10,14 @@ export default function CollectionCard({ item, onFavorite }) {
   const care = item.care || EMPTY_CARE;
   const displayName = item.common_name || item.nickname || item.scientific_name || item.species_name;
   const scientificName = item.scientific_name || item.species_name || displayName;
+  const detailTarget = item.specimen_id ? `/specimens/instances/${item.specimen_id}` : `/specimens/${item.species_id}`;
   return (
     <article className={item.is_archived ? 'opacity-70' : ''}>
       <Card className="relative h-full transition-transform hover:-translate-y-1 motion-reduce:transform-none">
         <div className="grid grid-cols-[5rem_minmax(0,1fr)_auto] items-start gap-4">
           <MediaFrame className="h-20 w-20" aspect="square" src={item.image_url} alt={`Imagem de ${displayName}`} />
           <div className="min-w-0">
-            <Link to={`/specimens/${item.species_id}`} aria-label={`Abrir detalhes de ${displayName}`} className="after:absolute after:inset-0 focus-visible:ring-4 focus-visible:ring-lime">
+            <Link to={detailTarget} aria-label={`Abrir detalhes de ${displayName}`} className="after:absolute after:inset-0 focus-visible:ring-4 focus-visible:ring-lime">
               <h2 className="truncate text-lg font-extrabold uppercase" title={displayName}>{displayName}</h2>
             </Link>
             <p className="truncate text-sm italic text-charcoal/70" title={scientificName}>{scientificName}</p>

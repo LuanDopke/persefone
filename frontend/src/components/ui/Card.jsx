@@ -5,8 +5,14 @@
  */
 
 const DENSITY = { default: 'p-5', compact: 'p-3' };
+const HEADER_TONES = {
+  lime: 'bg-lime text-charcoal',
+  botanical: 'bg-botanical text-offwhite',
+  charcoal: 'bg-charcoal text-offwhite',
+  offwhite: 'bg-offwhite text-charcoal',
+};
 
-export function Card({ children, title, footer, density = 'default', className = '', ...props }) {
+export function Card({ children, title, footer, density = 'default', headerTone = 'lime', className = '', ...props }) {
   return (
     <div
       className={[
@@ -16,8 +22,8 @@ export function Card({ children, title, footer, density = 'default', className =
       {...props}
     >
       {title && (
-        <div className="border-b-4 border-charcoal px-5 py-3 bg-lime">
-          <h3 className="text-lg font-bold uppercase tracking-wide text-charcoal">
+        <div className={`border-b-4 border-charcoal px-5 py-3 ${HEADER_TONES[headerTone] || HEADER_TONES.lime}`}>
+          <h3 className="text-lg font-bold uppercase tracking-wide">
             {title}
           </h3>
         </div>

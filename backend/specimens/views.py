@@ -1,14 +1,17 @@
 """API views for Specimen and CareLog."""
 
+import uuid
+
+from django.db import transaction
 from django.db.models import Prefetch
 from rest_framework import viewsets, filters, status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from specimens.models import Specimen, CareLog
+from specimens.models import Specimen, CareLog, VisualEntry
 from catalog.models import Species
 from specimens.serializers import (
     SpecimenListSerializer,
@@ -16,7 +19,14 @@ from specimens.serializers import (
     SpecimenCreateSerializer,
     CareLogSerializer,
     CollectionSpeciesSerializer,
+    VisualEntrySerializer,
+    VisualEntryCreateSerializer,
+    SpecimenUpdateSerializer,
 )
+
+
+class SpecimenConflict(Exception):
+    pass
 
 
 class CollectionPagination(PageNumberPagination):
@@ -34,6 +44,7 @@ def _collection_item(species):
     specimens = list(species.collection_specimens)
     active = [specimen for specimen in specimens if specimen.is_active]
     relevant = active or specimens
+    representative = relevant[0] if relevant else None
     total = len(active)
 
     def indicator(criterion):
@@ -56,6 +67,7 @@ def _collection_item(species):
             break
     return {
         'species_id': species.id,
+        'specimen_id': str(representative.id) if representative else None,
         'common_name': species.common_name,
         'scientific_name': species.scientific_name,
         'image_url': image,
@@ -77,8 +89,9 @@ def _collection_item(species):
 class SpecimenViewSet(viewsets.ModelViewSet):
     """CRUD operations for user plant specimens."""
 
-    queryset = Specimen.objects.select_related('species').prefetch_related('care_logs', 'visual_entries').all()
+    queryset = Specimen.objects.select_related('species').all()
     permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post', 'patch', 'head', 'options']
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nickname', 'species__scientific_name', 'species__common_name']
     ordering_fields = ['acquired_at', 'vitality_index', 'nickname']
@@ -88,6 +101,8 @@ class SpecimenViewSet(viewsets.ModelViewSet):
             return SpecimenCreateSerializer
         if self.action == 'list':
             return SpecimenListSerializer
+        if self.action in ('update', 'partial_update'):
+            return SpecimenUpdateSerializer
         return SpecimenDetailSerializer
 
     def get_queryset(self):
@@ -95,6 +110,17 @@ class SpecimenViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        expected = serializer.validated_data.get('expected_updated_at')
+        with transaction.atomic():
+            locked = self.get_queryset().select_for_update().get(pk=serializer.instance.pk)
+            if expected is not None and locked.updated_at != expected:
+                error = ValidationError({'detail': 'O exemplar foi alterado em outra sessão.', 'updated_at': locked.updated_at})
+                error.status_code = 409
+                raise error
+            serializer.instance = locked
+            serializer.save()
 
     @action(detail=False, methods=['get'], url_path='collection')
     def collection(self, request):
@@ -146,14 +172,51 @@ class CareLogViewSet(viewsets.ModelViewSet):
     serializer_class = CareLogSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['timestamp']
+    ordering_fields = ['occurred_at', 'created_at']
+    http_method_names = ['get', 'post', 'head', 'options']
 
     def get_queryset(self):
         qs = super().get_queryset().filter(specimen__owner=self.request.user)
         specimen_id = self.request.query_params.get('specimen_id')
-        if specimen_id:
-            qs = qs.filter(specimen_id=specimen_id)
+        if not specimen_id:
+            raise ValidationError({'specimen_id': ['Este filtro é obrigatório.']})
+        try:
+            uuid.UUID(str(specimen_id))
+        except (ValueError, AttributeError, TypeError):
+            raise ValidationError({'specimen_id': ['UUID inválido.']})
+        scoped = Specimen.objects.filter(pk=specimen_id, owner=self.request.user).exists()
+        if not scoped:
+            raise NotFound('Exemplar não encontrado.')
+        qs = qs.filter(specimen_id=specimen_id)
         return qs
+
+    def perform_create(self, serializer):
+        specimen = serializer.validated_data['specimen']
+        if specimen.owner_id != self.request.user.id:
+            raise ValidationError({'specimen': ['Exemplar não encontrado.']})
+        serializer.save()
+
+
+class VisualEntryViewSet(viewsets.ModelViewSet):
+    queryset = VisualEntry.objects.select_related('specimen').all()
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_serializer_class(self):
+        return VisualEntryCreateSerializer if self.action == 'create' else VisualEntrySerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter(specimen__owner=self.request.user)
+        specimen_id = self.request.query_params.get('specimen_id')
+        if not specimen_id:
+            raise ValidationError({'specimen_id': ['Este filtro é obrigatório.']})
+        try:
+            uuid.UUID(str(specimen_id))
+        except (ValueError, AttributeError, TypeError):
+            raise ValidationError({'specimen_id': ['UUID inválido.']})
+        if not Specimen.objects.filter(pk=specimen_id, owner=self.request.user).exists():
+            raise NotFound('Exemplar não encontrado.')
+        return qs.filter(specimen_id=specimen_id)
 
     def perform_create(self, serializer):
         specimen = serializer.validated_data['specimen']

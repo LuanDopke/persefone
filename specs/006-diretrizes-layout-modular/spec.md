@@ -70,6 +70,17 @@ Como equipe responsável pelo produto, queremos compor novas telas usando módul
 2. **Given** que uma nova variação visual é necessária, **When** ela é introduzida, **Then** a variação é adicionada ao módulo compartilhado e documentada antes de ser usada pela página.
 3. **Given** que um módulo interativo possui estados normal, foco, pressionado e indisponível, **When** esses estados são acionados em páginas diferentes, **Then** apresentam o mesmo retorno visual e semântico.
 
+### Referência de composição — tela de detalhe de exemplar
+
+A tela de detalhe de exemplar estabelece a composição de referência para páginas de acompanhamento com informação densa. A referência visual deve orientar hierarquia, densidade e ritmo de leitura, sem transferir para o produto seu conteúdo, nomes, imagens remotas ou funções que não existam no domínio Persefone.
+
+1. O cabeçalho reúne identificador técnico, situação textual, nome do exemplar, espécie ou contexto relacionado e ações da página.
+2. O resumo e as métricas atuais formam o primeiro bloco analítico; cada métrica exibe rótulo, valor, unidade ou escala e momento da atualização.
+3. A linha do tempo visual usa cartões quadrados, datas de captura e uma ação explícita para adicionar foto quando disponível.
+4. Ações rápidas de cuidado aparecem antes do histórico na ordem de leitura; em telas amplas podem ocupar a coluna de apoio enquanto o histórico ocupa a área principal.
+5. O histórico apresenta registros cronológicos com tipo, ocorrência e nota, distinguindo estados por texto, símbolo e estrutura além da cor.
+6. A composição se reorganiza para uma coluna em telas estreitas, preserva a ordem do DOM e não cria rolagem horizontal global.
+
 ### Edge Cases
 
 - Como o layout preserva a ordem de leitura quando um painel lateral passa para baixo do conteúdo principal?
@@ -107,6 +118,11 @@ Como equipe responsável pelo produto, queremos compor novas telas usando módul
 - **FR-020**: A interface DEVE manter foco visível de alto contraste, ordem de teclado coerente e retorno de foco após o fechamento de sobreposições.
 - **FR-021**: Animações não essenciais DEVEM ser discretas e desativadas quando a pessoa indicar preferência por movimento reduzido.
 - **FR-022**: A atualização das diretrizes DEVE preservar os fluxos, dados e permissões existentes, sem criar funcionalidades de domínio presentes apenas no arquivo de referência.
+- **FR-023**: A composição de detalhe de exemplar DEVE organizar identificação, situação, resumo, métricas atuais, linha do tempo visual, ações de cuidado e histórico em uma hierarquia única e documentada.
+- **FR-024**: Cada métrica do exemplar DEVE combinar rótulo, valor, unidade ou escala e momento de atualização; qualquer barra ou indicador gráfico DEVE ser complementar ao texto.
+- **FR-025**: A linha do tempo visual DEVE usar cartões de mídia com proporção consistente, data de captura, descrição acessível e ação explícita para novo registro quando disponível.
+- **FR-026**: As ações de cuidado e o histórico DEVERÃO manter relação de apoio e conteúdo principal em telas amplas e formar uma sequência de uma coluna em telas estreitas, sem encobrir ações ou registros.
+- **FR-027**: Os registros cronológicos DEVEM apresentar tipo, instante de ocorrência e nota quando existente, mantendo distinção textual e estrutural entre registros.
 
 ### Key Entities
 
@@ -129,6 +145,7 @@ Como equipe responsável pelo produto, queremos compor novas telas usando módul
 - **SC-007**: Pelo menos 90% das pessoas em avaliação identificam a seção ativa e a ação principal de uma página em até cinco segundos.
 - **SC-008**: Uma alteração em borda, sombra, espaçamento ou cor compartilhada pode ser aplicada a todos os módulos correspondentes por meio de uma única definição.
 - **SC-009**: Todas as funções existentes continuam passando pelos seus critérios de aceitação após a adoção das novas diretrizes.
+- **SC-010**: Em 100% das larguras de validação, a tela de detalhe de exemplar mantém a ordem identificação → estado e métricas → registros visuais → ações → histórico, sem conteúdo encoberto ou rolagem horizontal global.
 
 ## Assumptions
 
@@ -137,5 +154,6 @@ Como equipe responsável pelo produto, queremos compor novas telas usando módul
 - A atualização abrange inicialmente todas as páginas autenticadas; telas públicas de acesso reutilizam tokens e módulos adequados, mas não precisam adotar a navegação autenticada.
 - A navegação móvel prioriza até cinco destinos e oferece acesso complementar quando houver mais rotas.
 - Diagramas, tabelas e linhas do tempo podem usar tratamento responsivo próprio dentro de seus módulos, sem alterar a largura da página inteira.
+- A tela de detalhe de exemplar usa como composição de referência uma faixa de identificação, um bloco de métricas, uma grade de registros visuais e uma área dividida entre ações de cuidado e histórico, com colapso para uma coluna.
 - O idioma e os termos de negócio continuam definidos pelas funcionalidades correspondentes; esta especificação trata da apresentação e da composição.
 - Controle de pragas, relatórios, lembretes, leitura por câmera e demais funções mostradas no arquivo não entram no escopo somente por aparecerem na referência.

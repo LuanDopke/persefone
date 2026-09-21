@@ -1,7 +1,7 @@
 """Unit tests for specimens models (Specimen, CareLog)."""
 
 import pytest
-from datetime import date
+from datetime import date, datetime, timezone
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from catalog.models import Species
@@ -120,6 +120,14 @@ class TestSpecimenModel:
 
         assert list(sample_specimen.visual_entries.all()) == [entry]
 
+    def test_visual_capture_time_is_immutable(self, sample_specimen):
+        captured = datetime(2024, 1, 1, tzinfo=timezone.utc)
+        entry = VisualEntry.objects.create(specimen=sample_specimen, image='specimens/initial/test.jpg', captured_at=captured)
+        entry.captured_at = datetime(2025, 1, 1, tzinfo=timezone.utc)
+        entry.save()
+        assert entry.refresh_from_db() is None
+        assert entry.captured_at == captured
+
 
 @pytest.mark.django_db
 class TestCareLogModel:
@@ -152,12 +160,20 @@ class TestCareLogModel:
 
     def test_care_log_types(self, sample_specimen):
         """All care log types can be created."""
-        for care_type in ['watering', 'fertilizing', 'repotting', 'observation']:
+        for care_type in ['watering', 'fertilizing', 'repotting', 'pruning', 'observation']:
             log = CareLog.objects.create(
                 specimen=sample_specimen,
                 type=care_type,
             )
             assert log.type == care_type
+
+    def test_care_occurrence_time_is_immutable(self, sample_specimen):
+        occurred = datetime(2024, 1, 1, tzinfo=timezone.utc)
+        log = CareLog.objects.create(specimen=sample_specimen, type='watering', occurred_at=occurred)
+        log.occurred_at = datetime(2025, 1, 1, tzinfo=timezone.utc)
+        log.save()
+        log.refresh_from_db()
+        assert log.occurred_at == occurred
 
     def test_care_log_str(self, sample_specimen):
         """__str__ shows care type and specimen nickname."""

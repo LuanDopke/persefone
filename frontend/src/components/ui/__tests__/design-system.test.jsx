@@ -7,6 +7,9 @@ describe('shared design tokens', () => {
     expect(config.theme.extend.colors.lime.DEFAULT).toBe('#BDFF00');
     expect(config.theme.extend.colors.charcoal).toBe('#1A1A1A');
     expect(config.theme.extend.colors.botanical).toBe('#247A47');
+    expect(config.theme.extend.colors.primary).toBe('#4B6700');
+    expect(config.theme.extend.colors['primary-container']).toBe('#BDFF00');
+    expect(config.theme.extend.colors.secondary).toBe('#46645E');
     expect(config.theme.extend.colors.amber).toBe('#D97706');
     expect(config.theme.extend.colors.critical).toBe('#B91C1C');
     expect(config.theme.extend.boxShadow.hard).toBe('4px 4px 0px 0px #1A1A1A');

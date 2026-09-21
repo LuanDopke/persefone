@@ -2,7 +2,7 @@
 
 ## Summary
 
-O frontend autenticado será reorganizado sobre um sistema visual compartilhado inspirado na composição do protótipo fornecido, sem copiar seu conteúdo nem introduzir funcionalidades de domínio. A implementação consolidará tokens no Tailwind/CSS, adotará um shell de viewport com navegação lateral persistente em telas amplas e navegação inferior em telas menores, criará módulos reutilizáveis para composição e estados de página e migrará as rotas existentes em ondas. Os fluxos, contratos HTTP, cache e permissões atuais serão preservados.
+O frontend autenticado será reorganizado sobre um sistema visual compartilhado inspirado na composição do protótipo fornecido, sem copiar seu conteúdo nem introduzir funcionalidades de domínio. A tela de detalhe de exemplar será a composição de referência para informação densa: identificação e estado, métricas atuais, linha do tempo visual, ações de cuidado e histórico. A implementação consolidará tokens no Tailwind/CSS, adotará um shell de viewport com navegação lateral persistente em telas amplas e navegação inferior em telas menores, criará módulos reutilizáveis para composição e estados de página e migrará as rotas existentes em ondas. Os fluxos, contratos HTTP, cache e permissões atuais serão preservados.
 
 ## Project Structure
 
@@ -73,7 +73,7 @@ Não há violações constitucionais previstas.
 - **Testes existentes**: Vitest, React Testing Library e JSDOM.
 - **Persistência/API**: nenhuma alteração de banco de dados ou contrato HTTP.
 - **Breakpoints de aceitação**: 360, 768, 1024 e 1440 pixels.
-- **Referência visual**: conjunto HTML Plantedex fornecido pelo usuário; usado apenas como orientação de hierarquia, densidade e composição.
+- **Referência visual**: conjunto HTML fornecido pelo usuário; usado apenas como orientação de hierarquia, densidade e composição. Para o detalhe de exemplar, a referência estabelece cabeçalho de identidade, painel de métricas, cartões de registros visuais e composição de ações/histórico em 1/3 e 2/3 nas telas amplas, com colapso para uma coluna.
 - **Estado do repositório**: existem mudanças em andamento da feature 005; a implementação deve integrá-las sem sobrescrever ou refazer o trabalho existente.
 
 ## Implementation Strategy
@@ -99,13 +99,14 @@ Não há violações constitucionais previstas.
 2. Unificar loading, vazio e erro em ContentState sem remover o contexto da página.
 3. Criar SearchField, ResponsiveGrid, MediaFrame e módulos de formulário onde a repetição já existe.
 4. Corrigir acessibilidade de Modal, Table e cartões interativos: teclado, Escape, foco inicial, retorno de foco e ações não aninhadas.
+5. Documentar a composição do detalhe de exemplar como padrão de página: identificação, estado, métricas com valor textual, linha do tempo visual, ações de cuidado e histórico cronológico.
 
 ### Fase 4 — Migração das páginas
 
 1. Migrar placeholders autenticados em `App.jsx` somente para a estrutura compartilhada, sem criar novas funções.
 2. Migrar catálogo preservando busca, filtros, favorito, modal, cache e tratamento de falhas.
 3. Migrar cadastro preservando validação, foto, envio único e navegação pós-criação.
-4. Migrar detalhe preservando consulta, refetch e dados apresentados.
+4. Migrar detalhe preservando consulta, refetch e dados apresentados, com a composição de identificação, estado, métricas, ações de cuidado e histórico definida nas diretrizes.
 5. Alinhar widgets e linha do tempo aos tokens apenas quando já fizerem parte de um fluxo existente.
 
 ### Fase 5 — Validação e estabilização
@@ -121,7 +122,7 @@ Não há violações constitucionais previstas.
 - **Shell**: um único `main`, sidebar e navegação móvel nos breakpoints corretos, rota ativa correta e conteúdo em região rolável.
 - **Navegação**: criação e detalhe de exemplar destacam Coleção; catálogo e detalhe de espécie destacam Descobrir; URLs atuais são mantidas.
 - **Sobreposições**: Escape, foco inicial, contenção e retorno de foco para modal ou futura gaveta complementar.
-- **Páginas**: cenários existentes de catálogo, cadastro e detalhe continuam passando após a migração; PageHeader permanece nos estados loading, vazio e erro.
+- **Páginas**: cenários existentes de catálogo, cadastro e detalhe continuam passando após a migração; PageHeader permanece nos estados loading, vazio e erro; o detalhe mantém a ordem identificação → estado e métricas → registros visuais → ações → histórico em todas as larguras.
 - **Responsividade**: `scrollWidth <= clientWidth`, grade 1/2/analítica, alvos mínimos de 44px e navegação não cobrindo ações essenciais.
 - **Regressão**: chamadas de API, query keys, payloads, autenticação e permissões não mudam.
 

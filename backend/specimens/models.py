@@ -8,6 +8,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 
 
 class Specimen(models.Model):
@@ -76,6 +77,10 @@ class Specimen(models.Model):
         validators=[MinValueValidator(0)],
         help_text='Estimated sunlight intensity (Lux)',
     )
+    metrics_updated_at = models.DateTimeField(
+        default=timezone.now,
+        help_text='Date and time when current vital metrics were last updated',
+    )
 
     photo = models.URLField(
         blank=True,
@@ -111,11 +116,19 @@ class VisualEntry(models.Model):
         related_name='visual_entries',
     )
     image = models.ImageField(upload_to='specimens/initial/%Y/%m/%d')
-    captured_at = models.DateTimeField(auto_now_add=True)
+    captured_at = models.DateTimeField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True, default='')
 
     class Meta:
-        ordering = ['captured_at', 'created_at']
+        ordering = ['-captured_at', '-created_at', '-id']
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            original = type(self).objects.filter(pk=self.pk).values('captured_at').first()
+            if original and original['captured_at'] != self.captured_at:
+                self.captured_at = original['captured_at']
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'Visual entry for {self.specimen.display_name}'
@@ -128,6 +141,7 @@ class CareLog(models.Model):
         ('watering', 'Watering'),
         ('fertilizing', 'Fertilizing'),
         ('repotting', 'Repotting'),
+        ('pruning', 'Pruning'),
         ('observation', 'Observation'),
     ]
 
@@ -147,10 +161,11 @@ class CareLog(models.Model):
         choices=CARE_TYPE_CHOICES,
         help_text='Type of care activity',
     )
-    timestamp = models.DateTimeField(
-        auto_now_add=True,
+    occurred_at = models.DateTimeField(
+        default=timezone.now,
         help_text='Date and time when care was performed',
     )
+    created_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(
         blank=True,
         default='',
@@ -158,7 +173,14 @@ class CareLog(models.Model):
     )
 
     class Meta:
-        ordering = ['-timestamp']
+        ordering = ['-occurred_at', '-created_at', '-id']
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            original = type(self).objects.filter(pk=self.pk).values('occurred_at').first()
+            if original and original['occurred_at'] != self.occurred_at:
+                self.occurred_at = original['occurred_at']
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.get_type_display()} — {self.specimen.nickname}'

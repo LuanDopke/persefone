@@ -99,28 +99,31 @@ spacing:
   lg: 24px
   xl: 48px
   gutter: 20px
-  margin: 24px
-  border-width: 3px
+  margin-mobile: 16px
+  margin-wide: 24px
+  border-width: 4px
+  shadow-default: 4px
+  shadow-emphasis: 6px
 ---
 
 ## Brand & Style
-This design system is an energetic evolution of Neobrutalism tailored for environmental tech and archival research. It balances the raw, "undone" aesthetic of a scientific field journal with the aggressive clarity of modern software. The brand personality is authoritative yet rebellious—treating ecological data with the urgency of a high-contrast editorial spread.
+This design system applies a neobrutalist visual language to plant care and archival records. It combines the structure of a scientific field journal with the clarity required by an application used during care routines.
 
 The target audience includes climate researchers, urban arborists, and environmental activists who require high-density information layouts that remain legible under varying field conditions. The UI evokes a sense of "digital specimens"—contained, categorized, and high-energy.
 
 **Visual Principles:**
-- **Raw Hierarchy:** Heavy black borders and un-aliased aesthetic choices.
-- **Archival Precision:** Systematic use of grids and monospaced accents to imply data integrity.
-- **Organic Contrast:** A collision of synthetic "electric" tones against deep, earthy foundations.
+- **Explicit hierarchy:** charcoal borders, rectangular surfaces and visible section labels distinguish primary, secondary and auxiliary content.
+- **Archival precision:** systematic grids and monospaced accents identify records, dates, IDs and measurements.
+- **Tactile interaction:** hard offsets and immediate state changes communicate interaction without blur, gradients or ornamental motion.
 
 ## Colors
 The palette is centered on high-chroma accents against a "paper-white" archival background. 
 
 - **Electric Green (#BDFF00):** The primary signal color. Used for high-priority actions, growth indicators, and primary focus states.
-- **Forest Green (#0B2B26):** The structural anchor. Used for deep backgrounds, heavy headers, and secondary containers to provide a grounded, sophisticated contrast.
+- **Forest Green (#4B6700):** The structural anchor. Used for section headers, stable states and secondary containers.
 - **Vibrant Amber (#FFBF00):** Reserved for warnings, pest alerts, and critical anomalies. It must maintain high legibility against black text.
 - **Sky Blue (#00B4D8):** Dedicated to hydration, atmospheric data, and climate-positive metrics.
-- **Neutral (#1A1A1A):** Used for all borders, shadows, and primary body text to maintain the Neobrutalist weight.
+- **Neutral (#1C1B1B):** Used for borders, shadows and primary body text. The canonical surface and semantic tokens are defined in the frontmatter of this file and in the frontend theme.
 
 ## Typography
 The typography system utilizes **Lexend** for its hyper-legibility and geometric strength, reinforcing the Neobrutalist structure. 
@@ -131,40 +134,43 @@ The typography system utilizes **Lexend** for its hyper-legibility and geometric
 - **Body:** Standard weight Lexend. Paragraphs should maintain generous line-height to balance the heavy visual weight of the borders.
 
 ## Layout & Spacing
-The layout follows a **Fixed Grid** philosophy with a 12-column desktop structure and a 4-column mobile structure. 
+The layout follows a **fluid grid** with a 12-column wide-screen structure. Components may use a two-column intermediate composition only when their content remains readable; on narrow screens, the reading order becomes one column.
 
 **Grid Rules:**
-- Containers do not use soft padding; they use hard "gutters" that act as visual breaks.
-- **Breakpoints:** Mobile (375px), Tablet (768px), Desktop (1280px).
-- Elements are often "staggered"—shifted slightly off-axis or overlapping to create a raw, collage-like feel.
-- **Margins:** 24px on mobile, scaling to 48px on desktop to provide "breathing room" for the aggressive internal elements.
+- Containers use consistent internal margins: 16px on narrow screens and 24px from the medium breakpoint onward.
+- **Breakpoints for validation:** 360px, 768px, 1024px and 1440px. The persistent sidebar begins at 1024px; below it, mobile navigation remains available without covering content.
+- **Columns:** cards use one column on narrow screens, two columns when the available width allows comparison, and up to twelve columns on wide screens.
+- Decorative offsets or slight rotations are allowed only for non-essential surfaces and must not change reading order, cause overflow or make controls harder to use.
+- Page-level fixed or floating elements must reserve safe-area space and must not cover forms, messages, timelines or primary actions.
 
 ## Elevation & Depth
 In line with Neobrutalism, this design system rejects shadows and blurs. Depth is communicated through **Hard Offsets** and **Stark Layers**.
 
-- **Hard Shadows:** Use 100% opacity black offsets (e.g., 4px x 4px) to elevate cards and buttons.
-- **Tonal Layering:** Objects "lower" in hierarchy are flat on the background with a 3px border. "Higher" objects use the offset shadow.
-- **Negative Space:** Use the #F4F4F2 background color to separate high-intensity containers.
+- **Hard Shadows:** Use 100% opacity charcoal offsets, normally 4px x 4px and up to 6px x 6px for a featured panel. No blur.
+- **Tonal Layering:** Lower-level regions may use a flat surface; cards and primary actions use the offset shadow. Border weight remains the canonical 4px token.
+- **Negative Space:** Use the surface-container tokens to separate content groups without gradients or decorative textures.
 
 ## Shapes
 The shape language is strictly **Sharp (0px)**. 
 
-Every UI element—from buttons to input fields to images—must maintain 90-degree corners. This reinforces the "archival sheet" and "scientific document" aesthetic. Overlapping shapes should use the 3px black border to maintain separation.
+Every UI element—from buttons to input fields to images—must maintain 90-degree corners. This reinforces the "archival sheet" and "scientific document" aesthetic. Overlapping shapes should use the canonical charcoal border to maintain separation.
+
+The implementation uses the canonical 4px border token, including for image frames, inputs and structured regions.
 
 ## Components
 
 ### Buttons
-- **Primary:** Electric Green background, 3px Black border, Bold Lexend text. Hard offset shadow (4px).
-- **Secondary:** White background, 3px Black border, Hard offset shadow.
-- **Destructive/Alert:** Vibrant Amber background, 3px Black border.
+- **Primary:** Electric Green background, 4px charcoal border, Bold Lexend text. Hard offset shadow (4px).
+- **Secondary:** White background, 4px charcoal border, Hard offset shadow.
+- **Destructive/Alert:** Vibrant Amber background, 4px charcoal border.
 
 ### Cards
-- White or light grey background with a 3px Black border. 
+- White or light grey background with a 4px charcoal border.
 - Header areas of cards should use a Forest Green background with White text to categorize content.
 - Use JetBrains Mono labels in the top-right corner for "specimen numbers" or IDs.
 
 ### Input Fields
-- White background, 3px Black border. 
+- White background, 4px charcoal border.
 - Focus state: The border stays black, but a 4px "glow" (no-blur offset) in Electric Green appears behind the field.
 
 ### Chips & Tags
@@ -172,9 +178,30 @@ Every UI element—from buttons to input fields to images—must maintain 90-deg
 - Small, rectangular, Forest Green background with White monospaced text. No rounded corners.
 
 ### Lists
-- Items separated by 2px horizontal Black lines. 
-- Hover state: Row background changes to Electric Green (#BDFF00) with no transition time (instant state change).
+- Items use structured cards or 2px separators according to density.
+- Hover state may change the surface to Electric Green (#BDFF00) with no transition time; focus-visible and pressed states must remain available by keyboard and pointer.
 
 ### Technical Data Viz
 - Use Sky Blue for water levels/humidity and Vibrant Amber for warning thresholds. 
-- All charts should use a "pixel-grid" background texture.
+- Use Electric Green for light or stable-growth measures when that mapping is meaningful to the product.
+- Values must also have a label, unit and accessible text. Avoid a texture as the only data distinction.
+
+## Specimen Detail Composition
+
+The specimen detail page is the reference composition for dense monitoring screens. It uses the shared application shell and follows this reading order:
+
+1. **Identity header:** technical identifier and textual status, specimen name as the page title, species or contextual description, then page actions.
+2. **Current state:** a metrics panel adjacent to the identity block on wide screens. Each metric presents a label, value, unit or scale and update time. A progress bar is optional and never replaces the value or label.
+3. **Visual timeline:** an open section with a botanical-green square title block, a horizontal rule and square media cards below it. Cards show capture date and contextual label; the final slot may be an explicit action to add a visual record.
+4. **Care actions and activity history:** use square title blocks with distinct colors and a horizontal rule; place each activity date outside its record box on the timeline axis. On wide screens, quick care actions occupy the supporting column and the growth or care log occupies the main column. On narrow screens, actions precede the history in one reading flow.
+5. **Activity records:** records use a stable vertical axis or equivalent chronology, with timestamp, type and note separated by text and structure. The latest record remains distinguishable without relying only on color.
+
+Composition rules:
+
+- Use `PageContainer`, `PageHeader`, `ResponsiveGrid`, `Card`, `MediaFrame`, semantic status components and the existing modal/form primitives. Use `Card` for metrics, actions and individual records; do not wrap the visual timeline, care actions or history in an additional outer card.
+- Prefer a 5-column visual-card grid on wide screens, four columns when space is constrained, two columns on tablet and one column on narrow screens. The DOM order must remain chronological.
+- Use a 1/3 supporting-column and 2/3 main-column arrangement for care actions and history only when both columns remain readable; collapse them in reading order otherwise.
+- Use lime for primary actions and stable emphasis, blue for hydration or atmospheric measures, amber for attention and red for critical conditions. Every status includes text or a symbol.
+- Care actions must expose their label, type and most recent occurrence, and pressed feedback may reduce the hard shadow without moving neighboring content.
+- Loading, empty and error states preserve the section context and provide recovery where recovery is possible.
+- Images are local product data or approved local fallbacks. Names, dates, sample identifiers, remote URLs and domain features from a visual reference are not product content.

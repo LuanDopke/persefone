@@ -9,6 +9,12 @@ const paths = {
   info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7h.01" /></>,
   stable: <path d="m4 12 5 5L20 6" />,
   critical: <><circle cx="12" cy="12" r="9" /><path d="m8 8 8 8M16 8l-8 8" /></>,
+  water: <><path d="M12 3S6 10 6 14a6 6 0 0 0 12 0c0-4-6-11-6-11Z" /><path d="M9 15c.3 1.2 1.2 2 2.5 2.3" /></>,
+  leaf: <><path d="M20 4C11 4 5 8 5 15c0 2.8 2.2 5 5 5 7 0 10-6 10-16Z" /><path d="M4 20c3-4 7-7 12-9" /></>,
+  repot: <><path d="M6 10h12l-1 10H7L6 10Z" /><path d="M4 10h16M9 7c0-2 1-4 3-4s3 2 3 4" /></>,
+  pruning: <><path d="m5 5 6 6M19 5l-6 6M11 11 6 19M13 11l5 8" /><circle cx="5" cy="5" r="2" /><circle cx="19" cy="5" r="2" /></>,
+  history: <><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5M12 7v5l3 2" /></>,
+  camera: <><path d="M4 7h4l1.5-2h5L16 7h4v12H4V7Z" /><circle cx="12" cy="13" r="3.5" /></>,
 };
 
 export function Icon({ name, label, size = 24, className = '' }) {

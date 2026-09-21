@@ -64,6 +64,9 @@ export const queryKeys = {
   careLogs: {
     bySpecimen: (specimenId) => ['care-logs', specimenId],
   },
+  visualEntries: {
+    bySpecimen: (specimenId) => ['visual-entries', specimenId],
+  },
   weather: {
     current: (lat, lon) => ['weather', lat, lon],
   },
@@ -83,6 +86,38 @@ export async function createSpecimen(formData) {
 
 export async function createLocalSpecies(scientificName) {
   const response = await apiClient.post('/api/species/local/', { scientific_name: scientificName });
+  return response.data;
+}
+
+export async function fetchSpecimenDetail(specimenId) {
+  const response = await apiClient.get(`/api/specimens/${specimenId}/`);
+  return response.data;
+}
+
+export async function updateSpecimen({ specimenId, payload }) {
+  const response = await apiClient.patch(`/api/specimens/${specimenId}/`, payload);
+  return response.data;
+}
+
+export async function listCareLogs(specimenId, page = 1) {
+  const response = await apiClient.get('/api/care-logs/', { params: { specimen_id: specimenId, page } });
+  return response.data;
+}
+
+export async function createCareLog(payload) {
+  const response = await apiClient.post('/api/care-logs/', payload);
+  return response.data;
+}
+
+export async function listVisualEntries(specimenId, page = 1) {
+  const response = await apiClient.get('/api/visual-entries/', { params: { specimen_id: specimenId, page } });
+  return response.data;
+}
+
+export async function createVisualEntry(formData) {
+  const response = await apiClient.post('/api/visual-entries/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   return response.data;
 }
 

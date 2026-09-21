@@ -7,7 +7,7 @@ import SpecimenCatalog from '../SpecimenCatalog';
 import apiClient from '../../services/apiClient';
 
 const item = {
-  species_id: 7, common_name: 'Costela-de-adão', scientific_name: 'Monstera deliciosa', image_url: null,
+  species_id: 7, specimen_id: '00000000-0000-0000-0000-000000000007', common_name: 'Costela-de-adão', scientific_name: 'Monstera deliciosa', image_url: null,
   specimen_count: 3, is_archived: false, is_favorite: false,
   care: { water: { needs_attention: true, affected_count: 1, total_count: 3 }, nutrients: { needs_attention: false, affected_count: 0, total_count: 3 }, light: { needs_attention: false, affected_count: 0, total_count: 3 } },
   care_reference: { light: 'Luz indireta', water: 'Semanal' },
@@ -23,6 +23,7 @@ describe('SpecimenCatalog page', () => {
   it('renders Minha Coleção with one species card and accessible fallback image', async () => {
     renderWithProviders(); expect(screen.getByRole('heading', { name: /minha coleção/i })).toBeInTheDocument();
     expect(await screen.findByText('Costela-de-adão')).toBeInTheDocument(); expect(screen.getByText('3 exemplares')).toBeInTheDocument(); expect(screen.getByRole('img', { name: /imagem indisponível/i })).toBeInTheDocument(); expect(screen.getByText('Monstera deliciosa')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /abrir detalhes de costela/i })).toHaveAttribute('href', '/specimens/instances/00000000-0000-0000-0000-000000000007');
   });
   it('shows independent attention and neutral care indicators', async () => {
     renderWithProviders(); expect(await screen.findByText('Água: 1 de 3')).toBeInTheDocument(); expect(screen.getByText('Nutrientes: em dia')).toBeInTheDocument(); expect(screen.getByText('Luz: em dia')).toBeInTheDocument();

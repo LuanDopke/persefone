@@ -2,7 +2,8 @@
 
 import pytest
 from io import BytesIO
-from datetime import date
+from datetime import date, timedelta
+from django.utils import timezone
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
@@ -225,8 +226,30 @@ class TestSpecimenAPI:
     def test_delete_specimen(self, api_client, specimen):
         url = reverse('specimen-detail', kwargs={'pk': str(specimen.pk)})
         response = api_client.delete(url)
-        assert response.status_code == 204
-        assert Specimen.objects.count() == 0
+        assert response.status_code == 405
+        assert Specimen.objects.count() == 1
+
+    def test_update_rejects_invalid_payload_without_partial_change(self, api_client, specimen):
+        url = reverse('specimen-detail', kwargs={'pk': str(specimen.pk)})
+        response = api_client.patch(url, {'nickname': '', 'vitality_index': 140})
+        assert response.status_code == 400
+        specimen.refresh_from_db()
+        assert specimen.nickname == 'Monsterina'
+        assert specimen.vitality_index == 100
+
+    def test_update_can_archive_and_rejects_species_change(self, api_client, specimen, species):
+        url = reverse('specimen-detail', kwargs={'pk': str(specimen.pk)})
+        response = api_client.patch(url, {'is_active': False, 'species': species.pk})
+        assert response.status_code == 200
+        specimen.refresh_from_db()
+        assert specimen.is_active is False
+        assert specimen.species_id == species.pk
+
+    def test_update_conflict_returns_409(self, api_client, specimen):
+        url = reverse('specimen-detail', kwargs={'pk': str(specimen.pk)})
+        api_client.patch(url, {'nickname': 'Atualizado'})
+        conflict = api_client.patch(url, {'nickname': 'Obsoleto', 'expected_updated_at': '2000-01-01T00:00:00Z'})
+        assert conflict.status_code == 409
 
 
 @pytest.mark.django_db
@@ -238,7 +261,7 @@ class TestCollectionAPI:
 
     def test_collection_groups_active_species_paginates_and_uses_specimen_photo(self, api_client, species):
         second = Species.objects.create(scientific_name='Ficus elastica', common_name='Rubber plant')
-        self.make_specimen(api_client, species, 'One', photo='https://example.test/monstera.jpg')
+        first = self.make_specimen(api_client, species, 'One', photo='https://example.test/monstera.jpg')
         self.make_specimen(api_client, species, 'Two')
         self.make_specimen(api_client, second, 'Three')
         response = api_client.get(reverse('specimen-collection'), {'page_size': 10})
@@ -246,6 +269,7 @@ class TestCollectionAPI:
         assert response.data['count'] == 2
         item = next(item for item in response.data['results'] if item['species_id'] == species.id)
         assert item['specimen_count'] == 2
+        assert item['specimen_id'] in {str(first.id), str(Specimen.objects.filter(species=species, owner=api_client.user).exclude(pk=first.id).first().id)}
         assert item['image_url'] == 'https://example.test/monstera.jpg'
         assert item['is_archived'] is False
 
@@ -315,3 +339,37 @@ class TestCareLogAPI:
         response = api_client.get(url, {'specimen_id': str(specimen.pk)})
         assert response.status_code == 200
         assert len(response.data['results']) == 2
+
+    def test_care_log_accepts_past_occurrence_and_rejects_future(self, api_client, specimen):
+        past = (timezone.now() - timedelta(days=2)).isoformat()
+        response = api_client.post(reverse('carelog-list'), {
+            'specimen': str(specimen.pk), 'type': 'pruning', 'occurred_at': past, 'notes': 'Poda',
+        }, format='json')
+        assert response.status_code == 201
+        assert response.data['occurred_at']
+        future = api_client.post(reverse('carelog-list'), {
+            'specimen': str(specimen.pk), 'type': 'watering', 'occurred_at': (timezone.now() + timedelta(days=1)).isoformat(),
+        }, format='json')
+        assert future.status_code == 400
+        assert 'occurred_at' in future.data
+
+    def test_care_log_list_requires_specimen_filter(self, api_client):
+        response = api_client.get(reverse('carelog-list'))
+        assert response.status_code == 400
+
+
+@pytest.mark.django_db
+class TestVisualEntryAPI:
+    def test_create_visual_entry_preserves_capture_and_notes(self, api_client, specimen, settings, tmp_path):
+        settings.MEDIA_ROOT = tmp_path
+        response = api_client.post(reverse('visualentry-list'), {
+            'specimen': str(specimen.pk), 'captured_at': '2024-07-01T12:00:00-03:00', 'notes': 'Folha nova', 'image': image_upload('new.png'),
+        }, format='multipart')
+        assert response.status_code == 201
+        assert response.data['notes'] == 'Folha nova'
+        assert response.data['image'].endswith('.avif')
+        assert VisualEntry.objects.filter(specimen=specimen).count() == 1
+
+    def test_visual_entry_list_requires_owner_scoped_specimen(self, api_client):
+        response = api_client.get(reverse('visualentry-list'), {'specimen_id': 'not-a-uuid'})
+        assert response.status_code == 400

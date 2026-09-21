@@ -65,6 +65,27 @@ Este contrato define as fronteiras públicas dos módulos compartilhados. É um 
 - A ordem do DOM continua sendo a ordem de leitura.
 - O consumidor pode definir spans desktop documentados, não posições absolutas.
 
+### Composição do detalhe de exemplar
+
+A tela de detalhe de exemplar é a composição de referência para páginas autenticadas com informação densa. Ela deve seguir esta ordem no DOM:
+
+1. identificação e situação do exemplar;
+2. foto representativa, resumo e métricas atuais;
+3. linha do tempo visual;
+4. ações de cuidado;
+5. histórico de crescimento e cuidados.
+
+Em telas amplas, a identificação pode compartilhar a faixa superior com o painel de métricas. A área de ações e histórico pode usar uma relação aproximada de 1/3 para 2/3 quando os dois blocos permanecerem legíveis. Em telas estreitas, todos os blocos passam a uma coluna na mesma ordem de leitura.
+
+- O cabeçalho exibe identificador técnico, situação textual, nome do exemplar, contexto da espécie e ações da página.
+- O painel de métricas exibe rótulo, valor, unidade ou escala e atualização; barras de progresso são complemento visual, nunca a única comunicação do valor.
+- A linha do tempo visual usa um título colorido em bloco retangular, divisor horizontal, cartões de mídia quadrados com data de captura e uma ação explícita para adicionar registro quando permitida; não usa um Card externo.
+- Ações rápidas de cuidado exibem tipo e última ocorrência; o histórico exibe instante de ocorrência, tipo e nota quando existente.
+- Ações de cuidado, resumo e histórico usam títulos em blocos retangulares com cores distintas e divisores diretamente na página; Cards ficam restritos às ações, ao resumo interno quando necessário e aos registros individuais. A data de cada cuidado fica fora do registro, acima do quadro, junto ao eixo da timeline.
+- A linha do tempo preserva a ordem cronológica no DOM e pode mudar de grade para uma coluna sem rolagem horizontal global.
+- Os módulos reutilizam `Card`, `MediaFrame`, `ResponsiveGrid`, `ContentState`, `Button`, `Modal` e `FormField`; não criam um shell, um `main` ou um Card externo paralelo para cada seção.
+- O conteúdo real do exemplar substitui nomes, datas, identificadores, imagens e funções apresentados em qualquer arquivo de referência.
+
 ## Estados e conteúdo
 
 ### `ContentState`
@@ -97,6 +118,19 @@ Este contrato define as fronteiras públicas dos módulos compartilhados. É um 
 - Trata URL ausente e erro de carregamento.
 - Usa `object-fit` sem deformação.
 - Não aceita imagem remota do protótipo como dado do produto.
+
+### `SpecimenMetrics`
+
+- Recebe as métricas atuais do exemplar e apresenta valores, unidades, escala e instante da atualização.
+- Pode usar barras ou outros indicadores visuais, desde que o valor também esteja disponível como texto.
+- Usa os tons semânticos existentes; não cria uma paleta por métrica sem necessidade documentada.
+
+### `VisualTimeline` e `CareLogTimeline`
+
+- São regiões independentes: falha ou carregamento de uma não desmonta a outra nem o cabeçalho do exemplar.
+- Preservam estados de loading, vazio, erro e paginação dentro do próprio cartão.
+- A entrada visual informa captura e descrição acessível; a atividade informa ocorrência, tipo e nota quando houver.
+- Em telas estreitas, os cartões formam uma coluna e as ações permanecem alcançáveis sem cobrir o conteúdo.
 
 ## Controles
 

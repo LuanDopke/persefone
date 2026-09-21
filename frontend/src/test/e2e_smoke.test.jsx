@@ -33,6 +33,8 @@ vi.mock('../services/apiClient', () => ({
     species: { all: ['species'], search: (term) => ['species', 'search', term] },
     specimens: { all: ['specimens'], detail: (id) => ['specimens', 'detail', id] },
     collection: { all: ['collection'] },
+    careLogs: { bySpecimen: (id) => ['care-logs', id] },
+    visualEntries: { bySpecimen: (id) => ['visual-entries', id] },
   },
 }));
 

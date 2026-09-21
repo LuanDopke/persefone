@@ -8,16 +8,16 @@
 
 ### User Story 1 - Acompanhar o estado do exemplar (Priority: P1)
 
-Como pessoa responsável por uma planta, quero abrir o exemplar e reconhecer sua identificação, localização, condição atual, métricas e histórico recente, para decidir rapidamente qual cuidado precisa ser realizado.
+Como pessoa responsável por uma planta, quero abrir o exemplar e reconhecer sua identificação, localização, condição atual e histórico recente, para decidir rapidamente qual cuidado precisa ser realizado.
 
 **Why this priority**: A visão consolidada é o ponto de entrada para todas as ações de acompanhamento e entrega valor mesmo antes de qualquer novo registro.
 
-**Independent Test**: Abrir um exemplar com dados, fotos e atividades existentes e confirmar que identificação, estado, métricas atuais, última atividade e linhas do tempo aparecem em uma composição única e compreensível.
+**Independent Test**: Abrir um exemplar com dados, fotos e atividades existentes e confirmar que identificação, estado, descrição ou última observação, última atividade e linhas do tempo aparecem em uma composição única e compreensível.
 
 **Acceptance Scenarios**:
 
 1. **Given** que o exemplar pertence à pessoa autenticada, **When** ela abre seu detalhe, **Then** vê nome, espécie, identificação, localização, situação ativa ou arquivada, data de aquisição e foto representativa.
-2. **Given** que o exemplar possui valores atuais de vitalidade, umidade do solo e luminosidade, **When** o detalhe é exibido, **Then** cada métrica apresenta valor, unidade ou escala e rótulo compreensível.
+2. **Given** que as métricas futuras ainda dependem da taxonomia, **When** o detalhe é exibido, **Then** a página apresenta um placeholder para esse quadro e não exibe os valores atuais de vitalidade, umidade do solo ou luminosidade.
 3. **Given** que existem fotos e atividades registradas, **When** a pessoa consulta o detalhe, **Then** os eventos mais recentes ficam visíveis primeiro e o histórico completo permanece alcançável.
 4. **Given** que o exemplar não possui foto ou atividade, **When** seu detalhe é aberto, **Then** a página mantém sua estrutura e oferece uma orientação para produzir o primeiro registro.
 
@@ -61,16 +61,16 @@ Como pessoa acompanhando o desenvolvimento da planta, quero acrescentar fotos ao
 
 ### User Story 4 - Atualizar os dados do exemplar (Priority: P2)
 
-Como pessoa proprietária do exemplar, quero corrigir seus dados, atualizar métricas e arquivar ou reativar a planta, para manter seu registro coerente com a situação atual.
+Como pessoa proprietária do exemplar, quero corrigir seus dados e arquivar ou reativar a planta, para manter seu registro coerente com a situação atual.
 
 **Why this priority**: Dados atualizados tornam o acompanhamento confiável, mas dependem da identificação e do histórico já acessíveis.
 
-**Independent Test**: Alterar nome, localização, condições e métricas, arquivar o exemplar, recarregar a página e confirmar que as mudanças permanecem enquanto fotos e atividades anteriores são preservadas.
+**Independent Test**: Alterar nome, localização e condições, arquivar o exemplar, recarregar a página e confirmar que as mudanças permanecem enquanto fotos e atividades anteriores são preservadas.
 
 **Acceptance Scenarios**:
 
 1. **Given** que a pessoa abre a edição, **When** altera nome, localização, data de aquisição, descrição do solo ou condição de luz e salva, **Then** o detalhe passa a apresentar os valores atualizados.
-2. **Given** que a pessoa mede a condição atual, **When** atualiza vitalidade, umidade do solo ou luminosidade com um valor válido, **Then** a métrica e a indicação de última atualização são renovadas.
+2. **Given** que o quadro de métricas ainda aguarda a definição da taxonomia, **When** a pessoa abre a edição, **Then** a interface mantém apenas a indicação de que essas métricas serão definidas futuramente e não oferece campos para alterá-las.
 3. **Given** que algum valor é inválido, **When** a pessoa tenta salvar, **Then** cada problema aparece junto ao campo correspondente e nenhuma alteração parcial é aplicada.
 4. **Given** que o exemplar não está mais sob cuidado, **When** a pessoa o arquiva, **Then** ele fica identificado como arquivado sem perder fotos, atividades ou vínculo taxonômico.
 5. **Given** que um exemplar arquivado volta ao cuidado, **When** a pessoa o reativa, **Then** ele volta ao estado ativo com todo o histórico preservado.
@@ -94,7 +94,7 @@ Como pessoa proprietária do exemplar, quero corrigir seus dados, atualizar mét
 - **FR-001**: O sistema DEVE apresentar uma página individual para acompanhar cada exemplar pertencente à pessoa autenticada.
 - **FR-002**: A página DEVE apresentar nome do exemplar, espécie vinculada, identificação, localização, data de aquisição e situação ativa ou arquivada.
 - **FR-003**: A página DEVE apresentar a foto representativa e um substituto visual quando nenhuma imagem puder ser exibida.
-- **FR-004**: A página DEVE apresentar os valores atuais de vitalidade, umidade do solo e luminosidade com rótulo, escala ou unidade compreensível e indicação da última atualização.
+- **FR-004**: A página DEVE reservar um bloco de métricas para futura integração com dados da taxonomia e NÃO DEVE exibir, nesta entrega, os valores atuais de vitalidade, umidade do solo ou luminosidade.
 - **FR-005**: A página DEVE reunir linha do tempo visual, ações de cuidado e histórico de atividades em uma hierarquia que permaneça compreensível em telas pequenas e amplas.
 - **FR-006**: O sistema DEVE listar as atividades do exemplar por data e hora de ocorrência, da mais recente para a mais antiga.
 - **FR-007**: O sistema DEVE permitir registrar atividades dos tipos rega, adubação, replante, poda e observação.
@@ -110,7 +110,7 @@ Como pessoa proprietária do exemplar, quero corrigir seus dados, atualizar mét
 - **FR-017**: O sistema DEVE validar tipo e tamanho da imagem antes de concluir o registro visual e NÃO DEVE criar entrada parcial após uma falha.
 - **FR-018**: O sistema DEVE carregar progressivamente linhas do tempo extensas de fotos e atividades.
 - **FR-019**: O sistema DEVE permitir alterar nome, localização, data de aquisição, descrição do solo e condição de luz do exemplar.
-- **FR-020**: O sistema DEVE permitir atualizar os valores atuais de vitalidade, umidade do solo e luminosidade dentro de seus limites válidos.
+- **FR-020**: A interface NÃO DEVE oferecer edição dos campos de vitalidade, umidade do solo ou luminosidade; os campos de backend podem permanecer preservados para integração futura com a taxonomia.
 - **FR-021**: O sistema DEVE validar todas as alterações antes de aplicá-las e NÃO DEVE persistir uma atualização parcial quando algum campo for inválido.
 - **FR-022**: O sistema DEVE permitir arquivar e reativar o exemplar sem apagar seu histórico, suas fotos ou seu vínculo com a espécie.
 - **FR-023**: A espécie vinculada NÃO DEVE ser alterada por esta página para evitar troca acidental de identidade taxonômica.
@@ -122,10 +122,10 @@ Como pessoa proprietária do exemplar, quero corrigir seus dados, atualizar mét
 
 ### Key Entities
 
-- **Exemplar**: Planta individual pertencente à pessoa autenticada e vinculada a uma espécie; reúne identificação pessoal, localização, aquisição, condições, métricas atuais e situação ativa ou arquivada.
+- **Exemplar**: Planta individual pertencente à pessoa autenticada e vinculada a uma espécie; reúne identificação pessoal, localização, aquisição, condições, campos de métricas preservados para futura integração e situação ativa ou arquivada.
 - **Registro de atividade**: Evento histórico relacionado ao exemplar; possui tipo de cuidado ou observação, instante de ocorrência imutável, instante de registro e nota opcional.
 - **Registro visual**: Fotografia histórica vinculada ao exemplar; possui arquivo de imagem, instante de captura, instante de registro e observação opcional.
-- **Métrica atual**: Leitura mais recente de vitalidade, umidade do solo ou luminosidade, apresentada com escala ou unidade e momento da última atualização.
+- **Métrica futura de taxonomia**: Leitura definida pela taxonomia da espécie, a ser integrada posteriormente à página e apresentada com escala ou unidade apropriada.
 
 ## Success Criteria
 
@@ -148,9 +148,9 @@ Como pessoa proprietária do exemplar, quero corrigir seus dados, atualizar mét
 - As atividades contempladas nesta entrega são rega, adubação, replante, poda e observação; lembretes agendados e automações não fazem parte do escopo.
 - Uma ação rápida registra o horário atual por padrão e sempre apresenta uma confirmação explícita antes do envio.
 - Uma atividade concluída é histórica: esta entrega não inclui editar ou apagar registros de atividade, apenas criar e consultar.
-- A edição abrange dados pessoais e condições do exemplar, mas não troca sua espécie vinculada.
+- A edição abrange dados pessoais e condições do exemplar, mas não troca sua espécie vinculada nem edita as métricas reservadas para a taxonomia.
 - Arquivar é a alternativa segura para retirar uma planta da coleção ativa; exclusão definitiva não faz parte do escopo.
-- As métricas representam o estado atual e não formam, nesta entrega, um histórico próprio de medições ou gráficos analíticos.
+- Os campos de métricas existentes no backend permanecem preservados, mas não são exibidos nem editados no frontend desta entrega; futuras métricas serão definidas pela taxonomia.
 - A linha do tempo visual aceita várias fotos e amplia o registro inicial já existente; remoção de fotos não faz parte do escopo.
 - O limite e os formatos de imagem seguem as regras já adotadas no cadastro de exemplar.
 - O template fornecido orienta composição, hierarquia, métricas, ações rápidas e linhas do tempo; nomes, dados de exemplo, imagens externas e navegação própria do template não serão copiados.

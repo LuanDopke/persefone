@@ -82,7 +82,7 @@ frontend/src/
 ### Fase 3 — Composição da página
 
 1. Manter o cabeçalho e o contexto do exemplar durante loading, vazio, erro e revalidação.
-2. Compor identificação, foto representativa, situação, métricas, ações rápidas e ações de edição em uma grade que preserva a ordem de leitura.
+2. Compor identificação, espécie, descrição ou última observação, foto representativa, situação, placeholder de métricas, ações rápidas e ações de edição em uma grade que preserva a ordem de leitura.
 3. Substituir o `CareLogTimeline` atual por um módulo localizado, paginado e separado do formulário de atividade.
 4. Criar a linha do tempo visual paginada, com fallback por item e formulário próprio para anexar uma nova foto.
 5. Reutilizar Modal e FormField para confirmação rápida, registro detalhado e edição, preservando os valores quando a API falhar.

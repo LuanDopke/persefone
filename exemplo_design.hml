@@ -1,0 +1,377 @@
+<!DOCTYPE html><html class="light" lang="en" style="width: 1280px; height: 1512px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Specimen Visual &amp; Text Log | Plantedex</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom Neobrutalist focus Ring */
+        .neo-focus:focus-within {
+            box-shadow: 4px 4px 0px 0px #bdff00;
+            outline: none;
+        }
+        /* Hide scrollbars for cleaner grid feel but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .stagger-1 { transform: rotate(-1deg); }
+        .stagger-2 { transform: rotate(1deg); }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1c1b1b",
+                        "on-surface": "#1c1b1b",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#00201c",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-surface-variant": "#434933",
+                        "tertiary": "#795900",
+                        "surface-variant": "#e5e2e1",
+                        "on-primary-container": "#547300",
+                        "on-primary-fixed-variant": "#374e00",
+                        "secondary-fixed": "#c8eae1",
+                        "outline-variant": "#c2caad",
+                        "secondary-container": "#c8eae1",
+                        "tertiary-container": "#ffe7bc",
+                        "primary": "#4b6700",
+                        "on-secondary-fixed-variant": "#2e4c46",
+                        "primary-fixed-dim": "#a0d800",
+                        "inverse-primary": "#a0d800",
+                        "tertiary-fixed": "#ffdfa0",
+                        "surface": "#fcf9f8",
+                        "secondary": "#46645e",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "surface-container-low": "#f6f3f2",
+                        "surface-tint": "#4b6700",
+                        "outline": "#737a61",
+                        "on-tertiary-container": "#866300",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container-high": "#eae7e7",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#accdc5",
+                        "tertiary-fixed-dim": "#fbbc00",
+                        "primary-container": "#bdff00",
+                        "background": "#fcf9f8",
+                        "surface-dim": "#dcd9d9",
+                        "inverse-surface": "#313030",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#4c6a64",
+                        "inverse-on-surface": "#f3f0ef",
+                        "surface-container": "#f0eded",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#141f00",
+                        "surface-bright": "#fcf9f8",
+                        "primary-fixed": "#b7f700",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "margin": "24px",
+                        "sm": "8px",
+                        "unit": "4px",
+                        "border-width": "3px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "gutter": "20px",
+                        "xl": "48px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Lexend"],
+                        "body-md": ["Lexend"],
+                        "headline-lg": ["Lexend"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-md": ["Lexend"],
+                        "headline-lg-mobile": ["Lexend"],
+                        "code-md": ["JetBrains Mono"],
+                        "display-lg": ["Lexend"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "code-md": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+<!-- SIDE NAVIGATION (WEB) -->
+<aside class="hidden md:flex flex-col h-screen w-64 bg-surface border-r-[3px] border-on-background p-md gap-sm shrink-0 sticky top-0">
+<div class="mb-xl">
+<h1 class="font-headline-md text-headline-md font-black text-on-surface leading-tight">Plantedex Archival</h1>
+<span class="font-label-sm text-label-sm text-on-surface-variant">V.2.04-BIOS</span>
+</div>
+<nav class="flex flex-col gap-sm">
+<a class="flex items-center gap-md p-sm font-body-md font-bold text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container transition-none active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+                Home
+            </a>
+<a class="flex items-center gap-md p-sm font-body-md font-bold text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container transition-none active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+                Taxonomy
+            </a>
+<a class="flex items-center gap-md p-sm font-body-md font-bold bg-primary-container text-on-primary-container border-2 border-on-background shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-none active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+                Specimens
+            </a>
+<a class="flex items-center gap-md p-sm font-body-md font-bold text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container transition-none active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="pest_control">pest_control</span>
+                Pest Control
+            </a>
+</nav>
+<div class="mt-auto">
+
+</div>
+</aside>
+<div class="flex-1 flex flex-col w-full min-w-0">
+<!-- TOP NAV BAR -->
+<header class="bg-background border-b-[3px] border-on-background w-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-10 sticky top-0">
+<div class="flex justify-between items-center px-margin py-md w-full">
+<div class="flex items-center gap-md">
+<span class="md:hidden material-symbols-outlined cursor-pointer" data-icon="menu">menu</span>
+<span class="font-headline-lg text-headline-lg font-black tracking-tighter text-on-background">Plantedex</span>
+</div>
+<div class="hidden md:flex flex-1 max-w-xl mx-xl px-md items-center border-[3px] border-on-background bg-surface-container-lowest neo-focus">
+<span class="material-symbols-outlined mr-sm" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 py-sm font-label-sm" placeholder="Query specimens database..." type="text">
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-pointer hover:bg-primary-container p-xs" data-icon="account_circle">account_circle</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-primary-container p-xs" data-icon="settings">settings</span>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="p-margin flex flex-col gap-xl">
+<!-- SPECIMEN HEADER -->
+<section class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-lg">
+<div>
+<div class="flex items-center gap-sm mb-xs">
+<span class="bg-on-background text-background font-label-sm px-sm py-1">ID: #001-BM</span>
+<span class="font-label-sm text-primary font-bold">ACTIVE ARCHIVE</span>
+</div>
+<h2 class="font-display-lg text-headline-lg md:text-display-lg text-on-background uppercase tracking-tight">Begonia Maculata #1</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Polka dot begonia specimen retrieved from local nursery. Tracking chlorotic spots and foliage expansion since Q3.</p>
+</div>
+<!-- STATUS CARD -->
+<div class="w-full lg:w-96 bg-surface border-[3px] border-on-background p-md shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] stagger-2">
+<div class="flex justify-between items-center mb-md border-b-2 border-on-background pb-sm">
+<span class="font-label-sm font-bold uppercase">Vitality Metrics</span>
+<span class="material-symbols-outlined text-primary" data-icon="bolt">bolt</span>
+</div>
+<div class="space-y-md">
+<div>
+<div class="flex justify-between font-label-sm mb-1">
+<span class="">HYDRATION</span>
+<span class="font-bold">88%</span>
+</div>
+<div class="h-6 w-full bg-surface-container-highest border-2 border-on-background overflow-hidden">
+<div class="h-full bg-[#38BDF8] border-r-2 border-on-background" style="width: 88%; transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm mb-1">
+<span class="">NUTRIENT LOAD</span>
+<span class="font-bold">42%</span>
+</div>
+<div class="h-6 w-full bg-surface-container-highest border-2 border-on-background overflow-hidden">
+<div class="h-full bg-[#F59E0B] border-r-2 border-on-background" style="width: 42%; transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm mb-1">
+<span class="">LUX LEVELS</span>
+<span class="font-bold">65%</span>
+</div>
+<div class="h-6 w-full bg-surface-container-highest border-2 border-on-background overflow-hidden">
+<div class="h-full bg-primary-container border-r-2 border-on-background" style="width: 65%; transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- VISUAL TIMELINE -->
+<section>
+<div class="flex items-center gap-md mb-lg">
+<div class="bg-primary text-on-primary px-lg py-sm border-[3px] border-on-background shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<h3 class="font-headline-md text-headline-md uppercase">Visual Timeline</h3>
+</div>
+<div class="h-[3px] flex-1 bg-on-background"></div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-md">
+<!-- Photo Entry 1 -->
+<div class="bg-surface border-[3px] border-on-background p-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-transform group">
+<div class="aspect-square bg-surface-container relative overflow-hidden mb-xs">
+<img class="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A high-contrast, professional macro photograph of a Begonia Maculata leaf, showing distinct silver polka dots on a deep green surface. The lighting is crisp and scientific, emphasizing the textured foliage. The background is a clean, neutral laboratory gray. The overall aesthetic is archival and high-energy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3du8cwvbQaIxDRRnhzlyQEFoQWOpIcOnFJQb2OK_e72d9luDVABuCZ3Zy53tVWyx-O8aQtbZdg6C2ZnhWHZHYww0ZcDbwhBBFFXueYPyvMvqs-QM57ANc_rb801UGTVRdAz3ClFF798npGzgGvhbd4mBut99XsIuNkkD9y_AdOANw26-TW9U_MVj2ig3b6115jmriD2tJ-iO-Mlad8bS-RIHXPnIglIHCCEe8ZUBcgX5GNQ6cYOYK" style="transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);">
+<div class="absolute top-0 right-0 bg-on-background text-background font-label-sm px-xs">OCT 12</div>
+</div>
+<div class="font-label-sm font-bold text-center py-1 bg-surface-variant border-t-2 border-on-background">INITIATION</div>
+</div>
+<!-- Photo Entry 2 -->
+<div class="bg-surface border-[3px] border-on-background p-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] stagger-1 hover:-translate-y-1 transition-transform group">
+<div class="aspect-square bg-surface-container relative overflow-hidden mb-xs">
+<img class="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A scientific specimen photo of a young Begonia Maculata plant in a simple terra cotta pot, placed against a stark white wall with sharp architectural shadows. The plant shows new leaf growth at the apex. The color palette features vibrant electric green accents and deep earthy clay tones. Brutalist, high-contrast style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr9Ytbp1eNoHRlR6npKHVE2gtGKQYld4q9hwgaLxFH8CH3nskidp4Y54NDiGhvsgztqqvm6TdwekJytOJ7Aea27otBx8z2BLPxTgC04NKWkUfJ__L37Y_P3g-DvDUFAQKEI3XN5-RHvmuCacGvsYr0IFTdvaa_Gr4DH69CX96kq0dndukynw9THhNBkWKplfrZjYTBWYiRuYtLt3IbDW05Uw_RY-25wBQvYFqlYzhpc2D5Xzel57Z_" style="transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);">
+<div class="absolute top-0 right-0 bg-on-background text-background font-label-sm px-xs">OCT 28</div>
+</div>
+<div class="font-label-sm font-bold text-center py-1 bg-surface-variant border-t-2 border-on-background">NEW SHOOT</div>
+</div>
+<!-- Photo Entry 3 -->
+<div class="bg-surface border-[3px] border-on-background p-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-transform group">
+<div class="aspect-square bg-surface-container relative overflow-hidden mb-xs">
+<img class="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="Close-up photograph of Begonia Maculata leaves under artificial purple and blue grow lights. The silver spots on the leaves shimmer with an iridescent quality. The composition is tight and geometric, highlighting the sharp leaf edges and archival specimen quality. Deep blacks and vibrant electric tones dominate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkyStIFT6E8zLNlS-xv6FfAtR6qqICU2IXBcJsc1a2b8QmB7xTN-kuRH0CqzTgiQdYmhqdrc_OFCzy6veERxxi6rHRtWInWY4SKSkW-eDr46DaKw6dTMvD9Dd4J4SOFt-0DOpXkuCgeAB5voaqwfuda8rUa7B44NO7G_ywFy-y9Oq1H4eLIIWYgDwkAREaw1vQWsZAZC1YSO_gtdE68_mD_mJZQF6HSpU73jdtWNIftC3_xImR5vHH" style="transition: width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67);">
+<div class="absolute top-0 right-0 bg-on-background text-background font-label-sm px-xs">NOV 15</div>
+</div>
+<div class="font-label-sm font-bold text-center py-1 bg-surface-variant border-t-2 border-on-background">MATURATION</div>
+</div>
+<!-- Add New -->
+<button class="aspect-square border-[3px] border-dashed border-on-background flex flex-col items-center justify-center gap-sm bg-surface-container-low hover:bg-primary-container transition-none">
+<span class="material-symbols-outlined text-4xl" data-icon="add_a_photo">add_a_photo</span>
+<span class="font-label-sm font-black">LOG PHOTO</span>
+</button>
+</div>
+</section>
+<!-- LOGS SECTION -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+<!-- CARE ACTIONS -->
+<div class="lg:col-span-1">
+<div class="bg-secondary text-on-secondary px-lg py-sm border-[3px] border-on-background shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-lg">
+<h3 class="font-headline-md text-headline-md uppercase">Care Actions</h3>
+</div>
+<div class="space-y-md">
+<button class="w-full flex items-center justify-between bg-surface border-[3px] border-on-background p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-primary-container transition-none active:translate-x-1 active:translate-y-1 active:shadow-none">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-blue-600" data-icon="water_drop">water_drop</span>
+<span class="font-body-md font-bold">Watering Log</span>
+</div>
+<span class="font-label-sm">2H AGO</span>
+</button>
+<button class="w-full flex items-center justify-between bg-surface border-[3px] border-on-background p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-primary-container transition-none active:translate-x-1 active:translate-y-1 active:shadow-none">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-amber-600" data-icon="eco">eco</span>
+<span class="font-body-md font-bold">Fertilizing</span>
+</div>
+<span class="font-label-sm">14D AGO</span>
+</button>
+<button class="w-full flex items-center justify-between bg-surface border-[3px] border-on-background p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-primary-container transition-none active:translate-x-1 active:translate-y-1 active:shadow-none">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-red-600" data-icon="content_cut">content_cut</span>
+<span class="font-body-md font-bold">Pruning</span>
+</div>
+<span class="font-label-sm">NEVER</span>
+</button>
+</div>
+<!-- TAXONOMY CHIPS -->
+<div class="mt-xl flex flex-wrap gap-sm">
+<span class="bg-primary text-on-primary font-code-md text-label-sm px-sm py-1">PH: 6.2</span>
+<span class="bg-primary text-on-primary font-code-md text-label-sm px-sm py-1">TEMP: 24C</span>
+<span class="bg-primary text-on-primary font-code-md text-label-sm px-sm py-1">HUMIDITY: 60%</span>
+</div>
+</div>
+<!-- GROWTH LOG -->
+<div class="lg:col-span-2">
+<div class="bg-on-background text-background px-lg py-sm border-[3px] border-on-background shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-lg flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md uppercase">Growth &amp; Care Log</h3>
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+</div>
+<!-- Editor -->
+<div class="bg-surface border-[3px] border-on-background shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-md mb-xl">
+<textarea class="w-full bg-surface-container-lowest border-2 border-on-background p-md font-body-md neo-focus focus:ring-0 placeholder-on-surface-variant/40 mb-md" placeholder="Record new observations or health changes..." rows="4"></textarea>
+<div class="flex justify-end">
+<button class="bg-primary-container text-on-primary-container border-[3px] border-on-background font-bold py-sm px-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-primary transition-none active:translate-x-1 active:translate-y-1 active:shadow-none">
+                                POST TO ARCHIVE
+                            </button>
+</div>
+</div>
+<!-- Entries -->
+<div class="space-y-lg">
+<div class="relative pl-xl border-l-[3px] border-on-background">
+<div class="absolute -left-[14px] top-0 w-6 h-6 bg-primary-container border-[3px] border-on-background"></div>
+<div class="font-label-sm font-bold text-on-surface-variant mb-sm">NOV 22, 2023 @ 09:12</div>
+<div class="bg-surface border-[3px] border-on-background p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<p class="font-body-md">Leaf 4 has fully unfurled. Spotted some white residue near the stem—could be hard water deposits. Cleaning with distilled water tomorrow. Overall vitality remains high.</p>
+<div class="mt-md flex gap-sm">
+<span class="font-label-sm border border-on-background px-xs bg-surface-variant">OBSERVATION</span>
+<span class="font-label-sm border border-on-background px-xs bg-secondary-container">FOLIAGE</span>
+</div>
+</div>
+</div>
+<div class="relative pl-xl border-l-[3px] border-on-background">
+<div class="absolute -left-[14px] top-0 w-6 h-6 bg-surface border-[3px] border-on-background"></div>
+<div class="font-label-sm font-bold text-on-surface-variant mb-sm">NOV 15, 2023 @ 16:45</div>
+<div class="bg-surface border-[3px] border-on-background p-md shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<p class="font-body-md">Moved specimen closer to the humidifier. The leaf tips were showing slight crispness. Monitored for 24h, turgor pressure improved significantly.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- MOBILE NAV -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t-[3px] border-on-background flex justify-around p-sm z-50">
+<button class="flex flex-col items-center p-xs">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-bold">HOME</span>
+</button>
+<button class="flex flex-col items-center p-xs text-primary">
+<span class="material-symbols-outlined" data-icon="database" style="font-variation-settings: &quot;FILL&quot; 1;">database</span>
+<span class="text-[10px] font-bold">SPECIMENS</span>
+</button>
+<button class="flex flex-col items-center p-xs">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="text-[10px] font-bold">LOG</span>
+</button>
+<button class="flex flex-col items-center p-xs">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[10px] font-bold">SETTINGS</span>
+</button>
+</nav>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+
+        // Simulating some dynamic behavior for progress bars
+        const bars = document.querySelectorAll('.h-full');
+        bars.forEach(bar => {
+            const finalWidth = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.transition = 'width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67)';
+                bar.style.width = finalWidth;
+            }, 300);
+        });
+    </script>
+
+
+</body></html>
