@@ -132,67 +132,10 @@ cd frontend
 
 ---
 
-## Spec Kit, Fixit e Companion
-
-Este repositório já está inicializado com Spec Kit e usa a integração `agy`.
-Os comandos e skills ficam em `.specify/` e `.agents/skills/`. Execute o agente de
-desenvolvimento a partir da raiz do repositório para que esses arquivos sejam carregados.
-
-### Instalar o Spec Kit
-
-O Spec Kit requer Python 3.11 ou superior. A instalação persistente recomendada usa
-o `uv`:
-
-```bash
-uv tool install specify-cli
-specify version
-specify check
-```
-
-Em um projeto novo, inicialize a integração escolhida. Não execute novamente este
-comando no Persefone, pois ele já está inicializado:
-
-```bash
-specify init <diretorio-do-projeto> --integration <integracao>
-```
-
-### Instalar as extensões
-
-Execute na raiz de um projeto inicializado pelo Spec Kit:
-
-```bash
-specify extension add fixit
-specify extension add companion
-specify extension list
-```
-
-Após instalar ou atualizar extensões, reinicie o agente para recarregar os comandos.
-No Persefone, o Companion registra automaticamente o progresso depois das etapas de
-especificação, plano, tarefas e implementação. O Fixit é acionado manualmente para
-diagnosticar um bug com base em `spec.md`, `plan.md` e `tasks.md` antes de alterar o código.
-
-Fluxo recomendado:
-
-```text
-speckit-specify → revisar spec.md → speckit-plan → revisar plan.md
-→ speckit-tasks → revisar tasks.md → speckit-implement → speckit-converge
-```
-
-Comandos auxiliares:
-
-```text
-speckit-companion-status
-speckit-companion-resume
-speckit-companion-doctor
-speckit-fixit-run <descrição do bug>
-```
-
-Verifique a instalação atual com `specify extension list`. Neste checkout, Fixit e
-Companion já estão habilitados em `.specify/extensions.yml`.
-
----
-
 ## 🏛 Arquitetura e Princípios de Design
+
+As orientações operacionais do Codex estão em [`AGENTS.md`](AGENTS.md). Os contratos
+de API e interface ficam em [`docs/contracts/`](docs/contracts/).
 
 - **Chlorophyll Noir Aesthetic**: Interface neobrutalista com bordas sólidas de 4px, sombras projetadas de 4px a 6px sem desfoque (`shadow-hard`), cantos totalmente retos (`border-radius: 0px`) e paleta baseada em Lime vibrante (`#BDFF00`), Off-White e Charcoal (`#1A1A1A`).
 - **Diferenciação Visual de Status**: Espécimes **Possuídos** são exibidos com cores vibrantes e limão; Espécimes **Faltantes** (não catalogados) aparecem em tons de cinza dessaturados.
