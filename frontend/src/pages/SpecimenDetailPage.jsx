@@ -13,18 +13,13 @@ import SpecimenMetrics from '../components/specimen/SpecimenMetrics';
 import CareLogTimeline from '../components/specimen/CareLogTimeline';
 import VisualTimeline from '../components/specimen/VisualTimeline';
 import CareActivityForm from '../components/specimen/CareActivityForm';
-import VisualEntryForm from '../components/specimen/VisualEntryForm';
 import SpecimenEditForm from '../components/specimen/SpecimenEditForm';
 import { Icon } from '../components/ui/Icon';
+import { getCareActivity, QUICK_CARE_TYPES } from '../config/careActivities';
 
-const QUICK_CARE_ACTIONS = [
-  { type: 'watering', label: 'Rega', icon: 'water', tone: 'text-info' },
-  { type: 'fertilizing', label: 'Adubação', icon: 'leaf', tone: 'text-botanical' },
-  { type: 'repotting', label: 'Replante', icon: 'repot', tone: 'text-amber' },
-  { type: 'pruning', label: 'Poda', icon: 'pruning', tone: 'text-critical' },
-];
+const QUICK_CARE_ACTIONS = QUICK_CARE_TYPES.map(getCareActivity);
 
-function QuickCareButton({ action, onClick, latestCare }) {
+function QuickCareButton({ action, onClick, latestCare, selected }) {
   const latest = latestCare?.type === action.type && latestCare.occurred_at
     ? new Date(latestCare.occurred_at).toLocaleString()
     : 'Ainda não registrado';
@@ -33,10 +28,11 @@ function QuickCareButton({ action, onClick, latestCare }) {
       type="button"
       onClick={onClick}
       variant="care"
-      className="w-full justify-between gap-3 px-4 py-3 text-left normal-case"
+      aria-pressed={selected}
+      className={`w-full justify-between gap-3 px-4 py-3 text-left normal-case aria-pressed:translate-x-[3px] aria-pressed:translate-y-[3px] aria-pressed:shadow-hard-pressed ${selected ? action.activeButton : ''}`}
     >
       <span className="flex min-w-0 items-center gap-3">
-        <Icon name={action.icon} className={`shrink-0 ${action.tone}`} />
+        <span className={`grid h-9 w-9 shrink-0 place-items-center border-2 border-charcoal ${action.solid}`}><Icon name={action.icon} size={20} /></span>
         <span className="min-w-0">
           <span className="block truncate text-sm font-bold uppercase">{action.label}</span>
           <span className="mt-1 block truncate font-mono text-[10px] font-bold uppercase tracking-wider text-charcoal/60">{latest}</span>
@@ -50,7 +46,6 @@ function QuickCareButton({ action, onClick, latestCare }) {
 export default function SpecimenDetailPage() {
   const { specimenId } = useParams();
   const [careType, setCareType] = useState(null);
-  const [visualOpen, setVisualOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [updateError, setUpdateError] = useState('');
@@ -106,7 +101,7 @@ export default function SpecimenDetailPage() {
         <SpecimenMetrics specimen={data} />
       </section>
       {updateError && <div role="alert" className="border-4 border-critical bg-critical/10 p-3 font-semibold">{updateError}</div>}
-      <VisualTimeline specimenId={specimenId} specimenName={data.nickname} onAdd={() => setVisualOpen(true)} />
+      <VisualTimeline specimenId={specimenId} specimenName={data.nickname} />
       <section aria-label="Ações e resumo do exemplar" className="grid gap-8 lg:grid-cols-12">
         <aside className="space-y-6 lg:col-span-4">
           <section aria-labelledby="care-actions-heading" className="space-y-6">
@@ -114,12 +109,12 @@ export default function SpecimenDetailPage() {
               <h2 id="care-actions-heading" className="text-lg font-bold uppercase tracking-wide">Ações de cuidado</h2>
             </div>
             <div className="space-y-3">
-              {QUICK_CARE_ACTIONS.map((action) => <QuickCareButton key={action.type} action={action} latestCare={data.latest_care_log} onClick={() => setCareType(action.type)} />)}
-              <Button id="care-activity-open" size="sm" variant="care" className="w-full" onClick={() => setCareType('observation')}><Icon name="info" size={18} className="mr-2" /> Registrar observação</Button>
+              {QUICK_CARE_ACTIONS.map((action) => <QuickCareButton key={action.type} action={action} latestCare={data.latest_care_log} selected={careType === action.type} onClick={() => setCareType(action.type)} />)}
+              <Button id="care-activity-open" size="sm" variant="care" aria-pressed={careType === 'observation'} className={`w-full ${careType === 'observation' ? getCareActivity('observation').activeButton : ''}`} onClick={() => setCareType('observation')}><span className={`mr-2 grid h-8 w-8 place-items-center border-2 border-charcoal ${getCareActivity('observation').solid}`}><Icon name={getCareActivity('observation').icon} size={18} /></span> Registrar observação</Button>
             </div>
             <div className="mt-6 flex flex-wrap gap-2">
-              <span className="bg-botanical px-2 py-1 font-mono text-[10px] font-bold uppercase text-offwhite">Local: {data.location_in_home || 'Não informada'}</span>
-              <span className="bg-botanical px-2 py-1 font-mono text-[10px] font-bold uppercase text-offwhite">Solo: {data.initial_soil || 'Não informado'}</span>
+              <span className="rotate-1 border-2 border-charcoal bg-mint px-2 py-1 font-mono text-[10px] font-bold uppercase text-charcoal shadow-hard-sm">Local: {data.location_in_home || 'Não informada'}</span>
+              <span className="-rotate-1 border-2 border-charcoal bg-surface-variant px-2 py-1 font-mono text-[10px] font-bold uppercase text-charcoal shadow-hard-sm">Solo: {data.initial_soil || 'Não informado'}</span>
             </div>
           </section>
           <section aria-labelledby="specimen-summary-heading" className="space-y-4">
@@ -145,7 +140,6 @@ export default function SpecimenDetailPage() {
           />
         </div>
       </section>
-      <VisualEntryForm open={visualOpen} onClose={() => setVisualOpen(false)} specimenId={specimenId} />
       <SpecimenEditForm open={editOpen} onClose={() => setEditOpen(false)} specimen={data} onSave={saveEdits} />
       <Modal open={archiveOpen} onClose={updateMutation.isPending ? () => {} : () => setArchiveOpen(false)} title={data.is_active === false ? 'Reativar exemplar' : 'Arquivar exemplar'}>
         <p className="mb-5">{data.is_active === false ? 'Deseja reativar este exemplar?' : 'Deseja arquivar este exemplar? Ele ficará fora das listas ativas.'}</p>

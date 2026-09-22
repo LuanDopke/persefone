@@ -168,12 +168,12 @@ class SpecimenViewSet(viewsets.ModelViewSet):
 class CareLogViewSet(viewsets.ModelViewSet):
     """CRUD operations for care log entries."""
 
-    queryset = CareLog.objects.select_related('specimen').all()
+    queryset = CareLog.objects.select_related('specimen', 'visual_entry').all()
     serializer_class = CareLogSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['occurred_at', 'created_at']
-    http_method_names = ['get', 'post', 'head', 'options']
+    http_method_names = ['get', 'post', 'delete', 'head', 'options']
 
     def get_queryset(self):
         qs = super().get_queryset().filter(specimen__owner=self.request.user)
@@ -195,6 +195,16 @@ class CareLogViewSet(viewsets.ModelViewSet):
         if specimen.owner_id != self.request.user.id:
             raise ValidationError({'specimen': ['Exemplar não encontrado.']})
         serializer.save()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        visual_entry = getattr(instance, 'visual_entry', None)
+        stored_image = visual_entry.image if visual_entry and visual_entry.image else None
+        with transaction.atomic():
+            self.perform_destroy(instance)
+            if stored_image:
+                transaction.on_commit(lambda: stored_image.storage.delete(stored_image.name))
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class VisualEntryViewSet(viewsets.ModelViewSet):

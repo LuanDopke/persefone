@@ -6,9 +6,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from catalog.models import Species
-from catalog.serializers import SpeciesSerializer, SpeciesListSerializer, LocalSpeciesCreateSerializer
-from catalog.services import search_gbif_species
+from catalog.models import Observation, Species
+from catalog.serializers import ObservationSerializer, SpeciesSerializer, SpeciesListSerializer, LocalSpeciesCreateSerializer
+from catalog.services import GBIFServiceError, browse_gbif_taxa, get_gbif_taxon_profile, search_gbif_species
 
 
 class SpeciesViewSet(viewsets.ReadOnlyModelViewSet):
@@ -34,6 +34,47 @@ class SpeciesViewSet(viewsets.ReadOnlyModelViewSet):
             elif is_owned.lower() in ('false', '0'):
                 qs = qs.exclude(specimens__owner=self.request.user)
         return qs
+
+
+class ObservationViewSet(viewsets.ModelViewSet):
+    serializer_class = ObservationSerializer
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post', 'head', 'options']
+
+    def get_queryset(self):
+        return Observation.objects.filter(owner=self.request.user).select_related('species')
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def browse_taxonomy(request):
+    rank = request.query_params.get('rank', 'order').upper()
+    parent_key = request.query_params.get('parent_key')
+    query = request.query_params.get('q', '').strip()
+    try:
+        parent_key = int(parent_key) if parent_key else None
+        limit = int(request.query_params.get('limit', 24))
+        offset = int(request.query_params.get('offset', 0))
+        if query and len(query) < 2:
+            raise ValueError
+        data = browse_gbif_taxa(rank, parent_key=parent_key, limit=limit, offset=offset, query=query)
+    except (TypeError, ValueError):
+        return Response({'error': 'Parâmetros taxonômicos inválidos.'}, status=status.HTTP_400_BAD_REQUEST)
+    except GBIFServiceError:
+        return Response({'error': 'O catálogo taxonômico está temporariamente indisponível.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return Response(data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def taxonomy_profile(request, taxon_key):
+    try:
+        return Response(get_gbif_taxon_profile(taxon_key))
+    except GBIFServiceError:
+        return Response({'error': 'O perfil taxonômico está temporariamente indisponível.'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 @api_view(['GET'])

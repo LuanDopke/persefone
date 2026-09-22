@@ -115,6 +115,13 @@ class VisualEntry(models.Model):
         on_delete=models.CASCADE,
         related_name='visual_entries',
     )
+    care_log = models.OneToOneField(
+        'CareLog',
+        on_delete=models.CASCADE,
+        related_name='visual_entry',
+        null=True,
+        blank=True,
+    )
     image = models.ImageField(upload_to='specimens/initial/%Y/%m/%d')
     captured_at = models.DateTimeField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)

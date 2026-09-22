@@ -1,0 +1,646 @@
+<!-- Plantedex: Taxonomia com Mapa de Origem e Controles -->
+<!DOCTYPE html><html class="light" lang="en" style="width: 1280px; height: 991px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        try {
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "primary": "#4b6700",
+                            "on-primary": "#ffffff",
+                            "primary-container": "#bdff00",
+                            "on-primary-container": "#141f00",
+                            "secondary": "#46645e",
+                            "on-secondary": "#ffffff",
+                            "secondary-container": "#c8eae1",
+                            "on-secondary-container": "#4c6a64",
+                            "tertiary": "#795900",
+                            "on-tertiary": "#ffffff",
+                            "tertiary-container": "#ffe7bc",
+                            "on-tertiary-container": "#866300",
+                            "background": "#fcf9f8",
+                            "on-background": "#1c1b1b",
+                            "surface": "#fcf9f8",
+                            "on-surface": "#1c1b1b",
+                            "surface-variant": "#e5e2e1",
+                            "on-surface-variant": "#434933",
+                            "outline": "#1c1b1b",
+                            "outline-variant": "#c2caad",
+                            "error": "#ba1a1a"
+                        },
+                        borderRadius: {
+                            "DEFAULT": "0px",
+                            "lg": "0px",
+                            "xl": "0px",
+                            "full": "9999px"
+                        },
+                        spacing: {
+                            "xs": "4px",
+                            "sm": "8px",
+                            "md": "16px",
+                            "lg": "24px",
+                            "xl": "48px",
+                            "margin": "24px",
+                            "gutter": "20px",
+                        },
+                        fontFamily: {
+                            lexend: ["Lexend", "sans-serif"],
+                            body: ["Lexend", "sans-serif"],
+                            mono: ["JetBrains Mono", "monospace"]
+                        },
+                        boxShadow: {
+                            'neobrutal': '4px 4px 0px 0px #1c1b1b',
+                            'neobrutal-lg': '8px 8px 0px 0px #1c1b1b',
+                        }
+                    },
+                },
+            }
+        } catch (_e) {}
+    </script>
+<style>
+        .neobrutal-shadow { box-shadow: 4px 4px 0px 0px #1c1b1b; }
+        .neobrutal-interactive:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px 0px #1c1b1b; }
+        .tree-line-v { border-left: 4px solid #1c1b1b; }
+        .tree-line-h { border-top: 4px solid #1c1b1b; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body overflow-hidden h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="w-full top-0 z-50 flex justify-between items-center px-lg py-sm bg-background border-b-[4px] border-outline">
+<div class="flex items-center gap-md">
+<span class="font-lexend text-2xl font-black text-primary uppercase tracking-tighter">Plantedex</span>
+</div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm border-b-[4px] border-primary-container font-black" href="#">Taxonomy</a>
+<a class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors" href="#">Specimens</a>
+<a class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-md">
+<div class="relative hidden lg:block">
+<input class="bg-surface border-[4px] border-outline px-md py-xs pr-xl focus:ring-0 focus:outline-none w-64 neobrutal-shadow" placeholder="Search taxonomy..." type="text">
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2">search</span>
+</div>
+<button class="material-symbols-outlined text-outline p-xs border-[4px] border-outline bg-primary-container neobrutal-shadow neobrutal-interactive">notifications</button>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-full p-md gap-sm bg-surface w-64 border-r-[4px] border-outline">
+<div class="mb-lg border-[4px] border-outline p-sm bg-white neobrutal-shadow">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined font-black text-primary">biotech</span>
+<div>
+<p class="font-black text-xs uppercase leading-tight">Taxonomy<br>Explorer</p>
+<p class="text-[10px] font-bold text-on-surface-variant">Phylum: Magnoliophyta</p>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-xs flex-1">
+<button class="flex items-center gap-md p-md font-bold border-[4px] border-transparent hover:border-outline hover:bg-white transition-all text-left">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="text-[10px] uppercase tracking-widest">Families</span>
+</button>
+<button class="flex items-center gap-md p-md font-black bg-primary-container text-on-primary-container border-[4px] border-outline neobrutal-shadow text-left">
+<span class="material-symbols-outlined">category</span>
+<span class="text-[10px] uppercase tracking-widest">Genera</span>
+</button>
+<button class="flex items-center gap-md p-md font-bold border-[4px] border-transparent hover:border-outline hover:bg-white transition-all text-left">
+<span class="material-symbols-outlined">psychology_alt</span>
+<span class="text-[10px] uppercase tracking-widest">Species</span>
+</button>
+<button class="flex items-center gap-md p-md font-bold border-[4px] border-transparent hover:border-outline hover:bg-white transition-all text-left">
+<span class="material-symbols-outlined">assignment</span>
+<span class="text-[10px] uppercase tracking-widest">Specimen Logs</span>
+</button>
+</nav>
+<button class="mt-auto w-full bg-outline text-white font-black py-md px-lg neobrutal-shadow neobrutal-interactive uppercase text-xs">
+            Add Specimen
+        </button>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto bg-surface-container-low flex flex-col relative">
+<!-- Top Info Panel -->
+<div class="m-lg p-lg bg-white border-[4px] border-outline neobrutal-shadow z-30">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-lg">
+<div class="col-span-1">
+<h3 class="font-black text-2xl leading-none uppercase tracking-tight">Helianthus annuus</h3>
+<p class="text-xs font-bold opacity-70 italic mt-1">Common Sunflower</p>
+<div class="mt-4 flex gap-md">
+<div class="border-l-[3px] border-primary pl-2">
+<span class="block uppercase font-black opacity-60 text-[8px]">Family</span>
+<span class="font-bold text-sm">Asteraceae</span>
+</div>
+<div class="border-l-[3px] border-primary pl-2">
+<span class="block uppercase font-black opacity-60 text-[8px]">Genus</span>
+<span class="font-bold text-sm">Helianthus</span>
+</div>
+</div>
+</div>
+<div class="col-span-2 border-[4px] border-outline relative h-24 bg-surface-variant overflow-hidden group flex flex-col">
+<div class="absolute top-0 left-0 bg-outline text-white text-[8px] font-black px-2 py-1 border-r-[4px] border-b-[4px] border-outline z-10">Region of Origin</div>
+<img alt="Geographic distribution map" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkw_UgfFW7SZTwBAodwxMmk108Uc57642ndbD_neNKaHSnYcE-rR_TErZFAxz80zpAjNNJn_cEfA_YxICDh-InOpN80ljk5YRPwUodOIioULy37a3hDgJ50aZtMAu5UO9XCtOh0vNNdVzdj4r16UJahzOoz5TGBq0RIfdRMS5I5twp9QCRB6P5u20Gl3_cykETNyRnhFRieRgfWFt35b3S0i9znSPRN7kyd6KsgQyrX_if6Q8toKmzozXkZEgXj8caTQ">
+</div>
+<div class="col-span-1 flex flex-col items-end justify-between">
+<div class="text-right">
+<span class="block uppercase font-black opacity-60 text-[8px]">Reference ID</span>
+<span class="font-mono font-bold text-lg">8829-X</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Header -->
+<div class="px-lg pb-sm flex justify-between items-end">
+<div>
+<h1 class="font-black text-3xl uppercase tracking-tight leading-none mb-2">Technical Botanical Hierarchy</h1>
+<p class="text-xs font-bold text-on-surface-variant flex items-center gap-2">
+                    Visualizing phylogenetic relationships. 
+                    <span class="bg-primary-container text-on-primary-container px-2 py-0.5 border-[3px] border-outline font-black">Helianthus annuus</span>
+                    highlighted in path.
+                </p>
+</div>
+<div class="flex gap-md">
+<button class="border-[4px] border-outline bg-white px-md py-2 font-black uppercase text-xs neobrutal-shadow neobrutal-interactive flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filter
+                </button>
+<button class="border-[4px] border-outline bg-white px-md py-2 font-black uppercase text-xs neobrutal-shadow neobrutal-interactive flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">download</span> Export
+                </button>
+</div>
+</div>
+<!-- Taxonomic Tree Diagram -->
+<div class="flex-1 p-lg relative overflow-visible flex flex-col items-center"><div class="absolute top-4 right-4 flex flex-col gap-2 z-50">
+<button class="w-10 h-10 bg-white border-[4px] border-outline flex items-center justify-center neobrutal-shadow neobrutal-interactive">
+<span class="material-symbols-outlined font-black">zoom_in</span>
+</button>
+<button class="w-10 h-10 bg-white border-[4px] border-outline flex items-center justify-center neobrutal-shadow neobrutal-interactive">
+<span class="material-symbols-outlined font-black">zoom_out</span>
+</button>
+</div>
+<!-- Root node: Plant Kingdom -->
+<div class="relative z-10">
+<div class="w-64 bg-white border-[4px] border-outline p-md neobrutal-shadow text-center">
+<span class="font-black tracking-widest uppercase text-lg">Plant Kingdom</span>
+<p class="text-[10px] font-normal mt-2 leading-tight opacity-90">Primary taxonomic group comprising multicellular eukaryotes that conduct photosynthesis.</p>
+</div>
+<!-- Line down to split -->
+<div class="h-12 w-1 bg-outline mx-auto"></div>
+</div>
+<!-- Main Branches Split -->
+<div class="relative w-full max-w-4xl">
+<!-- Horizontal bar -->
+<div class="h-1 w-full bg-outline absolute top-0 left-0"></div>
+<!-- Vertical lines to Cryptogamia and Phanerogamia -->
+<div class="flex justify-between">
+<div class="w-1 h-12 bg-outline ml-[25%]"></div>
+<div class="w-1 h-12 bg-outline mr-[25%]"></div>
+</div>
+<!-- Level 1 Nodes -->
+<div class="flex justify-around items-start">
+<!-- Branch A: Cryptogamia -->
+<div class="flex flex-col items-center w-1/2">
+<div class="w-56 bg-white border-[4px] border-outline p-md neobrutal-shadow">
+<p class="font-black text-sm uppercase tracking-wider text-center">Cryptogamia</p>
+<p class="text-[10px] font-medium mt-1.5 text-on-surface-variant leading-relaxed text-center">Reproduction by spores, without flowers or seeds.</p>
+</div>
+<!-- Line down to sub-split -->
+<div class="h-12 w-1 bg-outline"></div>
+<!-- Sub-branches split -->
+<div class="relative w-full">
+<div class="h-1 w-[60%] bg-outline mx-auto"></div>
+<div class="flex justify-center gap-24">
+<div class="w-1 h-12 bg-outline"></div>
+<div class="w-1 h-12 bg-outline"></div>
+</div>
+<!-- Sub-level Cards -->
+<div class="flex justify-center gap-8">
+<!-- Algae -->
+<div class="w-32 bg-surface-variant border-[4px] border-outline p-2 neobrutal-shadow group grayscale">
+<p class="font-black text-[10px] uppercase mb-1 text-center">Algae</p>
+<img class="w-full aspect-square border-[2px] border-outline object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHI6S5q8EmUb5T_bbX3oQTPgLeXoPTSVJnscYGOUvbH2iCUlmNrNm14QYsAeElwVG6o4JvkxqgunEzip_UqSz4RbNUSMmDIOzrZL3IpH6zpbzYZyYkGt8hGFqiauTr3Xby6I3dy289vvEenpxsQK1z7re0PuzgEsyFlupvY4ndX2tTojib769vWKv-IpK4HF6wmQhCZy8xcP7JsKjDU-B_fAdPB_5PP9HKNJt298vPsN42VMXJT_A5">
+<div class="mt-2 text-center">
+<span class="bg-outline text-white text-[8px] px-2 py-0.5 font-black uppercase">Missing</span>
+</div>
+</div>
+<!-- Mosses -->
+<div class="w-32 bg-surface-variant border-[4px] border-outline p-2 neobrutal-shadow group grayscale">
+<p class="font-black text-[10px] uppercase mb-1 text-center">Mosses</p>
+<img class="w-full aspect-square border-[2px] border-outline object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5ZznrjlDKsacOho6upA3tNvgK0oFfO4pql7HeOE_ghM3Ur-Kr1SONZwjPij1LIfQV6bzm7JwXh6WQ-oMR_0TzJYA5Q_o1Fi7BE6j1pXZBKtgS1WLgerEvcqT4Yq7oPkwwqXFXPO7RmuogRvX-vCTcA4bTXrg5W0hy3WGg8-UJdJymUcoZTAm9Q9h23_0BwpC3CDKAlq8VyxMy0S7vPkonsjvOIXs4uGDkkezJnOyq1KE_EFL5hhaS">
+<div class="mt-2 text-center">
+<span class="bg-outline text-white text-[8px] px-2 py-0.5 font-black uppercase">Missing</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Branch B: Phanerogamia (ACTIVE) -->
+<div class="flex flex-col items-center w-1/2">
+<div class="w-56 bg-primary-container border-[4px] border-outline p-md neobrutal-shadow">
+<p class="font-black text-sm uppercase tracking-wider text-center">Phanerogamia</p>
+<p class="text-[10px] font-bold mt-1.5 text-on-primary-container leading-relaxed text-center">Seed-bearing plants with visible reproductive organs.</p>
+</div>
+<!-- Line down to sub-split -->
+<div class="h-12 w-1 bg-outline"></div>
+<!-- Sub-branches split -->
+<div class="relative w-full">
+<div class="h-1 w-[60%] bg-outline mx-auto"></div>
+<div class="flex justify-center gap-24">
+<div class="w-1 h-12 bg-outline"></div>
+<div class="w-1 h-12 bg-outline"></div>
+</div>
+<!-- Sub-level Cards -->
+<div class="flex justify-center gap-8">
+<!-- Gymnosperm -->
+<div class="w-32 bg-surface-variant border-[4px] border-outline p-2 neobrutal-shadow group grayscale">
+<p class="font-black text-[10px] uppercase mb-1 text-center">Gymnosperm</p>
+<img class="w-full aspect-square border-[2px] border-outline object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvYYD7vncz60NAsHmtpzanTKvDPjEUH3OC-ZrV57QFlZiL_FugetrLqWozabr3x_Tld5d1-OwP7rm0Bp47HUdDbRrsr9SpZuVtt1hKY2E_O64AvM1gMYtsy4p5oiRGrBGh6ejf4_DwBpyJR_xqPdiFRXLPOu7XL1m33Q50pX2-k6ppvkKEa8H3R3xlqeZ83vtHUsq-vDlKBfLx5xpxGsXIXWp2-ERtsBbk2-b8Gp2ijhhf9AVhZCMF">
+<div class="mt-2 text-center">
+<span class="bg-outline text-white text-[8px] px-2 py-0.5 font-black uppercase">Missing</span>
+</div>
+</div>
+<!-- Angiosperm (ACTIVE) -->
+<div class="w-32 bg-white border-[4px] border-primary-container p-2 neobrutal-shadow ring-[4px] ring-outline relative">
+<p class="font-black text-[10px] uppercase mb-1 text-center">Angiosperm</p>
+<img class="w-full aspect-square border-[2px] border-outline object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4oM-byx_d5qCzB18ByQ0yVH8MH8RdMKwJlJsQccM0ZnVyjCtOkKyM_J2GXxHFFfVgMOryLjiVe9P2oCe6gbtedG6vQamHg9D3v2RJ7CvU7ctOjsSvVcbwvdcbqFjvV2hmdNFqn4n6MKp10WcPV2S5ffiz1RpoR6Qe1P_j0Ouv1yBeYjAkd1sXgdlFP4Fykhpz6yhoNhDCamoO3BfV3e_DTRj0Eh1KzAmz5aEv6XXGibnCNX1bLXXg">
+<div class="mt-2 text-center">
+<span class="bg-primary-container text-on-primary-container text-[8px] px-2 py-0.5 font-black uppercase border-[2px] border-outline">Owned</span>
+</div>
+<div class="absolute -bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center">
+<div class="w-1 h-6 bg-outline"></div>
+<div class="bg-primary text-white text-[7px] px-2 py-1 font-black uppercase border-[2px] border-outline whitespace-nowrap">Dicotyledon Path</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Watermark background -->
+<div class="absolute bottom-4 right-4 pointer-events-none opacity-20 select-none">
+<div class="font-black text-4xl leading-none">PHYLOGENETIC MAP_GEN_V</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Insight FAB -->
+<button class="fixed bottom-lg right-lg w-16 h-16 bg-primary-container border-[4px] border-outline text-outline rounded-full flex items-center justify-center neobrutal-shadow neobrutal-interactive z-[100] lg:hidden">
+<span class="material-symbols-outlined font-black text-2xl">bar_chart</span>
+</button>
+<script>
+    // Interactivity for buttons
+    document.querySelectorAll('.neobrutal-interactive').forEach(btn => {
+        btn.addEventListener('mousedown', () => {
+            btn.classList.add('translate-x-[2px]', 'translate-y-[2px]', 'shadow-none');
+        });
+        const reset = () => {
+            btn.classList.remove('translate-x-[2px]', 'translate-y-[2px]', 'shadow-none');
+        };
+        btn.addEventListener('mouseup', reset);
+        btn.addEventListener('mouseleave', reset);
+    });
+</script>
+<div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>
+
+<!-- Dendrogram Taxonomy Explorer -->
+<!DOCTYPE html><html class="light" lang="en" style="width: 1280px; height: 1096px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Plantedex | Botanical Dendrogram Explorer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        .neobrutal-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+        .neobrutal-shadow-lg {
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+        }
+        .active-shadow-none:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+        }
+        /* Custom scrollbar for neobrutalist look */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fcf9f8;
+            border-left: 3px solid #1c1b1b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b6700;
+            border: 2px solid #1c1b1b;
+        }
+        /* Pixel grid texture */
+        .pixel-grid {
+            background-image: radial-gradient(#1c1b1b 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-color: #fcf9f8;
+            opacity: 0.05;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#1c1b1b",
+                      "on-surface": "#1c1b1b",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed": "#00201c",
+                      "on-tertiary-fixed": "#261a00",
+                      "on-surface-variant": "#434933",
+                      "tertiary": "#795900",
+                      "surface-variant": "#e5e2e1",
+                      "on-primary-container": "#547300",
+                      "on-primary-fixed-variant": "#374e00",
+                      "secondary-fixed": "#c8eae1",
+                      "outline-variant": "#c2caad",
+                      "secondary-container": "#c8eae1",
+                      "tertiary-container": "#ffe7bc",
+                      "primary": "#4b6700",
+                      "on-secondary-fixed-variant": "#2e4c46",
+                      "primary-fixed-dim": "#a0d800",
+                      "inverse-primary": "#a0d800",
+                      "tertiary-fixed": "#ffdfa0",
+                      "surface": "#fcf9f8",
+                      "secondary": "#46645e",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "surface-container-low": "#f6f3f2",
+                      "surface-tint": "#4b6700",
+                      "outline": "#737a61",
+                      "on-tertiary-container": "#866300",
+                      "on-error-container": "#93000a",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e5e2e1",
+                      "surface-container-high": "#eae7e7",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed-dim": "#accdc5",
+                      "tertiary-fixed-dim": "#fbbc00",
+                      "primary-container": "#bdff00",
+                      "background": "#fcf9f8",
+                      "surface-dim": "#dcd9d9",
+                      "inverse-surface": "#313030",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-container": "#4c6a64",
+                      "inverse-on-surface": "#f3f0ef",
+                      "surface-container": "#f0eded",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed": "#141f00",
+                      "surface-bright": "#fcf9f8",
+                      "primary-fixed": "#b7f700",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "margin": "24px",
+                      "sm": "8px",
+                      "unit": "4px",
+                      "border-width": "3px",
+                      "lg": "24px",
+                      "md": "16px",
+                      "gutter": "20px",
+                      "xl": "48px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Lexend"],
+                      "body-md": ["Lexend"],
+                      "headline-lg": ["Lexend"],
+                      "label-sm": ["JetBrains Mono"],
+                      "headline-md": ["Lexend"],
+                      "headline-lg-mobile": ["Lexend"],
+                      "code-md": ["JetBrains Mono"],
+                      "display-lg": ["Lexend"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "code-md": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                      "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-hidden flex flex-col h-screen">
+<!-- TopNavBar (Shared Component Identity) -->
+<header class="flex justify-between items-center px-margin py-md w-full bg-background border-b-3 border-on-background shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] z-50">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg text-headline-lg font-black tracking-tighter text-on-background">Plantedex</span>
+<div class="hidden md:flex gap-sm ml-xl">
+<button class="px-md py-xs font-headline-md text-headline-md text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-none active:translate-x-1 active:translate-y-1 active:shadow-none">Home</button>
+<button class="px-md py-xs font-headline-md text-headline-md text-on-background border-b-4 border-primary hover:bg-primary-container hover:text-on-primary-container transition-none active:translate-x-1 active:translate-y-1 active:shadow-none">Taxonomy</button>
+<button class="px-md py-xs font-headline-md text-headline-md text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container transition-none active:translate-x-1 active:translate-y-1 active:shadow-none">Specimens</button>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<input class="border-3 border-on-background px-md py-xs font-code-md text-code-md focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#bdff00] transition-shadow" placeholder="Search Database..." type="text">
+</div>
+<span class="material-symbols-outlined text-headline-md cursor-pointer hover:text-primary transition-colors">account_circle</span>
+<span class="material-symbols-outlined text-headline-md cursor-pointer hover:text-primary transition-colors">settings</span>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar (Shared Component Logic) -->
+<aside class="hidden lg:flex flex-col h-full p-md gap-sm border-r-3 border-on-background w-64 bg-surface shrink-0">
+<div class="mb-lg">
+<h2 class="font-headline-md text-headline-md font-black text-on-surface">Plantedex Archival</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">V.2.04-BIOS</p>
+</div>
+<nav class="flex flex-col gap-sm">
+<button class="flex items-center gap-md p-sm font-body-md text-body-md font-bold text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container transition-none active:scale-95">
+<span class="material-symbols-outlined">home</span> Home
+                </button>
+<button class="flex items-center gap-md p-sm font-body-md text-body-md font-bold bg-primary-container text-on-primary-container border-2 border-on-background shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-none active:scale-95">
+<span class="material-symbols-outlined">category</span> Taxonomy
+                </button>
+<button class="flex items-center gap-md p-sm font-body-md text-body-md font-bold text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container transition-none active:scale-95">
+<span class="material-symbols-outlined">database</span> Specimens
+                </button>
+<button class="flex items-center gap-md p-sm font-body-md text-body-md font-bold text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container transition-none active:scale-95">
+<span class="material-symbols-outlined">pest_control</span> Pest Control
+                </button>
+</nav>
+<button class="mt-auto border-3 border-on-background bg-primary-container p-md font-headline-md text-headline-md font-bold neobrutal-shadow active-shadow-none text-center">
+                Add New Specimen
+            </button>
+</aside>
+<!-- Main Content Area: Dendrogram Explorer -->
+<main class="flex-1 relative bg-background overflow-hidden flex flex-col">
+<div class="absolute inset-0 pixel-grid pointer-events-none"></div>
+<!-- Page Title Header -->
+<div class="p-lg bg-surface border-b-3 border-on-background relative z-10 flex justify-between items-end">
+<div>
+<span class="font-label-sm text-label-sm uppercase bg-on-background text-background px-sm py-xs inline-block mb-sm">Visual Archive System</span>
+<h1 class="font-display-lg text-headline-lg md:text-display-lg leading-tight uppercase">Botanical Dendrogram Explorer</h1>
+</div>
+<div class="flex gap-sm">
+<button class="border-3 border-on-background px-md py-sm bg-surface-container hover:bg-surface-variant neobrutal-shadow active-shadow-none font-bold">Zoom In</button>
+<button class="border-3 border-on-background px-md py-sm bg-surface-container hover:bg-surface-variant neobrutal-shadow active-shadow-none font-bold">Zoom Out</button>
+</div>
+</div>
+<!-- Dendrogram Canvas Area -->
+<div class="flex-1 overflow-auto p-xl relative">
+<div class="min-w-[1200px] flex items-center justify-start gap-xl h-full relative">
+<!-- SVG Connections (Absolute behind cards) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;">
+<!-- Family to Genus -->
+<path d="M 280 400 L 400 400" fill="none" stroke="#1c1b1b" stroke-width="4"></path>
+<path d="M 400 400 L 400 200 L 520 200" fill="none" stroke="#1c1b1b" stroke-width="4"></path>
+<path d="M 400 400 L 400 600 L 520 600" fill="none" stroke="#1c1b1b" stroke-width="4"></path>
+<!-- Genus (Monstera) to Species -->
+<path d="M 760 200 L 820 200 L 820 100 L 880 100" fill="none" stroke="#1c1b1b" stroke-width="4"></path>
+<path d="M 760 200 L 820 200 L 820 300 L 880 300" fill="none" stroke="#1c1b1b" stroke-width="4"></path>
+</svg>
+<!-- Node 1: Family (Level 1) -->
+<div class="flex flex-col items-center justify-center relative z-10 w-64">
+<div class="bg-secondary-container border-3 border-on-background p-md w-full neobrutal-shadow-lg transform -rotate-1 hover:rotate-0 transition-transform cursor-pointer">
+<span class="font-code-md text-label-sm bg-secondary text-white px-sm py-xs mb-md block w-fit">LEVEL 01: FAMILY</span>
+<h3 class="font-headline-md text-headline-md mb-xs">Araceae</h3>
+<p class="font-body-md text-on-surface-variant">The Aroid Family. Characterized by a spadix and spathe.</p>
+</div>
+</div>
+<!-- Column for Genus (Level 2) -->
+<div class="flex flex-col justify-center gap-xl relative z-10 w-64 ml-lg">
+<!-- Active Genus Node -->
+<div class="bg-primary-container border-3 border-on-background p-md w-full neobrutal-shadow-lg transform rotate-1 hover:rotate-0 transition-transform cursor-pointer">
+<span class="font-code-md text-label-sm bg-primary text-white px-sm py-xs mb-md block w-fit">LEVEL 02: GENUS</span>
+<h3 class="font-headline-md text-headline-md mb-xs">Monstera</h3>
+<p class="font-body-md text-on-surface-variant">Vining perennials native to tropical America.</p>
+</div>
+<!-- Other Genus Node -->
+<div class="bg-surface-variant border-3 border-on-background p-md w-full neobrutal-shadow hover:bg-white transition-colors cursor-pointer opacity-80 hover:opacity-100">
+<span class="font-code-md text-label-sm bg-outline text-white px-sm py-xs mb-md block w-fit">LEVEL 02: GENUS</span>
+<h3 class="font-headline-md text-headline-md mb-xs">Philodendron</h3>
+<p class="font-body-md text-on-surface-variant">Diverse genus containing hundreds of species.</p>
+</div>
+</div>
+<!-- Column for Species (Level 3) -->
+<div class="flex flex-col justify-center gap-lg relative z-10 w-72 ml-lg">
+<!-- Species Node 1 -->
+<div class="bg-white border-3 border-on-background p-md w-full neobrutal-shadow-lg hover:translate-x-2 transition-transform cursor-pointer border-l-[12px] border-l-primary">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-sm text-label-sm bg-on-background text-white px-sm py-xs">SPECIMEN #092</span>
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-xs italic">M. Deliciosa</h3>
+<div class="h-32 mb-md overflow-hidden border-2 border-on-background">
+<img class="w-full h-full object-cover" data-alt="A macro photography shot of a giant Monstera Deliciosa leaf showing deep fenestrations and a vibrant electric green texture. The lighting is high-contrast and dramatic, highlighting the waxy surface and structural veins against a clean architectural concrete background. Professional botanical photography style with crisp edges and high color saturation consistent with a modern environmental tech UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBULYq14EuVWElZt_5ZxwM0lYa264OBE6W2DSD2zvEOMrmOyW4auiEsMpriYDteezMv6wkzHrxNIE4_Am9SaPPj7SxVlBMwUNzZLfshz9NLKtRt1yyOrBAwH9PRdYNXx7L2H6l4VZKmcEotIVJyM9iwMOsn5zRR64A_R-gPGE2DI8CDhk7mbAbvJEI0rvuyLsWbtzHb0tFWlAlKzwUrRXqkLRDaFN4i82b-jv1-Vt5zY_pqJilvEH0q">
+</div>
+<p class="font-body-md text-on-surface-variant">The famous Swiss Cheese plant.</p>
+</div>
+<!-- Species Node 2 -->
+<div class="bg-white border-3 border-on-background p-md w-full neobrutal-shadow hover:translate-x-2 transition-transform cursor-pointer border-l-[12px] border-l-tertiary">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-sm text-label-sm bg-on-background text-white px-sm py-xs">SPECIMEN #104</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-xs italic">M. Adansonii</h3>
+<p class="font-body-md text-on-surface-variant">Smaller climbing species with numerous holes.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Side Panel: Species Insights -->
+<aside class="w-96 bg-surface border-l-3 border-on-background flex flex-col h-full z-20 shadow-[-4px_0px_0px_0px_rgba(0,0,0,1)]">
+<div class="p-lg bg-primary border-b-3 border-on-background">
+<h2 class="font-headline-md text-headline-md text-white uppercase">Species Insights</h2>
+<p class="font-code-md text-label-sm text-primary-fixed-dim">DATA_STREAM: MONSTERA_DELICIOSA</p>
+</div>
+<div class="flex-1 overflow-y-auto p-lg space-y-lg">
+<!-- Editable Observations -->
+<section>
+<label class="font-headline-md text-body-lg font-bold mb-sm block">Field Observations</label>
+<div class="relative group">
+<textarea class="w-full min-h-[150px] border-3 border-on-background p-md font-body-md focus:ring-0 focus:outline-none focus:bg-primary-container/10 resize-none" placeholder="Enter specimen notes here...">Specimen displays exceptional fenestration patterns. Growth rate observed at 15cm per month under laboratory conditions. No signs of thrips or fungal spotting on the lower dorsum of the leaves.</textarea>
+<div class="absolute -bottom-2 -right-2 bg-on-background text-white px-sm py-xs font-label-sm opacity-0 group-hover:opacity-100 transition-opacity">EDITABLE</div>
+</div>
+</section>
+<!-- Technical Specs -->
+<section class="space-y-md">
+<h3 class="font-headline-md text-body-lg font-bold">Biological Profile</h3>
+<div class="border-3 border-on-background p-md bg-white neobrutal-shadow">
+<div class="flex justify-between items-center mb-sm">
+<span class="font-label-sm uppercase font-bold text-on-surface-variant">Origin</span>
+<span class="font-body-md font-bold">Southern Mexico / Panama</span>
+</div>
+<div class="w-full h-24 border-2 border-on-background overflow-hidden mb-sm">
+<div class="w-full h-full bg-cover bg-center" data-alt="A satellite style topographic map of Southern Mexico and Central America featuring vibrant neon green highlights on tropical forest zones. The map uses high-contrast black and white styling with sharp vector-like topography lines. Clean, archival aesthetic for an environmental data dashboard." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQEJsZE9QfaApPvoxOVmiT-loxd2unSJpBMfF-z3yNK1rNVy5unIdLyCuD-ymHi-Gkje7a69MdRAbE2bTWVpzrAxjaRq8r8yb4iqZJjvJFCk2Pup0i8xWXy7VEyLDbC_mWfk8DlbqEkw0kYBkJUEKe8VCFNDOVNq4an_pfwIlOVlCTUhWGxll6Srr_5RMe1R7ZoyDknPJsppd13aEgj-rrptOfvmU3sOkpfQ3P4NQ5Ew4W_D3p0J9c')"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div class="border-3 border-on-background p-md bg-tertiary-container">
+<span class="material-symbols-outlined block mb-xs">sunny</span>
+<span class="font-label-sm block uppercase font-bold">Sun Needs</span>
+<span class="font-body-md font-bold">Bright Indirect</span>
+</div>
+<div class="border-3 border-on-background p-md bg-secondary-container">
+<span class="material-symbols-outlined block mb-xs">humidity_high</span>
+<span class="font-label-sm block uppercase font-bold">Humidity</span>
+<span class="font-body-md font-bold">60% - 80%</span>
+</div>
+</div>
+</section>
+<!-- Growth Graph Visualization -->
+<section class="border-3 border-on-background p-md bg-white">
+<h3 class="font-label-sm uppercase font-bold mb-md">Relative Humidity Thresholds</h3>
+<div class="h-24 w-full flex items-end gap-1 px-sm">
+<div class="bg-secondary w-full" style="height: 40%;"></div>
+<div class="bg-secondary w-full" style="height: 55%;"></div>
+<div class="bg-secondary w-full" style="height: 70%;"></div>
+<div class="bg-primary w-full" style="height: 90%;"></div>
+<div class="bg-primary w-full" style="height: 85%;"></div>
+<div class="bg-tertiary w-full" style="height: 45%;"></div>
+<div class="bg-error w-full" style="height: 20%;"></div>
+</div>
+<div class="flex justify-between mt-sm font-label-sm text-on-surface-variant">
+<span>JAN</span>
+<span>MAY</span>
+<span>DEC</span>
+</div>
+</section>
+</div>
+<!-- Action Footer -->
+<div class="p-lg bg-surface border-t-3 border-on-background grid grid-cols-2 gap-md">
+<button class="border-3 border-on-background bg-white py-md font-bold hover:bg-on-background hover:text-white transition-colors neobrutal-shadow active-shadow-none">Print Label</button>
+<button class="border-3 border-on-background bg-primary-container py-md font-bold hover:bg-primary transition-colors neobrutal-shadow active-shadow-none">Update Data</button>
+</div>
+</aside>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        // Simple click listener for nodes to show selection state
+        document.querySelectorAll('.neobrutal-shadow').forEach(node => {
+            node.addEventListener('click', function() {
+                // Remove active classes from others in same level logic can go here
+                // For now, just a visual feedback
+                this.classList.toggle('border-primary');
+            });
+        });
+    </script>
+</body></html>

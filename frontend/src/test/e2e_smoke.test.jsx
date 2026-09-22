@@ -12,7 +12,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, within, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
@@ -214,21 +214,26 @@ describe('Scenario 3: Specimen Registration', () => {
     expect(screen.getByText('Monstera deliciosa')).toBeInTheDocument();
   });
 
-  it('opens Add Specimen modal on button click', async () => {
+  it('navigates directly to specimen registration', async () => {
     apiClient.get.mockResolvedValue({ data: { results: [] } });
+    const queryClient = createTestQueryClient();
 
     render(
-      <TestWrapper>
-        <SpecimenCatalog />
-      </TestWrapper>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={['/collection']}>
+          <Routes>
+            <Route path="/collection" element={<SpecimenCatalog />} />
+            <Route path="/specimens/new" element={<p>Tela de cadastro</p>} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
     );
 
     const addBtn = screen.getByText('+ Add Specimen');
     fireEvent.click(addBtn);
 
-    await waitFor(() => {
-      expect(screen.getByText('Register Specimen')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('Tela de cadastro')).toBeInTheDocument();
+    expect(screen.queryByText('Register Specimen')).not.toBeInTheDocument();
   });
 });
 
@@ -342,7 +347,7 @@ describe('Scenario 5: Navigation & Responsive Shell', () => {
     );
     expect(screen.getByText('Painel')).toBeInTheDocument();
     expect(screen.getByText('Coleção')).toBeInTheDocument();
-    expect(screen.getByText('Descobrir')).toBeInTheDocument();
+    expect(screen.getByText('Observações')).toBeInTheDocument();
     expect(screen.getByText('Taxonomia')).toBeInTheDocument();
   });
 

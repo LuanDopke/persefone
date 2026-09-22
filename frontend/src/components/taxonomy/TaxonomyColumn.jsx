@@ -1,0 +1,106 @@
+import { useEffect, useState } from 'react';
+import { Button } from '../ui/Button';
+import Input from '../ui/Input';
+
+const TONES = {
+  order: 'bg-coral',
+  family: 'bg-amber',
+  genus: 'bg-mint',
+  species: 'bg-lilac',
+};
+
+const LABELS = {
+  order: 'Ordens',
+  family: 'Famílias',
+  genus: 'Gêneros',
+  species: 'Espécies',
+};
+
+const SEARCH_LABELS = {
+  order: 'ordens',
+  family: 'famílias',
+  genus: 'gêneros',
+  species: 'espécies',
+};
+
+export default function TaxonomyColumn({ rank, query, selected, onSelect, enabled, parentName, search, onSearch }) {
+  const [draft, setDraft] = useState(search);
+  const [searchError, setSearchError] = useState('');
+  useEffect(() => setDraft(search), [search]);
+  const pages = query.data?.pages || [];
+  const taxa = pages.flatMap((page) => page.results);
+  const count = pages[0]?.count;
+  const submitSearch = (event) => {
+    event.preventDefault();
+    const value = draft.trim();
+    if (value.length === 1) { setSearchError('Digite pelo menos 2 caracteres.'); return; }
+    setSearchError('');
+    onSearch(value);
+  };
+
+  return (
+    <section aria-labelledby={`taxonomy-${rank}`} className="relative min-w-0">
+      <div className={`border-4 border-charcoal px-4 py-3 shadow-hard-sm ${TONES[rank]}`}>
+        <p className="font-mono text-[10px] font-bold uppercase tracking-widest">Nível taxonômico</p>
+        <div className="mt-1 flex items-end justify-between gap-2">
+          <h2 id={`taxonomy-${rank}`} className="text-xl font-extrabold uppercase">{LABELS[rank]}</h2>
+          {typeof count === 'number' && <span className="border-2 border-charcoal bg-surface px-2 py-0.5 font-mono text-[10px] font-bold">{count}</span>}
+        </div>
+      </div>
+
+      <form onSubmit={submitSearch} className="mt-4 space-y-2">
+        <label htmlFor={`taxonomy-search-${rank}`} className="font-mono text-[10px] font-bold uppercase tracking-wider">Buscar {SEARCH_LABELS[rank]}</label>
+        <div className="flex gap-2">
+          <Input id={`taxonomy-search-${rank}`} type="search" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={`Ex.: ${rank === 'genus' ? 'Begonia' : rank === 'species' ? 'Begonia maculata' : rank === 'family' ? 'Begoniaceae' : 'Cucurbitales'}`} className="min-w-0 py-2 text-sm shadow-hard-sm" aria-invalid={Boolean(searchError)} />
+          <Button type="submit" size="sm" variant="primary" aria-label={`Executar busca de ${SEARCH_LABELS[rank]}`}>⌕</Button>
+        </div>
+        {searchError && <p role="alert" className="text-xs font-bold text-critical">{searchError}</p>}
+        {search && <button type="button" onClick={() => { setDraft(''); setSearchError(''); onSearch(''); }} className="font-mono text-[10px] font-bold uppercase underline">Limpar busca</button>}
+      </form>
+
+      <div className="mt-4 min-h-40 border-l-4 border-charcoal pl-4">
+        {!enabled && (
+          <div className="border-4 border-dashed border-charcoal/40 bg-surface/70 p-4 text-sm font-semibold text-charcoal/55">
+            Selecione {rank === 'family' ? 'uma ordem' : rank === 'genus' ? 'uma família' : 'um gênero'} para abrir este ramo.
+          </div>
+        )}
+        {enabled && <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-wider text-charcoal/60">{search ? `Resultados para “${search}”` : `Ramo de ${parentName}`}</p>}
+        {enabled && query.isLoading && <p role="status" className="border-4 border-charcoal bg-surface p-4 font-bold shadow-hard-sm">Consultando GBIF…</p>}
+        {enabled && query.isError && (
+          <div role="alert" className="border-4 border-critical bg-red-50 p-4">
+            <p className="font-bold">Não foi possível abrir este ramo.</p>
+            <Button size="sm" className="mt-3" onClick={() => query.refetch()}>Tentar novamente</Button>
+          </div>
+        )}
+        {enabled && !query.isLoading && !query.isError && taxa.length === 0 && <p className="border-4 border-dashed border-charcoal bg-surface p-4 font-semibold">Nenhum táxon encontrado neste nível.</p>}
+        {enabled && taxa.length > 0 && (
+          <div className="space-y-3">
+            {taxa.map((taxon) => {
+              const isSelected = selected?.key === taxon.key;
+              return (
+                <button
+                  key={taxon.key}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => onSelect(taxon)}
+                  className={`group w-full border-4 border-charcoal p-3 text-left shadow-hard-sm transition-[transform,box-shadow,background-color] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none ${isSelected ? 'bg-lime' : 'bg-surface hover:bg-offwhite'}`}
+                >
+                  <span className="flex items-start gap-3">
+                    <span aria-hidden="true" className={`mt-1 h-3 w-3 shrink-0 border-2 border-charcoal ${isSelected ? 'bg-primary' : TONES[rank]}`} />
+                    <span className="min-w-0 flex-1">
+                      <span className={`block break-words font-extrabold ${rank === 'species' ? 'italic' : ''}`}>{taxon.scientific_name}</span>
+                      {taxon.vernacular_name && <span className="mt-1 block text-xs text-charcoal/65">{taxon.vernacular_name}</span>}
+                      {taxon.num_descendants > 0 && rank !== 'species' && <span className="mt-2 block font-mono text-[9px] font-bold uppercase text-charcoal/55">{taxon.num_descendants} descendentes</span>}
+                    </span>
+                    {rank !== 'species' && <span aria-hidden="true" className="font-mono text-xl font-black">→</span>}
+                  </span>
+                </button>
+              );
+            })}
+            {query.hasNextPage && <Button size="sm" variant="secondary" className="w-full" disabled={query.isFetchingNextPage} onClick={() => query.fetchNextPage()}>{query.isFetchingNextPage ? 'Carregando…' : 'Carregar mais'}</Button>}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

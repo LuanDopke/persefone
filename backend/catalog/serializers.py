@@ -1,7 +1,11 @@
 """Serializers for the Species catalog."""
 
 from rest_framework import serializers
-from catalog.models import Species, normalize_taxonomic_name
+from django.db import transaction
+from django.utils import timezone
+
+from catalog.models import Observation, Species, normalize_taxonomic_name
+from specimens.services import compressed_photo, validate_image_upload
 
 
 class SpeciesSerializer(serializers.ModelSerializer):
@@ -57,3 +61,43 @@ class LocalSpeciesCreateSerializer(serializers.Serializer):
             'normalized_name': normalize_taxonomic_name(scientific_name),
             'genus': scientific_name.split()[0],
         }
+
+
+class ObservationSerializer(serializers.ModelSerializer):
+    species_detail = SpeciesSerializer(source='species', read_only=True)
+    related_species = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Observation
+        fields = ['id', 'species', 'species_detail', 'related_species', 'image', 'observed_at', 'created_at']
+        read_only_fields = ['id', 'species_detail', 'related_species', 'created_at']
+        extra_kwargs = {'image': {'required': False}}
+
+    def get_related_species(self, instance):
+        if not instance.species.genus:
+            return []
+        queryset = Species.objects.filter(genus__iexact=instance.species.genus).exclude(pk=instance.species_id)
+        return SpeciesListSerializer(queryset[:20], many=True, context=self.context).data
+
+    def validate_observed_at(self, value):
+        if value > timezone.now():
+            raise serializers.ValidationError('A data da observação não pode estar no futuro.')
+        return value
+
+    def validate_image(self, value):
+        return validate_image_upload(value)
+
+    def create(self, validated_data):
+        upload = validated_data.pop('image', None)
+        observation = None
+        try:
+            with transaction.atomic():
+                observation = Observation(**validated_data)
+                if upload:
+                    observation.image = compressed_photo(upload)
+                observation.save()
+            return observation
+        except Exception:
+            if observation is not None and observation.image.name:
+                observation.image.storage.delete(observation.image.name)
+            raise

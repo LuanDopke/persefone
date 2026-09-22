@@ -57,7 +57,7 @@ export function Modal({ open, onClose, title, children, className = '' }) {
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="absolute inset-0 bg-charcoal/60"
+        className="absolute inset-0 bg-primary/70 backdrop-blur-[2px]"
         onClick={onClose}
       />
 
@@ -65,12 +65,12 @@ export function Modal({ open, onClose, title, children, className = '' }) {
       <div
         className={[
           'relative z-10 w-full max-w-lg mx-4',
-          'border-4 border-charcoal bg-offwhite shadow-hard-lg',
+          'border-4 border-charcoal bg-surface shadow-[10px_10px_0_#171713]',
           className,
         ].join(' ')}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b-4 border-charcoal px-5 py-3 bg-lime">
+        <div className="flex items-center justify-between border-b-4 border-charcoal bg-coral px-5 py-3">
           <h2 id={titleId} className="text-lg font-bold uppercase tracking-wide text-charcoal">
             {title}
           </h2>

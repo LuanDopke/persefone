@@ -8,4 +8,7 @@ it('renderiza campos permitidos sem seletor de espécie', () => {
   expect(screen.queryByLabelText(/espécie/i)).not.toBeInTheDocument();
   fireEvent.change(screen.getByLabelText(/^Nome/), { target: { value: 'Nova folha' } });
   expect(screen.getByLabelText(/^Nome/)).toHaveValue('Nova folha');
+  expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('radio', { name: 'Sol pleno' }));
+  expect(screen.getByRole('radio', { name: 'Sol pleno' })).toBeChecked();
 });

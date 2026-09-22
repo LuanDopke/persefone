@@ -15,7 +15,7 @@ export default function AppShell({ children }) {
   const { pathname } = useLocation();
 
   return (
-    <div className="grid h-dvh min-w-0 grid-cols-1 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-offwhite lg:grid-cols-[14rem_minmax(0,1fr)]">
+    <div className="paper-grid grid h-dvh min-w-0 grid-cols-1 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-offwhite lg:grid-cols-[15rem_minmax(0,1fr)]">
       <div className="lg:col-start-2"><Navbar displayName={displayName} onLogout={logout} /></div>
       <div className="hidden min-h-0 lg:row-span-2 lg:row-start-1 lg:block"><Sidebar pathname={pathname} /></div>
       <div className="min-h-0 min-w-0 lg:col-start-2">

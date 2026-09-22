@@ -61,6 +61,13 @@ export const queryKeys = {
   collection: {
     all: ['collection'],
   },
+  observations: {
+    all: ['observations'],
+  },
+  taxonomy: {
+    browse: (rank, parentKey, search = '') => ['taxonomy', rank, parentKey || 'plantae', search],
+    profile: (taxonKey) => ['taxonomy', 'profile', taxonKey],
+  },
   careLogs: {
     bySpecimen: (specimenId) => ['care-logs', specimenId],
   },
@@ -86,6 +93,25 @@ export async function createSpecimen(formData) {
 
 export async function createLocalSpecies(scientificName) {
   const response = await apiClient.post('/api/species/local/', { scientific_name: scientificName });
+  return response.data;
+}
+
+export async function createObservation(formData) {
+  const response = await apiClient.post('/api/observations/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+}
+
+export async function browseTaxonomy({ rank, parentKey, search = '', offset = 0, limit = 24 }) {
+  const response = await apiClient.get('/api/species/taxonomy/', {
+    params: { rank, parent_key: parentKey || undefined, q: search || undefined, offset, limit },
+  });
+  return response.data;
+}
+
+export async function fetchTaxonomyProfile(taxonKey) {
+  const response = await apiClient.get(`/api/species/taxonomy/${taxonKey}/profile/`);
   return response.data;
 }
 

@@ -7,8 +7,8 @@
 const DENSITY = { default: 'p-5', compact: 'p-3' };
 const HEADER_TONES = {
   lime: 'bg-lime text-charcoal',
-  botanical: 'bg-botanical text-offwhite',
-  charcoal: 'bg-charcoal text-offwhite',
+  botanical: 'bg-mint text-charcoal',
+  charcoal: 'bg-primary text-offwhite',
   offwhite: 'bg-offwhite text-charcoal',
 };
 
@@ -16,7 +16,7 @@ export function Card({ children, title, footer, density = 'default', headerTone 
   return (
     <div
       className={[
-        'border-4 border-charcoal bg-offwhite shadow-hard',
+        'border-4 border-charcoal bg-surface shadow-hard',
         className,
       ].join(' ')}
       {...props}

@@ -85,10 +85,10 @@ export default function SpecimenCreatePage() {
   return (
     <PageContainer width="standard" className="space-y-6">
       <PageHeader title="Cadastrar exemplar" description="Registre a identificação e as condições iniciais da planta." />
-      <Card>
+      <Card className="relative before:absolute before:-right-3 before:-top-3 before:h-8 before:w-8 before:rotate-6 before:border-4 before:border-charcoal before:bg-coral">
         <form className="space-y-7" onSubmit={submit} noValidate>
-          <section aria-labelledby="taxonomy-heading">
-            <h2 id="taxonomy-heading" className="mb-4 text-xl font-extrabold uppercase">Identificação</h2>
+          <section aria-labelledby="taxonomy-heading" className="border-l-4 border-primary pl-4">
+            <h2 id="taxonomy-heading" className="mb-4 flex items-center gap-3 text-xl font-extrabold uppercase"><span className="inline-grid h-8 w-8 place-items-center border-2 border-charcoal bg-lilac font-mono text-sm shadow-hard-sm">01</span>Identificação</h2>
             <TaxonomyField
               term={taxonomyTerm}
               onTermChange={(value) => {
@@ -102,8 +102,8 @@ export default function SpecimenCreatePage() {
             />
           </section>
 
-          <section aria-labelledby="conditions-heading" className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <h2 id="conditions-heading" className="text-xl font-extrabold uppercase sm:col-span-2">Condições iniciais</h2>
+          <section aria-labelledby="conditions-heading" className="grid grid-cols-1 gap-5 border-l-4 border-coral pl-4 sm:grid-cols-2">
+            <h2 id="conditions-heading" className="flex items-center gap-3 text-xl font-extrabold uppercase sm:col-span-2"><span className="inline-grid h-8 w-8 place-items-center border-2 border-charcoal bg-coral font-mono text-sm shadow-hard-sm">02</span>Condições iniciais</h2>
             <FormField id="initial-soil" label="Solo inicial" required error={fieldError(errors, 'initial_soil')}><Input value={form.initial_soil} onChange={update('initial_soil')} /></FormField>
             <div>
               <LightOptionField
@@ -118,8 +118,8 @@ export default function SpecimenCreatePage() {
             <FormField id="acquired-at" label="Data de aquisição" required error={fieldError(errors, 'acquired_at')}><Input type="date" max={today} value={form.acquired_at} onChange={update('acquired_at')} /></FormField>
             <FormField id="nickname" label="Apelido (opcional)" error={fieldError(errors, 'nickname')}><Input maxLength={100} value={form.nickname} onChange={update('nickname')} /></FormField>
           </section>
-          <section aria-labelledby="photo-heading">
-            <h2 id="photo-heading" className="mb-4 text-xl font-extrabold uppercase">Linha do tempo visual</h2>
+          <section aria-labelledby="photo-heading" className="border-l-4 border-botanical pl-4">
+            <h2 id="photo-heading" className="mb-4 flex items-center gap-3 text-xl font-extrabold uppercase"><span className="inline-grid h-8 w-8 place-items-center border-2 border-charcoal bg-mint font-mono text-sm shadow-hard-sm">03</span>Linha do tempo visual</h2>
             <InitialPhotoField
               file={initialPhoto}
               onChange={(file) => { setInitialPhoto(file); setErrors((current) => ({ ...current, initial_photo: undefined })); }}

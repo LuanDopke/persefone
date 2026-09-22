@@ -22,7 +22,7 @@ describe('AppShell component', () => {
     renderShell();
     expect(screen.getAllByRole('link', { name: /painel/i })).toHaveLength(2);
     expect(screen.getAllByRole('link', { name: /coleção/i })).toHaveLength(2);
-    expect(screen.getAllByRole('link', { name: /descobrir/i })).toHaveLength(2);
+    expect(screen.getAllByRole('link', { name: /observações/i })).toHaveLength(2);
     expect(screen.getAllByRole('link', { name: /taxonomia/i })).toHaveLength(2);
   });
 

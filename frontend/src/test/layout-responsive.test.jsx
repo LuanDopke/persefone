@@ -22,7 +22,7 @@ describe('responsive layout contracts', () => {
 
   it('uses responsive page margins and preserves grid order', () => {
     const { container } = render(<PageContainer><ResponsiveGrid><span>1</span><span>2</span></ResponsiveGrid></PageContainer>);
-    expect(container.firstChild).toHaveClass('p-4', 'md:p-6', 'overflow-x-clip');
+    expect(container.firstChild).toHaveClass('p-4', 'md:p-8', 'overflow-x-clip');
     expect(container.querySelector('.grid')).toHaveClass('grid-cols-1', 'md:grid-cols-2', 'xl:grid-cols-3');
   });
 });

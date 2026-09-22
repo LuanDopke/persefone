@@ -11,5 +11,5 @@ const TONES = {
 
 export default function Alert({ tone = 'neutral', children, className = '', ...props }) {
   const [classes, icon] = TONES[tone] || TONES.neutral;
-  return <div role={tone === 'critical' ? 'alert' : 'status'} className={`flex items-start gap-3 border-4 p-4 font-semibold ${classes} ${className}`} {...props}><Icon name={icon} className="mt-0.5 shrink-0" /><div>{children}</div></div>;
+  return <div role={tone === 'critical' ? 'alert' : 'status'} className={`flex items-start gap-3 border-4 p-4 font-semibold shadow-hard-sm ${classes} ${className}`} {...props}><Icon name={icon} className="mt-0.5 shrink-0" /><div>{children}</div></div>;
 }

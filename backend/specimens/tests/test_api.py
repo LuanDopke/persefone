@@ -357,6 +357,45 @@ class TestCareLogAPI:
         response = api_client.get(reverse('carelog-list'))
         assert response.status_code == 400
 
+    def test_delete_any_care_log(self, api_client, specimen):
+        observation = CareLog.objects.create(specimen=specimen, type='observation', notes='Removível')
+        watering = CareLog.objects.create(specimen=specimen, type='watering')
+        observation_url = f"{reverse('carelog-detail', args=[observation.pk])}?specimen_id={specimen.pk}"
+        watering_url = f"{reverse('carelog-detail', args=[watering.pk])}?specimen_id={specimen.pk}"
+
+        assert api_client.delete(observation_url).status_code == 204
+        assert not CareLog.objects.filter(pk=observation.pk).exists()
+        assert api_client.delete(watering_url).status_code == 204
+        assert not CareLog.objects.filter(pk=watering.pk).exists()
+
+    def test_observation_photo_creates_linked_visual_entry(self, api_client, specimen, settings, tmp_path):
+        settings.MEDIA_ROOT = tmp_path
+        response = api_client.post(reverse('carelog-list'), {
+            'specimen': str(specimen.pk),
+            'type': 'observation',
+            'notes': 'Folha nova',
+            'image': image_upload('observation.png'),
+        }, format='multipart')
+
+        assert response.status_code == 201
+        log = CareLog.objects.get(pk=response.data['id'])
+        entry = VisualEntry.objects.get(care_log=log)
+        assert entry.specimen == specimen
+        assert entry.notes == 'Folha nova'
+        assert response.data['visual_entry']['id'] == str(entry.pk)
+        delete_url = f"{reverse('carelog-detail', args=[log.pk])}?specimen_id={specimen.pk}"
+        assert api_client.delete(delete_url).status_code == 204
+        assert not VisualEntry.objects.filter(pk=entry.pk).exists()
+
+    def test_photo_is_rejected_for_non_observation(self, api_client, specimen):
+        response = api_client.post(reverse('carelog-list'), {
+            'specimen': str(specimen.pk),
+            'type': 'watering',
+            'image': image_upload('watering.png'),
+        }, format='multipart')
+        assert response.status_code == 400
+        assert 'image' in response.data
+
 
 @pytest.mark.django_db
 class TestVisualEntryAPI:

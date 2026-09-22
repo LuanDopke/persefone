@@ -4,7 +4,10 @@ Constitution Principle V: Strict biological hierarchy and computed ownership.
 """
 
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db import models
+from django.utils import timezone
+import uuid
 
 
 def normalize_taxonomic_name(value):
@@ -80,3 +83,20 @@ class Species(models.Model):
     def is_owned(self):
         """Returns True if at least one Specimen exists for this species."""
         return self.specimens.exists()
+
+
+class Observation(models.Model):
+    """A species sighting recorded by a user."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='species_observations')
+    species = models.ForeignKey(Species, on_delete=models.PROTECT, related_name='observations')
+    image = models.ImageField(upload_to='observations/%Y/%m/%d', blank=True)
+    observed_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-observed_at', '-created_at', '-id']
+
+    def __str__(self):
+        return f'{self.species.scientific_name} — {self.observed_at:%Y-%m-%d}'

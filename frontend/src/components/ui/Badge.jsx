@@ -29,7 +29,7 @@ export function Badge({ status = 'missing', label, className = '' }) {
       className={[
         'inline-flex items-center',
         'px-3 py-1 text-xs font-bold uppercase tracking-wider',
-        'border-2',
+        'rotate-[-1deg] border-2 shadow-hard-sm',
         statusClasses,
         className,
       ].join(' ')}

@@ -30,11 +30,17 @@ class CollectionSpeciesSerializer(serializers.Serializer):
 
 class CareLogSerializer(serializers.ModelSerializer):
     type_display = serializers.CharField(source='get_type_display', read_only=True)
+    image = serializers.ImageField(write_only=True, required=False)
+    visual_entry = serializers.SerializerMethodField()
 
     class Meta:
         model = CareLog
-        fields = ['id', 'specimen', 'type', 'type_display', 'occurred_at', 'created_at', 'notes']
+        fields = ['id', 'specimen', 'type', 'type_display', 'occurred_at', 'created_at', 'notes', 'image', 'visual_entry']
         read_only_fields = ['id', 'created_at']
+
+    def get_visual_entry(self, instance):
+        entry = getattr(instance, 'visual_entry', None)
+        return VisualEntrySerializer(entry, context=self.context).data if entry else None
 
     def validate_occurred_at(self, value):
         if value > timezone.now():
@@ -46,6 +52,35 @@ class CareLogSerializer(serializers.ModelSerializer):
         if request and specimen.owner_id != request.user.id:
             raise serializers.ValidationError('Exemplar não encontrado.')
         return specimen
+
+    def validate_image(self, value):
+        return validate_image_upload(value)
+
+    def validate(self, attrs):
+        if attrs.get('image') and attrs.get('type') != 'observation':
+            raise serializers.ValidationError({'image': 'Fotos podem ser anexadas apenas a observações.'})
+        return attrs
+
+    def create(self, validated_data):
+        upload = validated_data.pop('image', None)
+        entry = None
+        try:
+            with transaction.atomic():
+                log = CareLog.objects.create(**validated_data)
+                if upload:
+                    entry = VisualEntry(
+                        specimen=log.specimen,
+                        care_log=log,
+                        image=compressed_photo(upload),
+                        captured_at=log.occurred_at,
+                        notes=log.notes,
+                    )
+                    entry.save()
+            return log
+        except Exception:
+            if entry is not None and entry.image.name:
+                entry.image.storage.delete(entry.image.name)
+            raise
 
 
 class SpecimenListSerializer(serializers.ModelSerializer):
@@ -151,7 +186,7 @@ class SpecimenUpdateSerializer(serializers.ModelSerializer):
 class VisualEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = VisualEntry
-        fields = ['id', 'specimen', 'image', 'captured_at', 'created_at', 'notes']
+        fields = ['id', 'specimen', 'care_log', 'image', 'captured_at', 'created_at', 'notes']
         read_only_fields = fields
 
 

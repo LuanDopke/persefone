@@ -15,6 +15,7 @@ const paths = {
   pruning: <><path d="m5 5 6 6M19 5l-6 6M11 11 6 19M13 11l5 8" /><circle cx="5" cy="5" r="2" /><circle cx="19" cy="5" r="2" /></>,
   history: <><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5M12 7v5l3 2" /></>,
   camera: <><path d="M4 7h4l1.5-2h5L16 7h4v12H4V7Z" /><circle cx="12" cy="13" r="3.5" /></>,
+  trash: <><path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6" /></>,
 };
 
 export function Icon({ name, label, size = 24, className = '' }) {

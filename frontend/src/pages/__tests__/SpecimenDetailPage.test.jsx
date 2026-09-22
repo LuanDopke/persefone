@@ -48,6 +48,16 @@ describe('SpecimenDetailPage', () => {
     expect(screen.getByRole('img', { name: /imagem indisponível/i })).toBeInTheDocument();
   });
 
+  it('sincroniza cor e símbolo do registro com a ação selecionada', async () => {
+    renderPage();
+    await screen.findByRole('heading', { level: 1, name: 'Folhinha' });
+    const fertilizing = screen.getByRole('button', { name: /adubação/i });
+    fireEvent.click(fertilizing);
+    expect(fertilizing).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByLabelText('Registrar atividade')).toHaveAttribute('data-care-type', 'fertilizing');
+    expect(screen.getByLabelText('Registrar atividade')).toHaveClass('bg-green-50');
+  });
+
   it('announces an error and exposes retry', async () => {
     apiClient.get.mockRejectedValueOnce(new Error('network'));
     renderPage();

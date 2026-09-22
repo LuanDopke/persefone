@@ -3,17 +3,17 @@ import { describe, expect, it } from 'vitest';
 import config from '../../../../tailwind.config';
 
 describe('shared design tokens', () => {
-  it('keeps the Chlorophyll Noir palette and hard shadows centralized', () => {
+  it('keeps the botanical print palette and hard shadows centralized', () => {
     expect(config.theme.extend.colors.lime.DEFAULT).toBe('#BDFF00');
-    expect(config.theme.extend.colors.charcoal).toBe('#1A1A1A');
-    expect(config.theme.extend.colors.botanical).toBe('#247A47');
-    expect(config.theme.extend.colors.primary).toBe('#4B6700');
+    expect(config.theme.extend.colors.charcoal).toBe('#171713');
+    expect(config.theme.extend.colors.botanical).toBe('#197A50');
+    expect(config.theme.extend.colors.primary).toBe('#4F46E5');
     expect(config.theme.extend.colors['primary-container']).toBe('#BDFF00');
-    expect(config.theme.extend.colors.secondary).toBe('#46645E');
-    expect(config.theme.extend.colors.amber).toBe('#D97706');
-    expect(config.theme.extend.colors.critical).toBe('#B91C1C');
-    expect(config.theme.extend.boxShadow.hard).toBe('4px 4px 0px 0px #1A1A1A');
-    expect(config.theme.extend.boxShadow['hard-lg']).toBe('6px 6px 0px 0px #1A1A1A');
+    expect(config.theme.extend.colors.secondary).toBe('#5C3DF5');
+    expect(config.theme.extend.colors.coral).toBe('#FF6B4A');
+    expect(config.theme.extend.colors.mint).toBe('#65D6AD');
+    expect(config.theme.extend.boxShadow.hard).toBe('5px 5px 0px 0px #171713');
+    expect(config.theme.extend.boxShadow['hard-lg']).toBe('8px 8px 0px 0px #171713');
   });
 
   it('uses Lexend for reading and a technical monospace stack', () => {

@@ -12,17 +12,47 @@
   html {
     font-family: 'Lexend', system-ui, sans-serif;
     overflow-x: hidden;
+    background: #171713;
   }
 
   body {
     @apply bg-offwhite text-charcoal antialiased;
     min-height: 100dvh;
     overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgb(23 23 19 / 0.11) 1px, transparent 1.2px),
+      linear-gradient(105deg, transparent 0 48%, rgb(255 255 255 / 0.25) 49% 51%, transparent 52% 100%);
+    background-size: 18px 18px, 100% 100%;
   }
+
+  ::selection { background: #BDFF00; color: #171713; }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold uppercase tracking-tight;
+    text-wrap: balance;
   }
+
+  input[type='checkbox'] {
+    appearance: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    border: 3px solid #171713;
+    background: #fffdf5;
+    box-shadow: 2px 2px 0 #171713;
+    display: inline-grid;
+    place-content: center;
+  }
+
+  input[type='checkbox']::before {
+    content: '';
+    width: 0.65rem;
+    height: 0.65rem;
+    background: #5c3df5;
+    transform: scale(0) rotate(-8deg);
+    transition: transform 80ms ease-out;
+  }
+
+  input[type='checkbox']:checked::before { transform: scale(1) rotate(-8deg); }
 
   /* High-contrast focus rings for accessibility (Constitution Principle II) */
   :focus-visible {
@@ -34,7 +64,7 @@
 @layer components {
   /* Neobrutalist base container */
   .neo-container {
-    @apply border-4 border-charcoal bg-offwhite shadow-hard;
+    @apply border-4 border-charcoal bg-surface shadow-hard;
   }
 
   /* Active / pressed state for interactive neobrutalist elements */
@@ -55,6 +85,56 @@
   .safe-area-bottom {
     padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
   }
+
+  .paper-grid {
+    background-color: #f4eedc;
+    background-image:
+      linear-gradient(rgb(23 23 19 / 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(23 23 19 / 0.055) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .ink-speckle {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .ink-speckle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.14;
+    background-image: radial-gradient(circle, currentColor 0.7px, transparent 0.8px);
+    background-size: 7px 7px;
+    mix-blend-mode: multiply;
+  }
+
+  .tape-mark {
+    position: relative;
+  }
+
+  .tape-mark::before {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    top: -0.7rem;
+    left: 50%;
+    width: 4.25rem;
+    height: 1.15rem;
+    transform: translateX(-50%) rotate(-2deg);
+    background: rgb(255 211 78 / 0.86);
+    border-inline: 1px dashed rgb(23 23 19 / 0.3);
+    pointer-events: none;
+  }
+
+  .analog-hover {
+    transition: transform 100ms ease-out, box-shadow 100ms ease-out, background-color 100ms linear;
+  }
+
+  .analog-hover:hover { transform: translate(-2px, -2px) rotate(-0.25deg); box-shadow: 8px 8px 0 #171713; }
+  .analog-hover:active { transform: translate(3px, 3px) rotate(0); box-shadow: 1px 1px 0 #171713; }
 }
 
 @media (prefers-reduced-motion: reduce) {

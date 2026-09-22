@@ -5,12 +5,12 @@
  */
 
 const VARIANTS = {
-  default: 'bg-offwhite text-charcoal hover:bg-gray-100',
-  secondary: 'bg-offwhite text-charcoal hover:bg-gray-100',
-  care: 'bg-offwhite text-charcoal hover:bg-primary-container',
+  default: 'bg-surface text-charcoal hover:bg-lilac',
+  secondary: 'bg-surface-variant text-charcoal hover:bg-amber',
+  care: 'bg-surface text-charcoal hover:bg-primary-container',
   primary: 'bg-lime text-charcoal hover:bg-lime-300',
   lime: 'bg-lime text-charcoal hover:bg-lime-300',
-  danger: 'bg-red-500 text-white hover:bg-red-600',
+  danger: 'bg-critical text-white hover:bg-coral',
   ghost: 'bg-transparent text-charcoal hover:bg-gray-100 border-transparent shadow-none',
 };
 
@@ -40,9 +40,9 @@ export function Button({
         'inline-flex items-center justify-center',
         'font-bold uppercase tracking-wide',
         'border-4 border-charcoal shadow-hard',
-        'transition-[transform,box-shadow,background-color] duration-75 motion-reduce:transition-none',
+        'transition-[transform,box-shadow,background-color] duration-100 motion-reduce:transition-none',
         'outline-none focus-visible:ring-4 focus-visible:ring-lime/70',
-        'active:translate-x-[2px] active:translate-y-[2px] active:shadow-hard-pressed',
+        'hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-hard-lg active:translate-x-[4px] active:translate-y-[4px] active:shadow-hard-pressed',
         'disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-600 disabled:opacity-70 disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-hard',
         variantClasses,
         sizeClasses,
