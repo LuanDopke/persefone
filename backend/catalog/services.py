@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 GBIF_API_BASE = 'https://api.gbif.org/v1'
 GBIF_PLANTAE_KEY = 6
 TAXONOMY_RANKS = {'ORDER', 'FAMILY', 'GENUS', 'SPECIES'}
+PORTUGUESE_LANGUAGE_CODES = {'por', 'pt', 'pt-br', 'pt-pt'}
+ENGLISH_LANGUAGE_CODES = {'eng', 'en', 'en-us', 'en-gb'}
 
 
 class GBIFServiceError(Exception):
@@ -140,6 +142,46 @@ def _profile_facts(items):
     return facts[:8]
 
 
+def _vernacular_language_priority(item):
+    language = (item.get('language') or '').lower()
+    if language in PORTUGUESE_LANGUAGE_CODES:
+        return 0
+    if language in ENGLISH_LANGUAGE_CODES:
+        return 1
+    return 2
+
+
+def _establishment_means_value(value):
+    if isinstance(value, dict):
+        value = value.get('concept') or next(iter(value.get('lineage') or []), '')
+    return value if isinstance(value, str) else ''
+
+
+def _occurrence_points(items):
+    points = []
+    seen = set()
+    for item in items or []:
+        latitude = item.get('decimalLatitude')
+        longitude = item.get('decimalLongitude')
+        if not isinstance(latitude, (int, float)) or not isinstance(longitude, (int, float)):
+            continue
+        fingerprint = (round(latitude, 4), round(longitude, 4))
+        if fingerprint in seen:
+            continue
+        seen.add(fingerprint)
+        points.append({
+            'key': item.get('key'),
+            'latitude': latitude,
+            'longitude': longitude,
+            'country': item.get('country', ''),
+            'state_province': item.get('stateProvince', ''),
+            'locality': item.get('locality', ''),
+            'establishment_means': _establishment_means_value(item.get('establishmentMeans')),
+            'basis_of_record': item.get('basisOfRecord', ''),
+        })
+    return points[:300]
+
+
 def _literature_rows(payloads):
     rows = []
     seen = set()
@@ -170,7 +212,7 @@ def _literature_rows(payloads):
 
 def get_gbif_taxon_profile(taxon_key):
     """Aggregate species, occurrence and literature metadata for a GBIF taxon."""
-    cache_key = f'gbif-taxon-profile:{taxon_key}'
+    cache_key = f'gbif-taxon-profile:v2:{taxon_key}'
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
@@ -194,7 +236,8 @@ def get_gbif_taxon_profile(taxon_key):
     }
     if rank == 'SPECIES':
         jobs['occurrences'] = ('occurrence/search', {'taxon_key': taxon_key, 'limit': 0})
-        jobs['media'] = ('occurrence/search', {'taxon_key': taxon_key, 'media_type': 'StillImage', 'limit': 12})
+        jobs['occurrence_points'] = ('occurrence/search', {'taxon_key': taxon_key, 'has_coordinate': 'true', 'limit': 300})
+        jobs['media'] = ('occurrence/search', {'taxon_key': taxon_key, 'media_type': 'StillImage', 'limit': 30})
 
     payloads = {}
     warnings = []
@@ -221,7 +264,7 @@ def get_gbif_taxon_profile(taxon_key):
 
     names = payloads.get('vernacular', {}).get('results', [])
     vernacular_names = []
-    for item in sorted(names, key=lambda row: row.get('language') != 'por'):
+    for item in sorted(names, key=lambda row: (_vernacular_language_priority(row), (row.get('vernacularName') or '').casefold())):
         name = item.get('vernacularName')
         if name and name.casefold() not in {entry['name'].casefold() for entry in vernacular_names}:
             vernacular_names.append({'name': name, 'language': item.get('language', '')})
@@ -234,7 +277,7 @@ def get_gbif_taxon_profile(taxon_key):
             seen_locations.add(locality.casefold())
             distributions.append({
                 'locality': locality,
-                'establishment_means': item.get('establishmentMeans', ''),
+                'establishment_means': _establishment_means_value(item.get('establishmentMeans')),
                 'threat_status': item.get('threatStatus', ''),
                 'source': item.get('source', ''),
             })
@@ -277,9 +320,10 @@ def get_gbif_taxon_profile(taxon_key):
         'profiles': _profile_facts(payloads.get('profiles', {}).get('results', [])),
         'vernacular_names': vernacular_names[:12],
         'distributions': distributions[:30],
+        'occurrence_points': _occurrence_points(payloads.get('occurrence_points', {}).get('results', [])),
         'occurrence_count': payloads.get('occurrences', {}).get('count'),
         'image_count': payloads.get('media', {}).get('count'),
-        'images': images[:12],
+        'images': images[:30],
         'literature': _literature_rows([payloads.get('literature_exact'), payloads.get('literature_text')]),
         'conservation': {
             'category': payloads.get('iucn', {}).get('category', ''),

@@ -123,11 +123,17 @@ class TestGBIFService:
             if path.endswith('/speciesProfiles'):
                 return {'results': [{'lifeForm': 'Subarbusto', 'habitat': 'terrestrial', 'source': 'Flora'}]}
             if path.endswith('/vernacularNames'):
-                return {'results': [{'vernacularName': 'Begônia', 'language': 'por'}]}
+                return {'results': [
+                    {'vernacularName': 'Spotted begonia', 'language': 'eng'},
+                    {'vernacularName': 'Bégonia', 'language': 'fra'},
+                    {'vernacularName': 'Begônia pintada', 'language': 'por'},
+                ]}
             if path.endswith('/distributions'):
                 return {'results': [{'locality': 'Brazil Southeast', 'source': 'WCVP'}]}
             if path == 'occurrence/search' and params.get('media_type'):
                 return {'count': 1, 'results': [{'key': 99, 'country': 'Brazil', 'media': [{'type': 'StillImage', 'identifier': 'https://images.example/begonia.jpg', 'license': 'CC BY 4.0', 'creator': 'Ana'}]}]}
+            if path == 'occurrence/search' and params.get('has_coordinate'):
+                return {'results': [{'key': 100, 'country': 'Brazil', 'decimalLatitude': -15.7, 'decimalLongitude': -47.9, 'establishmentMeans': {'concept': 'NATIVE'}}]}
             if path == 'occurrence/search':
                 return {'count': 415, 'results': []}
             if path == 'literature/search' and params.get('q'):
@@ -141,5 +147,7 @@ class TestGBIFService:
         assert result['taxon']['scientific_name'] == 'Begonia maculata'
         assert result['occurrence_count'] == 415
         assert result['images'][0]['creator'] == 'Ana'
+        assert result['occurrence_points'][0]['establishment_means'] == 'NATIVE'
+        assert [item['language'] for item in result['vernacular_names']] == ['por', 'eng', 'fra']
         assert result['literature'][0]['title'] == 'Begonia study'
         assert result['descriptions'][0]['text'] == 'Erva terrestre com folhas assimétricas.'

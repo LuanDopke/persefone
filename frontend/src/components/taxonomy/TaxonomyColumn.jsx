@@ -23,7 +23,9 @@ const SEARCH_LABELS = {
   species: 'espécies',
 };
 
-export default function TaxonomyColumn({ rank, query, selected, onSelect, enabled, parentName, search, onSearch }) {
+const STEP_NUMBERS = { order: '01', family: '02', genus: '03', species: '04' };
+
+export default function TaxonomyColumn({ rank, query, selected, onSelect, enabled, parentName, search, onSearch, compact = false }) {
   const [draft, setDraft] = useState(search);
   const [searchError, setSearchError] = useState('');
   useEffect(() => setDraft(search), [search]);
@@ -39,16 +41,16 @@ export default function TaxonomyColumn({ rank, query, selected, onSelect, enable
   };
 
   return (
-    <section aria-labelledby={`taxonomy-${rank}`} className="relative min-w-0">
-      <div className={`border-4 border-charcoal px-4 py-3 shadow-hard-sm ${TONES[rank]}`}>
-        <p className="font-mono text-[10px] font-bold uppercase tracking-widest">Nível taxonômico</p>
-        <div className="mt-1 flex items-end justify-between gap-2">
-          <h2 id={`taxonomy-${rank}`} className="text-xl font-extrabold uppercase">{LABELS[rank]}</h2>
-          {typeof count === 'number' && <span className="border-2 border-charcoal bg-surface px-2 py-0.5 font-mono text-[10px] font-bold">{count}</span>}
+    <section aria-labelledby={`taxonomy-${rank}`} className="min-w-0 border-2 border-charcoal bg-surface shadow-hard-sm">
+      <div className={`border-b-2 border-charcoal px-4 py-3 ${TONES[rank]}`}>
+        <div className="flex items-center justify-between gap-2">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-widest">Etapa {STEP_NUMBERS[rank]}</p>
+          {typeof count === 'number' && <span className="border-2 border-charcoal bg-surface px-2 py-0.5 font-mono text-[10px] font-bold" aria-label={`${count} resultados`}>{count}</span>}
         </div>
+        <h2 id={`taxonomy-${rank}`} className="mt-1 text-lg font-extrabold uppercase">{LABELS[rank]}</h2>
       </div>
 
-      <form onSubmit={submitSearch} className="mt-4 space-y-2">
+      <form onSubmit={submitSearch} className="space-y-2 border-b-2 border-charcoal/15 p-4">
         <label htmlFor={`taxonomy-search-${rank}`} className="font-mono text-[10px] font-bold uppercase tracking-wider">Buscar {SEARCH_LABELS[rank]}</label>
         <div className="flex gap-2">
           <Input id={`taxonomy-search-${rank}`} type="search" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={`Ex.: ${rank === 'genus' ? 'Begonia' : rank === 'species' ? 'Begonia maculata' : rank === 'family' ? 'Begoniaceae' : 'Cucurbitales'}`} className="min-w-0 py-2 text-sm shadow-hard-sm" aria-invalid={Boolean(searchError)} />
@@ -58,13 +60,13 @@ export default function TaxonomyColumn({ rank, query, selected, onSelect, enable
         {search && <button type="button" onClick={() => { setDraft(''); setSearchError(''); onSearch(''); }} className="font-mono text-[10px] font-bold uppercase underline">Limpar busca</button>}
       </form>
 
-      <div className="mt-4 min-h-40 border-l-4 border-charcoal pl-4">
+      <div className={`min-h-32 p-3 ${compact ? 'max-h-[25rem]' : 'max-h-[28rem]'} overflow-y-auto overscroll-contain`}>
         {!enabled && (
           <div className="border-4 border-dashed border-charcoal/40 bg-surface/70 p-4 text-sm font-semibold text-charcoal/55">
             Selecione {rank === 'family' ? 'uma ordem' : rank === 'genus' ? 'uma família' : 'um gênero'} para abrir este ramo.
           </div>
         )}
-        {enabled && <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-wider text-charcoal/60">{search ? `Resultados para “${search}”` : `Ramo de ${parentName}`}</p>}
+        {enabled && <p className="mb-2 truncate px-1 font-mono text-[10px] font-bold uppercase tracking-wider text-charcoal/60">{search ? `Resultados para “${search}”` : `Ramo de ${parentName}`}</p>}
         {enabled && query.isLoading && <p role="status" className="border-4 border-charcoal bg-surface p-4 font-bold shadow-hard-sm">Consultando GBIF…</p>}
         {enabled && query.isError && (
           <div role="alert" className="border-4 border-critical bg-red-50 p-4">
@@ -74,7 +76,7 @@ export default function TaxonomyColumn({ rank, query, selected, onSelect, enable
         )}
         {enabled && !query.isLoading && !query.isError && taxa.length === 0 && <p className="border-4 border-dashed border-charcoal bg-surface p-4 font-semibold">Nenhum táxon encontrado neste nível.</p>}
         {enabled && taxa.length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {taxa.map((taxon) => {
               const isSelected = selected?.key === taxon.key;
               return (
@@ -83,10 +85,10 @@ export default function TaxonomyColumn({ rank, query, selected, onSelect, enable
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => onSelect(taxon)}
-                  className={`group w-full border-4 border-charcoal p-3 text-left shadow-hard-sm transition-[transform,box-shadow,background-color] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none ${isSelected ? 'bg-lime' : 'bg-surface hover:bg-offwhite'}`}
+                  className={`group w-full border-2 border-charcoal px-3 py-2.5 text-left transition-colors focus-visible:relative ${isSelected ? 'bg-lime' : 'bg-offwhite hover:bg-mint/40'}`}
                 >
                   <span className="flex items-start gap-3">
-                    <span aria-hidden="true" className={`mt-1 h-3 w-3 shrink-0 border-2 border-charcoal ${isSelected ? 'bg-primary' : TONES[rank]}`} />
+                    <span aria-hidden="true" className={`mt-1 h-3 w-3 shrink-0 border-2 border-charcoal ${isSelected ? 'bg-charcoal' : TONES[rank]}`} />
                     <span className="min-w-0 flex-1">
                       <span className={`block break-words font-extrabold ${rank === 'species' ? 'italic' : ''}`}>{taxon.scientific_name}</span>
                       {taxon.vernacular_name && <span className="mt-1 block text-xs text-charcoal/65">{taxon.vernacular_name}</span>}

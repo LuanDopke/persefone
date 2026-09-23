@@ -103,7 +103,7 @@ export async function createObservation(formData) {
   return response.data;
 }
 
-export async function browseTaxonomy({ rank, parentKey, search = '', offset = 0, limit = 24 }) {
+export async function browseTaxonomy({ rank, parentKey, search = '', offset = 0, limit = 6 }) {
   const response = await apiClient.get('/api/species/taxonomy/', {
     params: { rank, parent_key: parentKey || undefined, q: search || undefined, offset, limit },
   });

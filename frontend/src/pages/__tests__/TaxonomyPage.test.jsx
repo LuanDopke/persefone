@@ -30,12 +30,21 @@ it('abre dinamicamente ordem, família, gênero e espécie', async () => {
   render(<QueryClientProvider client={client}><TaxonomyPage /></QueryClientProvider>);
 
   fireEvent.click(await screen.findByRole('button', { name: /alismatales/i }));
+  expect(apiClient.get).toHaveBeenCalledWith('/api/species/taxonomy/', expect.objectContaining({ params: expect.objectContaining({ limit: 6 }) }));
   fireEvent.click(await screen.findByRole('button', { name: /araceae/i }));
   fireEvent.click(await screen.findByRole('button', { name: /^monstera\b/i }));
   fireEvent.click(await screen.findByRole('button', { name: /monstera deliciosa/i }));
 
   expect(await screen.findByRole('heading', { name: 'Monstera deliciosa' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /abrir no gbif/i })).toHaveAttribute('href', 'https://www.gbif.org/species/4');
+  expect(screen.getByRole('button', { name: /mostrar taxonomia completa/i })).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.queryByRole('heading', { name: 'Ordens' })).not.toBeInTheDocument();
+  const speciesSwitcher = screen.getByRole('button', { name: 'Trocar espécie' });
+  fireEvent.click(speciesSwitcher);
+  expect(speciesSwitcher).toHaveAttribute('aria-expanded', 'true');
+
+  fireEvent.click(screen.getByRole('button', { name: /mostrar taxonomia completa/i }));
+  expect(screen.getByRole('heading', { name: 'Ordens' })).toBeInTheDocument();
   await waitFor(() => expect(apiClient.get.mock.calls.filter(([url]) => url === '/api/species/taxonomy/')).toHaveLength(4));
 });
 

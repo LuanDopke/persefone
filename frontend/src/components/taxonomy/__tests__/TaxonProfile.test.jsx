@@ -23,9 +23,42 @@ it('exibe metadados, fotografia ampliável e literatura da espécie', () => {
   render(<TaxonProfile query={query} />);
 
   expect(screen.getByText('Erva terrestre com folhas assimétricas e manchas claras.')).toBeInTheDocument();
-  expect(screen.getByText('415 ocorrências no GBIF')).toBeInTheDocument();
+  expect(screen.getByText('415')).toBeInTheDocument();
+  expect(screen.getByText('ocorrências no GBIF')).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Morphoanatomical evidence in Begonia' })).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: /ampliar fotografia 1/i }));
   expect(screen.getByRole('dialog')).toBeInTheDocument();
   expect(screen.getByRole('img', { name: /fotografia ampliada de begonia maculata/i })).toBeInTheDocument();
+});
+
+it('prioriza nomes por idioma, limita fotos e destaca o nível IUCN', () => {
+  const images = Array.from({ length: 6 }, (_, index) => ({
+    url: `https://images.example/begonia-${index}.jpg`,
+    creator: `Autoria ${index}`,
+  }));
+  const richQuery = {
+    ...query,
+    data: {
+      ...query.data,
+      vernacular_names: [
+        { name: 'Spotted begonia', language: 'eng' },
+        { name: 'Bégonia', language: 'fra' },
+        { name: 'Begônia pintada', language: 'por' },
+      ],
+      conservation: { category: 'VULNERABLE', code: 'VU' },
+      image_count: 6,
+      images,
+    },
+  };
+
+  render(<TaxonProfile query={richQuery} />);
+
+  const names = screen.getByRole('heading', { name: 'Nomes populares' }).parentElement.textContent;
+  expect(names.indexOf('Begônia pintada')).toBeLessThan(names.indexOf('Spotted begonia'));
+  expect(names.indexOf('Spotted begonia')).toBeLessThan(names.indexOf('Bégonia'));
+  expect(screen.getByText('VU').closest('[aria-current="true"]')).toBeInTheDocument();
+  expect(screen.getAllByRole('button', { name: /ampliar fotografia/i })).toHaveLength(5);
+
+  fireEvent.click(screen.getByRole('button', { name: /carregar mais imagens/i }));
+  expect(screen.getAllByRole('button', { name: /ampliar fotografia/i })).toHaveLength(6);
 });
