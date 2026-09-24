@@ -111,7 +111,7 @@ export async function browseTaxonomy({ rank, parentKey, search = '', offset = 0,
 }
 
 export async function fetchTaxonomyProfile(taxonKey) {
-  const response = await apiClient.get(`/api/species/taxonomy/${taxonKey}/profile/`);
+  const response = await apiClient.get(`/api/species/taxonomy/${taxonKey}/profile/`, { timeout: 22000 });
   return response.data;
 }
 

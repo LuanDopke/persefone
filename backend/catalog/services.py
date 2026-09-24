@@ -7,6 +7,7 @@ import requests
 import logging
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import quote
 
 from django.core.cache import cache
 from django.utils.html import strip_tags
@@ -20,6 +21,21 @@ GBIF_PLANTAE_KEY = 6
 TAXONOMY_RANKS = {'ORDER', 'FAMILY', 'GENUS', 'SPECIES'}
 PORTUGUESE_LANGUAGE_CODES = {'por', 'pt', 'pt-br', 'pt-pt'}
 ENGLISH_LANGUAGE_CODES = {'eng', 'en', 'en-us', 'en-gb'}
+DESCRIPTION_TYPES = {'description', 'general description', 'morphology', 'diagnosis'}
+DESCRIPTION_NOISE = ('selected examined material', 'specimens examined', 'taxonomic notes:', 'references:')
+PROFILE_TERMS = {
+    'lifeForm': {
+        'árvore', 'arbusto', 'subarbusto', 'erva', 'herbácea', 'trepadeira', 'liana',
+        'epífita', 'aquática', 'rupícola', 'tree', 'shrub', 'subshrub', 'herb',
+        'vine', 'climber', 'epiphyte', 'aquatic',
+    },
+    'habitat': {
+        'terrestre', 'terrícola', 'aquático', 'aquática', 'rupícola', 'epífita',
+        'terrestrial', 'aquatic', 'freshwater', 'marine', 'forest', 'grassland',
+    },
+}
+WIKIPEDIA_LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/'
+WIKIPEDIA_USER_AGENT = 'Persefone/1.0 (https://github.com/LuanDopke/persefone)'
 
 
 class GBIFServiceError(Exception):
@@ -76,9 +92,12 @@ def browse_gbif_taxa(rank, parent_key=None, limit=24, offset=0, query=''):
     for item in payload.get('results', []):
         vernacular_names = item.get('vernacularNames') or []
         preferred_name = next(
-            (entry.get('vernacularName') for entry in vernacular_names if entry.get('language') == 'por'),
+            (entry.get('vernacularName') for entry in vernacular_names if _description_language(entry.get('language')) == 'pt' and entry.get('vernacularName')),
             None,
-        ) or next((entry.get('vernacularName') for entry in vernacular_names if entry.get('vernacularName')), '')
+        ) or next(
+            (entry.get('vernacularName') for entry in vernacular_names if _description_language(entry.get('language')) == 'en' and entry.get('vernacularName')),
+            '',
+        )
         taxa.append({
             'key': item.get('key'),
             'parent_key': item.get('parentKey'),
@@ -117,29 +136,125 @@ def _optional_gbif_request(path, params=None):
         return None, path
 
 
+def _description_language(value):
+    language = (value or '').strip().lower()
+    if language in PORTUGUESE_LANGUAGE_CODES:
+        return 'pt'
+    if language in ENGLISH_LANGUAGE_CODES:
+        return 'en'
+    return None
+
+
+def _select_description(items, taxon_key):
+    candidates = []
+    for item in items or []:
+        language = _description_language(item.get('language'))
+        kind = (item.get('type') or '').strip().lower()
+        text = _clean_text(item.get('description'))
+        if not language or kind not in DESCRIPTION_TYPES or not 30 <= len(text) <= 1500:
+            continue
+        if any(marker in text.casefold() for marker in DESCRIPTION_NOISE):
+            continue
+        source_key = item.get('sourceTaxonKey') or taxon_key
+        candidates.append({
+            'text': text,
+            'source': item.get('source') or 'GBIF',
+            'source_url': f'https://www.gbif.org/species/{source_key}',
+            'language': language,
+            'type': kind,
+        })
+    candidates.sort(key=lambda row: (
+        len(row['text']) < 80,
+        row['language'] != 'pt',
+        row['type'] not in {'description', 'general description'},
+        -len(row['text']),
+        row['source'].casefold(),
+    ))
+    return candidates[0] if candidates else None
+
+
+def _wikipedia_description(scientific_name):
+    title = '_'.join(scientific_name.split())
+    if not title:
+        return None
+    for language in ('pt', 'en'):
+        url = f'https://{language}.wikipedia.org/api/rest_v1/page/summary/{quote(title, safe="")}'
+        try:
+            response = requests.get(url, headers={'User-Agent': WIKIPEDIA_USER_AGENT}, timeout=3)
+            response.raise_for_status()
+            payload = response.json()
+        except (requests.RequestException, ValueError) as exc:
+            logger.info('Wikipedia summary unavailable for %s (%s): %s', scientific_name, language, exc)
+            continue
+        page_title = ' '.join((payload.get('titles') or {}).get('normalized', '').split())
+        extract = _clean_text(payload.get('extract'))
+        if (
+            payload.get('type') != 'standard'
+            or (payload.get('namespace') or {}).get('id') != 0
+            or page_title.casefold() != scientific_name.casefold()
+            or not 40 <= len(extract) <= 1500
+        ):
+            continue
+        return {
+            'text': extract,
+            'source': 'Wikipédia',
+            'source_url': f'https://{language}.wikipedia.org/wiki/{quote(title, safe="")}',
+            'language': language,
+            'license': 'CC BY-SA 4.0',
+            'license_url': WIKIPEDIA_LICENSE_URL,
+        }
+    return None
+
+
 def _profile_facts(items):
-    facts = []
-    seen = set()
+    candidates = []
     for item in items or []:
         values = {}
+        value_items = {}
         life_form = item.get('lifeForm')
-        if isinstance(life_form, str) and life_form.startswith('{'):
+        official_source = 'flora e funga do brasil' in (item.get('source') or '').casefold()
+        if isinstance(life_form, str) and life_form.lstrip().startswith('{'):
             try:
                 decoded = json.loads(life_form)
-                for key, value in decoded.items():
-                    values[key] = ', '.join(value) if isinstance(value, list) else str(value)
+                if isinstance(decoded, dict):
+                    for key in ('lifeForm', 'habitat', 'vegetationType'):
+                        raw_values = decoded.get(key)
+                        entries = raw_values if isinstance(raw_values, list) else [raw_values]
+                        accepted = []
+                        for value in entries:
+                            if not isinstance(value, str):
+                                continue
+                            text = _clean_text(value)
+                            if 0 < len(text) <= 100 and (official_source or text.casefold() in PROFILE_TERMS.get(key, set())):
+                                accepted.append(text)
+                        if accepted:
+                            value_items[key] = list(dict.fromkeys(accepted))
+                            values[key] = ', '.join(value_items[key])
             except (TypeError, ValueError):
-                values['lifeForm'] = life_form
-        elif life_form:
-            values['lifeForm'] = life_form
-        for key in ('habitat', 'extinct', 'hybrid', 'aquatic'):
-            if item.get(key) is not None:
+                pass
+        elif isinstance(life_form, str) and _clean_text(life_form).casefold() in PROFILE_TERMS['lifeForm']:
+            values['lifeForm'] = _clean_text(life_form)
+            value_items['lifeForm'] = [values['lifeForm']]
+        habitat = item.get('habitat')
+        if isinstance(habitat, str) and _clean_text(habitat).casefold() in PROFILE_TERMS['habitat']:
+            values['habitat'] = _clean_text(habitat)
+            value_items['habitat'] = [values['habitat']]
+        for key in ('extinct', 'hybrid', 'aquatic'):
+            if isinstance(item.get(key), bool):
                 values[key] = item[key]
-        fingerprint = tuple(sorted((key, str(value)) for key, value in values.items()))
-        if values and fingerprint not in seen:
-            seen.add(fingerprint)
-            facts.append({'values': values, 'source': item.get('source', '')})
-    return facts[:8]
+        core_count = sum(key in values for key in ('lifeForm', 'habitat', 'vegetationType'))
+        if core_count:
+            candidates.append((core_count, official_source, len(values), item.get('source') or '', item.get('sourceTaxonKey') or 0, values, value_items))
+    candidates.sort(key=lambda row: (-row[0], -row[1], -row[2], row[3].casefold(), row[4]))
+    if not candidates:
+        return []
+    _, _, _, source, source_key, values, value_items = candidates[0]
+    return [{
+        'values': values,
+        'value_items': value_items,
+        'source': source,
+        'source_url': f'https://www.gbif.org/species/{source_key}' if source_key else '',
+    }]
 
 
 def _vernacular_language_priority(item):
@@ -212,7 +327,7 @@ def _literature_rows(payloads):
 
 def get_gbif_taxon_profile(taxon_key):
     """Aggregate species, occurrence and literature metadata for a GBIF taxon."""
-    cache_key = f'gbif-taxon-profile:v2:{taxon_key}'
+    cache_key = f'gbif-taxon-profile:v4:{taxon_key}'
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
@@ -226,8 +341,6 @@ def get_gbif_taxon_profile(taxon_key):
     scientific_name = detail.get('canonicalName') or detail.get('scientificName', '')
     rank = detail.get('rank', '').upper()
     jobs = {
-        'descriptions': (f'species/{taxon_key}/descriptions', {'limit': 10}),
-        'profiles': (f'species/{taxon_key}/speciesProfiles', {'limit': 20}),
         'distributions': (f'species/{taxon_key}/distributions', {'limit': 100}),
         'vernacular': (f'species/{taxon_key}/vernacularNames', {'limit': 50}),
         'iucn': (f'species/{taxon_key}/iucnRedListCategory', None),
@@ -235,6 +348,8 @@ def get_gbif_taxon_profile(taxon_key):
         'literature_text': ('literature/search', {'q': scientific_name, 'limit': 10}),
     }
     if rank == 'SPECIES':
+        jobs['descriptions'] = (f'species/{taxon_key}/descriptions', {'limit': 100})
+        jobs['profiles'] = (f'species/{taxon_key}/speciesProfiles', {'limit': 100})
         jobs['occurrences'] = ('occurrence/search', {'taxon_key': taxon_key, 'limit': 0})
         jobs['occurrence_points'] = ('occurrence/search', {'taxon_key': taxon_key, 'has_coordinate': 'true', 'limit': 300})
         jobs['media'] = ('occurrence/search', {'taxon_key': taxon_key, 'media_type': 'StillImage', 'limit': 30})
@@ -250,21 +365,15 @@ def get_gbif_taxon_profile(taxon_key):
             if warning:
                 warnings.append(name)
 
-    description_rows = []
-    for item in payloads.get('descriptions', {}).get('results', []):
-        text = _clean_text(item.get('description'))
-        if len(text) >= 30:
-            description_rows.append({
-                'text': _clean_text(text, 900),
-                'source': item.get('source', ''),
-                'language': item.get('language', ''),
-                'type': item.get('type', ''),
-            })
-    description_rows.sort(key=lambda row: (row['type'].lower() != 'description', len(row['text'])))
+    description = _select_description(payloads.get('descriptions', {}).get('results', []), taxon_key) if rank == 'SPECIES' else None
+    if rank == 'SPECIES' and not description:
+        description = _wikipedia_description(scientific_name)
 
     names = payloads.get('vernacular', {}).get('results', [])
     vernacular_names = []
     for item in sorted(names, key=lambda row: (_vernacular_language_priority(row), (row.get('vernacularName') or '').casefold())):
+        if _description_language(item.get('language')) is None:
+            continue
         name = item.get('vernacularName')
         if name and name.casefold() not in {entry['name'].casefold() for entry in vernacular_names}:
             vernacular_names.append({'name': name, 'language': item.get('language', '')})
@@ -316,8 +425,8 @@ def get_gbif_taxon_profile(taxon_key):
             'family': detail.get('family', ''),
             'genus': detail.get('genus', ''),
         },
-        'descriptions': description_rows[:3],
-        'profiles': _profile_facts(payloads.get('profiles', {}).get('results', [])),
+        'descriptions': [description] if description else [],
+        'profiles': _profile_facts(payloads.get('profiles', {}).get('results', [])) if rank == 'SPECIES' else [],
         'vernacular_names': vernacular_names[:12],
         'distributions': distributions[:30],
         'occurrence_points': _occurrence_points(payloads.get('occurrence_points', {}).get('results', [])),

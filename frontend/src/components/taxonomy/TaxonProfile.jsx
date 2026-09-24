@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
+import BiologicalProfile from './BiologicalProfile';
 import TaxonDistributionMap, { distributionStatus } from './TaxonDistributionMap';
 
 const RANK_LABELS = { order: 'Ordem', family: 'Família', genus: 'Gênero', species: 'Espécie' };
-const FACT_LABELS = { lifeForm: 'Forma de vida', habitat: 'Habitat', vegetationType: 'Vegetação', extinct: 'Extinto', hybrid: 'Híbrido', aquatic: 'Aquático' };
 const PORTUGUESE_CODES = new Set(['por', 'pt', 'pt-br', 'pt-pt']);
 const ENGLISH_CODES = new Set(['eng', 'en', 'en-us', 'en-gb']);
 const IUCN_LEVELS = [
@@ -18,11 +18,6 @@ const IUCN_LEVELS = [
   { code: 'DD', label: 'Dados insuficientes', color: 'bg-gray-400 text-charcoal' },
   { code: 'NE', label: 'Não avaliada', color: 'bg-offwhite text-charcoal' },
 ];
-
-function displayValue(value) {
-  if (typeof value === 'boolean') return value ? 'Sim' : 'Não';
-  return value;
-}
 
 function languagePriority(language = '') {
   const code = (language || '').toLowerCase();
@@ -150,7 +145,7 @@ export default function TaxonProfile({ query }) {
   if (!query.data) return null;
 
   const { taxon, descriptions = [], profiles = [], vernacular_names: names = [], distributions = [], occurrence_points: occurrencePoints = [], images = [], literature = [], warnings = [], conservation, occurrence_count: occurrenceCount, image_count: imageCount } = query.data;
-  const sortedNames = [...names].sort((a, b) => languagePriority(a.language) - languagePriority(b.language) || a.name.localeCompare(b.name));
+  const sortedNames = names.filter((name) => languagePriority(name.language) < 2).sort((a, b) => languagePriority(a.language) - languagePriority(b.language) || a.name.localeCompare(b.name));
   const visibleImages = images.slice(0, visibleImageCount);
 
   return (
@@ -169,20 +164,20 @@ export default function TaxonProfile({ query }) {
         </div>
       </header>
 
-      <div className="grid min-w-0 xl:grid-cols-[minmax(0,1.2fr)_minmax(15rem,0.8fr)]">
-        <div className="min-w-0 space-y-5 p-5 md:p-6">
+      <div className={`grid min-w-0 ${taxon.rank === 'species' ? 'xl:grid-cols-[minmax(0,1.2fr)_minmax(15rem,0.8fr)]' : ''}`}>
+        {taxon.rank === 'species' && <div className="min-w-0 space-y-5 p-5 md:p-6">
           <section>
             <h3 className="inline-block border-2 border-charcoal bg-coral px-3 py-1 font-bold uppercase">Características disponíveis</h3>
-            {descriptions.length ? descriptions.map((item, index) => <blockquote key={`${item.source}-${index}`} className="mt-3 border-l-4 border-charcoal pl-4"><p className="leading-relaxed">{item.text}</p>{item.source && <cite className="mt-2 block font-mono text-[10px] not-italic uppercase text-charcoal/55">Fonte: {item.source}</cite>}</blockquote>) : <p className="mt-3 text-charcoal/65">O GBIF não possui descrição textual para este táxon.</p>}
+            {descriptions.length ? descriptions.map((item, index) => <blockquote key={`${item.source}-${index}`} className="mt-3 border-l-4 border-charcoal pl-4"><p className="leading-relaxed">{item.text}</p><footer className="mt-2 font-mono text-[10px] text-charcoal/60">{item.language && <span>{languageLabel(item.language)} · </span>}{item.source_url ? <a href={item.source_url} target="_blank" rel="noreferrer" className="underline">Fonte: {item.source} ↗</a> : <span>Fonte: {item.source}</span>}{item.license && <span> · <a href={item.license_url} target="_blank" rel="noreferrer" className="underline">{item.license}</a></span>}</footer></blockquote>) : <p className="mt-3 text-charcoal/65">Não há descrição confiável em português ou inglês para esta espécie.</p>}
           </section>
 
-          {profiles.length > 0 && <section><h3 className="font-bold uppercase">Perfil biológico</h3><div className="mt-3 grid gap-3 sm:grid-cols-2">{profiles.map((profile, index) => <article key={`${profile.source}-${index}`} className="border-2 border-charcoal bg-mint/40 p-3">{Object.entries(profile.values).map(([key, value]) => <p key={key} className="text-sm"><strong>{FACT_LABELS[key] || key}:</strong> {displayValue(value)}</p>)}{profile.source && <p className="mt-2 font-mono text-[9px] uppercase text-charcoal/55">{profile.source}</p>}</article>)}</div></section>}
+          {profiles.length > 0 && <section><h3 className="font-bold uppercase">Perfil biológico</h3>{profiles.map((profile, index) => <BiologicalProfile key={`${profile.source}-${index}`} profile={profile} />)}</section>}
 
-        </div>
+        </div>}
 
-        <aside className="min-w-0 border-t-2 border-charcoal/25 xl:border-l-2 xl:border-t-0">
+        <aside className={`flex min-w-0 flex-col ${taxon.rank === 'species' ? 'border-t-2 border-charcoal/25 xl:border-l-2 xl:border-t-0' : ''}`}>
           <Classification taxon={taxon} />
-          {sortedNames.length > 0 && <div className="border-t-2 border-charcoal/20 bg-lilac/25 p-5"><h3 className="text-sm font-bold uppercase">Nomes populares</h3><p className="mt-1 font-mono text-[9px] uppercase text-charcoal/55">Português, inglês e demais idiomas</p><ul className="mt-3 max-h-48 space-y-2 overflow-y-auto pr-2 text-sm">{sortedNames.map((item) => <li key={`${item.language}-${item.name}`} className="border-b border-charcoal/20 pb-1"><strong>{item.name}</strong><span className="ml-2 font-mono text-[9px] uppercase text-charcoal/55">{languageLabel(item.language)}</span></li>)}</ul></div>}
+          {sortedNames.length > 0 && <div className="min-h-0 flex-1 border-t-2 border-charcoal/20 bg-lilac/25 p-5"><h3 className="text-sm font-bold uppercase">Nomes populares</h3><p className="mt-1 font-mono text-[9px] uppercase text-charcoal/55">Português e inglês</p><ul className="mt-3 max-h-48 space-y-2 overflow-y-auto pr-2 text-sm">{sortedNames.map((item) => <li key={`${item.language}-${item.name}`} className="border-b border-charcoal/20 pb-1"><strong>{item.name}</strong><span className="ml-2 font-mono text-[9px] uppercase text-charcoal/55">{languageLabel(item.language)}</span></li>)}</ul></div>}
         </aside>
       </div>
 

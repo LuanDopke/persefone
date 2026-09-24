@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useId, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from './Button';
 
 export function Modal({ open, onClose, title, children, className = '' }) {
@@ -46,9 +47,9 @@ export function Modal({ open, onClose, title, children, className = '' }) {
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-[2000] flex items-center justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
@@ -90,6 +91,7 @@ export function Modal({ open, onClose, title, children, className = '' }) {
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

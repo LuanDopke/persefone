@@ -129,6 +129,9 @@ describe('Modal component', () => {
     render(<Modal open={true} onClose={() => {}} title="Test Modal"><p>Modal Body</p></Modal>);
     expect(screen.getByText('Test Modal')).toBeInTheDocument();
     expect(screen.getByText('Modal Body')).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.parentElement).toBe(document.body);
+    expect(dialog).toHaveClass('z-[2000]');
   });
 
   it('does not render when open is false', () => {
