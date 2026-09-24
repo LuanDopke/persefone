@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import PageHeader from '../components/layout/PageHeader';
 import TaxonomyColumn from '../components/taxonomy/TaxonomyColumn';
@@ -66,6 +67,8 @@ export default function TaxonomyPage() {
         {LEVELS.map((level) => path[level] && <span key={level} className="contents"><span aria-hidden="true" className="text-charcoal/35">/</span><button type="button" onClick={() => select(level, path[level])} className={`break-words border-b-2 border-transparent font-bold hover:border-charcoal ${level === 'species' ? 'italic text-primary' : ''}`}>{path[level].scientific_name}</button></span>)}
         {!path.order && <span className="text-charcoal/55">/ Selecione uma ordem para começar</span>}
       </nav>
+
+      <div className="flex flex-wrap items-center gap-3 border-l-4 border-primary bg-mint/30 px-4 py-3 text-sm"><span className="font-bold">Chaves de identificação</span><Link to={selectedTaxon && ['family', 'genus'].includes(selectedTaxon.rank) ? `/keys?scope_rank=${selectedTaxon.rank}&scope_gbif_key=${selectedTaxon.key}&search=${encodeURIComponent(selectedTaxon.scientific_name)}` : '/keys'} className="font-bold underline">{selectedTaxon && ['family', 'genus'].includes(selectedTaxon.rank) ? `Buscar chaves de ${selectedTaxon.scientific_name}` : 'Explorar chaves de identificação'} →</Link></div>
 
       {focusedSpecies ? (
         <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(14rem,17rem)_minmax(0,1fr)] lg:gap-6" aria-label="Espécie selecionada">

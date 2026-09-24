@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, expect, it, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import TaxonomyPage from '../TaxonomyPage';
 import apiClient from '../../services/apiClient';
 
@@ -27,7 +28,7 @@ beforeEach(() => {
 
 it('abre dinamicamente ordem, família, gênero e espécie', async () => {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  render(<QueryClientProvider client={client}><TaxonomyPage /></QueryClientProvider>);
+  render(<MemoryRouter><QueryClientProvider client={client}><TaxonomyPage /></QueryClientProvider></MemoryRouter>);
 
   fireEvent.click(await screen.findByRole('button', { name: /alismatales/i }));
   expect(apiClient.get).toHaveBeenCalledWith('/api/species/taxonomy/', expect.objectContaining({ params: expect.objectContaining({ limit: 6 }) }));
@@ -58,7 +59,7 @@ it('busca um gênero sem exigir navegação prévia e recompõe seus ancestrais'
     return Promise.resolve({ data: { count: 1, offset: 0, limit: 24, end_of_records: true, results: [result] } });
   });
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  render(<QueryClientProvider client={client}><TaxonomyPage /></QueryClientProvider>);
+  render(<MemoryRouter><QueryClientProvider client={client}><TaxonomyPage /></QueryClientProvider></MemoryRouter>);
 
   const input = screen.getByLabelText('Buscar gêneros');
   fireEvent.change(input, { target: { value: 'Begonia' } });

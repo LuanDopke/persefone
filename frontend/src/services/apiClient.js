@@ -63,6 +63,15 @@ export const queryKeys = {
   },
   observations: {
     all: ['observations'],
+    list: (search, status) => ['observations', 'list', search, status],
+    detail: (id) => ['observations', id],
+  },
+  identificationKeys: {
+    all: ['identification-keys'],
+    list: (filters) => ['identification-keys', 'list', filters],
+    detail: (id) => ['identification-keys', 'detail', id],
+    discovery: (term) => ['identification-keys', 'discovery', term],
+    runs: (observationId) => ['identification-keys', 'runs', observationId],
   },
   taxonomy: {
     browse: (rank, parentKey, search = '') => ['taxonomy', rank, parentKey || 'plantae', search],
@@ -101,6 +110,121 @@ export async function createObservation(formData) {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data;
+}
+
+export async function fetchObservation(id) {
+  const response = await apiClient.get(`/api/observations/${id}/`);
+  return response.data;
+}
+
+export async function updateObservation(id, payload) {
+  const response = await apiClient.patch(`/api/observations/${id}/`, payload);
+  return response.data;
+}
+
+export async function addObservationEvidence(id, formData) {
+  const response = await apiClient.post(`/api/observations/${id}/evidence/`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+}
+
+export async function updateObservationEvidence(id, evidenceId, payload) {
+  const response = await apiClient.patch(`/api/observations/${id}/evidence/${evidenceId}/`, payload);
+  return response.data;
+}
+
+export async function addObservationHypothesis(id, payload) {
+  const response = await apiClient.post(`/api/observations/${id}/hypotheses/`, payload);
+  return response.data;
+}
+
+export async function setHypothesisStatus(id, hypothesisId, status) {
+  const response = await apiClient.patch(`/api/observations/${id}/hypotheses/${hypothesisId}/`, { status });
+  return response.data;
+}
+
+export async function updateHypothesisNotes(id, hypothesisId, notes) {
+  const response = await apiClient.patch(`/api/observations/${id}/hypotheses/${hypothesisId}/`, { notes });
+  return response.data;
+}
+
+export async function confirmObservation(id, hypothesisId, notes = '') {
+  const response = await apiClient.post(`/api/observations/${id}/confirm/`, { hypothesis_id: hypothesisId, notes });
+  return response.data;
+}
+
+export async function reopenObservation(id, notes = '') {
+  const response = await apiClient.post(`/api/observations/${id}/reopen/`, { notes });
+  return response.data;
+}
+
+export async function listIdentificationKeys(params = {}) {
+  const response = await apiClient.get('/api/identification-keys/', { params });
+  return response.data;
+}
+
+export async function fetchIdentificationKey(id) {
+  const response = await apiClient.get(`/api/identification-keys/${id}/`);
+  return response.data;
+}
+
+export async function discoverIdentificationKeys(search) {
+  return (await apiClient.get('/api/identification-keys/discover/', { params: { search } })).data;
+}
+
+export async function importIdentificationKey(payload) {
+  const formData = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') formData.append(key, value);
+  });
+  return (await apiClient.post('/api/identification-keys/imports/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }, timeout: 60000,
+  })).data;
+}
+
+export async function saveIdentificationKey(id, payload) {
+  const response = id
+    ? await apiClient.patch(`/api/identification-keys/${id}/`, payload)
+    : await apiClient.post('/api/identification-keys/', payload);
+  return response.data;
+}
+
+export async function publishIdentificationKey(id) {
+  return (await apiClient.post(`/api/identification-keys/${id}/publish/`)).data;
+}
+
+export async function archiveIdentificationKey(id) {
+  return (await apiClient.post(`/api/identification-keys/${id}/archive/`)).data;
+}
+
+export async function listKeySuggestions(id) {
+  return (await apiClient.get(`/api/identification-keys/${id}/suggestions/`)).data;
+}
+
+export async function suggestKeyChange(id, graph, note) {
+  return (await apiClient.post(`/api/identification-keys/${id}/suggestions/`, { graph, note })).data;
+}
+
+export async function decideKeySuggestion(id, suggestionId, decision) {
+  return (await apiClient.post(`/api/identification-keys/${id}/suggestions/${suggestionId}/decision/`, { decision })).data;
+}
+
+export async function reportIdentificationKey(id, reason) {
+  return (await apiClient.post(`/api/identification-keys/${id}/reports/`, { reason })).data;
+}
+
+export async function listObservationKeyRuns(observationId) {
+  return (await apiClient.get(`/api/observations/${observationId}/key-runs/`)).data;
+}
+
+export async function startObservationKeyRun(observationId, versionId, parentRun = null) {
+  return (await apiClient.post(`/api/observations/${observationId}/key-runs/`, { version_id: versionId, parent_run: parentRun })).data;
+}
+
+export async function answerObservationKeyRun(observationId, runId, payload, correction = false) {
+  const url = `/api/observations/${observationId}/key-runs/${runId}/answers/`;
+  return (await (correction ? apiClient.patch(url, payload) : apiClient.post(url, payload))).data;
 }
 
 export async function browseTaxonomy({ rank, parentKey, search = '', offset = 0, limit = 6 }) {
