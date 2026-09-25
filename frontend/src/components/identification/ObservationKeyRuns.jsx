@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '../ui/Button';
-import { answerObservationKeyRun, fetchIdentificationKey, listIdentificationKeys, listObservationKeyRuns, queryKeys, startObservationKeyRun } from '../../services/apiClient';
+import { answerObservationKeyRun, listIdentificationKeys, listObservationKeyRuns, queryKeys, startObservationKeyRun } from '../../services/apiClient';
 
 function errorMessage(error) {
   const data = error.response?.data;
@@ -52,7 +52,8 @@ function RunCard({ run, observation, refresh }) {
   };
   const continueFromGenus = async (keyId) => {
     setBusy(true); setError('');
-    try { const detail = await fetchIdentificationKey(keyId); await startObservationKeyRun(observation.id, detail.version_id, run.id); await refresh(); }
+    const key = followUps.data?.results.find((item) => item.id === keyId);
+    try { await startObservationKeyRun(observation.id, key?.version_id, run.id); await refresh(); }
     catch (requestError) { setError(errorMessage(requestError)); }
     finally { setBusy(false); }
   };
@@ -67,7 +68,7 @@ function RunCard({ run, observation, refresh }) {
     {run.status === 'paused' && run.pending_note && <p className="border-l-4 border-amber pl-3 text-sm">Pendente: {run.pending_note}</p>}
     {isMulti && run.remaining_taxa && <details><summary className="cursor-pointer text-sm font-bold">Táxons restantes ({run.remaining_taxa.length})</summary><p className="mt-2 text-sm">{run.remaining_taxa.slice(0, 20).map((taxon) => taxon.name).join(' · ')}{run.remaining_taxa.length > 20 && '…'}</p></details>}
     {step && <div className="space-y-3 border-t-2 border-charcoal/20 pt-3"><h4 className="font-bold">{correctIndex == null ? 'Próxima característica' : `Corrigir resposta ${correctIndex + 1}`}: {isMulti ? step.label : step.prompt}</h4>
-      <div role="group" aria-label="Escolha a característica" className="grid gap-2 sm:grid-cols-2">{(isMulti ? step.states : step.choices).map((choice, index) => { const selected = isMulti ? run.answers[correctIndex]?.state_ids?.includes(choice.id) : run.answers[correctIndex]?.choice_index === index; return <Button key={choice.id || index} variant={correctIndex != null && selected ? 'lime' : 'secondary'} aria-pressed={correctIndex != null && selected} disabled={busy} onClick={() => record(isMulti ? choice.id : index)} className="justify-start text-left normal-case">{isMulti ? choice.label : choice.text}</Button>; })}</div>
+      <div role="group" aria-label="Escolha a característica" className="grid gap-2 sm:grid-cols-2">{(isMulti ? step.states : step.choices).map((choice, index) => { const selected = isMulti ? run.answers[correctIndex]?.state_ids?.includes(choice.id) : run.answers[correctIndex]?.choice_index === index; return <button type="button" key={choice.id || index} aria-pressed={correctIndex != null && selected} disabled={busy} onClick={() => record(isMulti ? choice.id : index)} className={`border-2 border-charcoal px-3 py-2 text-left font-bold disabled:opacity-60 ${correctIndex != null && selected ? 'bg-mint' : 'bg-surface hover:bg-gray-100'}`}>{isMulti ? choice.label : choice.text}</button>; })}</div>
       <label className="block text-sm font-bold">Nota da resposta (opcional)<textarea value={note} onChange={(event) => setNote(event.target.value)} rows="2" className="mt-2 w-full border-2 border-charcoal bg-offwhite px-3 py-2" /></label>
       {observation.evidence.length > 0 && <details><summary className="cursor-pointer text-sm font-bold">Vincular uma evidência (opcional)</summary><div className="mt-2 max-h-40 space-y-2 overflow-auto">{observation.evidence.map((item) => <Button key={item.id} size="sm" variant={evidenceId === item.id ? 'lime' : 'secondary'} aria-pressed={evidenceId === item.id} onClick={() => setEvidenceId(evidenceId === item.id ? '' : item.id)}>{item.subject === 'comparison' ? 'Outro indivíduo' : 'Planta principal'} · {new Date(item.observed_at).toLocaleDateString('pt-BR')} · {item.notes.slice(0, 35)}</Button>)}</div></details>}
       {correctIndex == null && <Button size="sm" variant="secondary" disabled={busy} onClick={() => record(null)}>Ainda não consigo observar · pausar</Button>}
@@ -96,11 +97,11 @@ export default function ObservationKeyRuns({ observation, onChanged }) {
     catch (requestError) { setError(errorMessage(requestError)); }
     finally { setBusy(false); }
   };
-  return <section className="space-y-5" aria-label="Chaves de identificação"><div className="flex flex-wrap justify-between gap-3"><h2 className="inline-block border-4 border-charcoal bg-amber px-4 py-2 text-lg font-bold uppercase">Chaves de identificação</h2><Link to="/keys" className="self-center font-bold underline">Explorar todas as chaves →</Link></div>
-    <p className="text-sm">Siga as características visíveis e guarde o percurso. Você pode esperar a floração para responder a outro passo.</p>
-    <div className="space-y-3"><h3 className="font-bold uppercase">Iniciar uma chave</h3><label className="block max-w-lg font-bold">Buscar por grupo ou título<input type="search" value={search} onChange={(event) => setSearch(event.target.value)} className="mt-2 w-full border-2 border-charcoal bg-offwhite px-3 py-2" /></label>
+  return <section className="space-y-5" aria-label="Chaves de identificação"><div className="flex flex-wrap items-end justify-between gap-3 border-b-2 border-charcoal/25 pb-3"><div className="max-w-2xl"><h2 className="text-xl font-bold uppercase">Chaves de identificação</h2><p className="mt-1 text-sm text-charcoal/70">Uma chave compara características visíveis em uma sequência de perguntas. O resultado vira um palpite, que você ainda pode revisar antes de confirmar a espécie.</p></div><Link to="/keys" className="font-bold underline">Explorar todas as chaves →</Link></div>
+    <div className="space-y-3"><div><h3 className="font-bold uppercase">Iniciar uma chave</h3><p className="mt-1 text-sm text-charcoal/70">Busque pelo grupo da planta ou pelo título. Se uma característica ainda não estiver visível, pause o percurso e retome quando ela aparecer.</p></div><label className="block max-w-lg font-bold">Buscar por grupo ou título<input type="search" value={search} onChange={(event) => setSearch(event.target.value)} className="mt-2 w-full border-2 border-charcoal bg-offwhite px-3 py-2" /></label>
+      {keys.isPending && <p role="status">Carregando chaves disponíveis…</p>}
       {keys.isError && <p role="alert">Não foi possível carregar as chaves.</p>}
-      <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{keys.data?.results.map((key) => <li key={key.id} className="space-y-2 border-2 border-charcoal bg-surface p-3"><p className="text-xs uppercase">{key.scope_rank === 'family' ? 'Família' : 'Gênero'} · {key.scope_name}</p><p className="font-bold">{key.title}</p><Button size="sm" variant="lime" disabled={busy} onClick={async () => { try { const detail = await fetchIdentificationKey(key.id); await start(detail.version_id); } catch (requestError) { setError(errorMessage(requestError)); } }}>Iniciar</Button></li>)}</ul>
+      <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{keys.data?.results.map((key) => <li key={key.id} className="space-y-2 border-2 border-charcoal bg-surface p-3"><p className="text-xs uppercase">{key.scope_rank === 'family' ? 'Família' : 'Gênero'} · {key.scope_name}</p><p className="font-bold">{key.title}</p><Button size="sm" variant="secondary" disabled={busy || !key.version_id} onClick={() => start(key.version_id)}>{busy ? 'Iniciando…' : 'Iniciar'}</Button></li>)}</ul>
       {keys.data && !keys.data.results.length && <p>Nenhuma chave encontrada.</p>}
     </div>
     {error && <p role="alert" className="font-bold text-critical">{error}</p>}

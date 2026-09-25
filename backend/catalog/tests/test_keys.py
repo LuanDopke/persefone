@@ -81,6 +81,8 @@ class TestIdentificationKeys:
         published = client.post(reverse('identification-key-publish', args=[family.data['id']]))
         assert published.status_code == 200
         assert published.data['published_version'] == 1
+        listed = client.get(reverse('identification-key-list')).data['results'][0]
+        assert listed['version_id'] == published.data['version_id']
         genus = create_key(client, 'genus', 200)
         genus_published = client.post(reverse('identification-key-publish', args=[genus.data['id']]))
         observation = Observation.objects.create(owner=client.user, title='Planta da praça')

@@ -13,7 +13,7 @@ const controlClass = 'mt-2 w-full border-2 border-charcoal bg-offwhite px-3 py-2
 const SUBJECTS = [['original', 'Planta principal'], ['comparison', 'Outro indivíduo']];
 
 function SubjectButtons({ value, onChange }) {
-  return <div role="group" aria-label="Indivíduo observado" className="flex flex-wrap gap-2">{SUBJECTS.map(([kind, label]) => <Button key={kind} size="sm" variant={value === kind ? 'lime' : 'secondary'} aria-pressed={value === kind} onClick={() => onChange(kind)}>{label}</Button>)}</div>;
+  return <div role="group" aria-label="Indivíduo observado" className="flex flex-wrap gap-2">{SUBJECTS.map(([kind, label]) => <button type="button" key={kind} aria-pressed={value === kind} onClick={() => onChange(kind)} className={`border-2 border-charcoal px-3 py-2 text-sm font-bold ${value === kind ? 'bg-mint' : 'bg-surface hover:bg-gray-100'}`}>{label}</button>)}</div>;
 }
 
 function PhotoPanel({ item, title }) {
@@ -80,9 +80,10 @@ export default function EvidenceSection({ observation, onChanged, composerOpen, 
     setViewer({ item, counterpart });
   };
   return <section id="observation-evidence" className="space-y-5 scroll-mt-4" aria-label="Evidências de campo">
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="inline-block border-4 border-charcoal bg-mint px-4 py-2 text-lg font-bold uppercase shadow-hard-sm">Evidências de campo</h2><Button size="sm" variant="lime" aria-expanded={composerOpen} onClick={() => onComposerChange(!composerOpen)}>{composerOpen ? 'Fechar registro' : 'Adicionar evidência'}</Button></div>
+    <div className="flex flex-wrap items-end justify-between gap-3 border-b-2 border-charcoal/25 pb-3"><div className="max-w-2xl"><h2 className="text-xl font-bold uppercase">Evidências de campo</h2><p className="mt-1 text-sm text-charcoal/70">Registre algo que ajude a comparar e identificar: uma foto, uma mudança nesta planta ou uma nota sobre outro indivíduo parecido, por exemplo quando ele estiver florindo.</p></div><Button size="sm" variant="secondary" aria-expanded={composerOpen} onClick={() => onComposerChange(!composerOpen)}>{composerOpen ? 'Fechar registro' : 'Adicionar evidência'}</Button></div>
     {composerOpen && <form onSubmit={submit} className="space-y-4 border-l-4 border-primary bg-surface px-4 py-5">
       <h3 className="font-bold uppercase">Nova evidência</h3>
+      <p className="text-sm text-charcoal/70">Escolha “Planta principal” para acompanhar este exemplar. Use “Outro indivíduo” para guardar uma comparação que possa ajudar na identificação.</p>
       <SubjectButtons value={subject} onChange={setSubject} />
       <label className="block font-bold" htmlFor="evidence-date">Data e hora<input id="evidence-date" type="datetime-local" value={observedAt} max={toLocalDateInput()} onChange={(event) => setObservedAt(event.target.value)} required className={controlClass} /></label>
       <label className="block font-bold" htmlFor="evidence-notes">Nota<textarea id="evidence-notes" value={notes} onChange={(event) => setNotes(event.target.value)} rows="3" className={controlClass} /></label>

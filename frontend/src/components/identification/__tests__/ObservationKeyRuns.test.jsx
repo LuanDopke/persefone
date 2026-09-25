@@ -14,8 +14,8 @@ it('pausa e retoma o percurso sem confirmar a espécie', async () => {
   let runs = [];
   vi.spyOn(apiClient, 'get').mockImplementation(async (url) => {
     if (url.includes('key-runs')) return { data: runs };
-    if (url.includes('identification-keys') && url.endsWith('/')) return { data: { count: 1, results: [{ id: 'key-1', title: 'Begônias', scope_rank: 'genus', scope_name: 'Begonia' }] } };
-    return { data: { version_id: 'version-1' } };
+    if (url.includes('identification-keys') && url.endsWith('/')) return { data: { count: 1, results: [{ id: 'key-1', version_id: 'version-1', title: 'Begônias', scope_rank: 'genus', scope_name: 'Begonia' }] } };
+    return { data: {} };
   });
   const post = vi.spyOn(apiClient, 'post').mockImplementation(async (url, payload) => {
     if (url.endsWith('/key-runs/')) runs = [{ id: 'run-1', key_id: 'key-1', key_title: 'Begônias', version_number: 1, scope_name: 'Begonia', status: 'active', graph: { start: 's1', steps: [step] }, answers: [], step, result_taxon: null, revisions: [] }];

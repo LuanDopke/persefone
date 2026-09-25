@@ -29,6 +29,9 @@ it('registra nota de outro indivíduo e hipótese livre sem espécie inicial', a
   const post = vi.spyOn(apiClient, 'post').mockResolvedValue({ data: { id: 'created' } });
   renderPage();
   expect(await screen.findByRole('heading', { level: 1, name: 'Planta da praça' })).toBeInTheDocument();
+  expect(screen.getAllByRole('button', { name: 'Adicionar evidência' })).toHaveLength(2);
+  expect(screen.getByText(/uma nota sobre outro indivíduo parecido/i)).toBeInTheDocument();
+  expect(screen.getByText(/identificação provisória/i)).toBeInTheDocument();
   fireEvent.click(screen.getAllByRole('button', { name: 'Adicionar evidência' })[0]);
   fireEvent.click(screen.getByRole('button', { name: 'Outro indivíduo' }));
   expect(screen.getByRole('button', { name: 'Outro indivíduo' })).toHaveAttribute('aria-pressed', 'true');

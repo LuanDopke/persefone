@@ -38,9 +38,9 @@ def _key_json(key, include_graph=False, published_only=False):
             'key_type': ((version.graph if published_only and version else key.draft_graph) or {}).get('type', 'branching'),
             'published_version': key.published_version,
             'archived': bool(key.archived_at), 'updated_at': key.updated_at}
+    data['version_id'] = str(version.pk) if version else None
     if include_graph:
         data['graph'] = version.graph if version else None
-        data['version_id'] = str(version.pk) if version else None
         data['draft_graph'] = key.draft_graph
     return data
 

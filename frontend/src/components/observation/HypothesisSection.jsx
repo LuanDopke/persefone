@@ -11,7 +11,7 @@ const RANK_OPTIONS = [['genus', 'Gênero'], ['species', 'Espécie'], ['unknown',
 const controlClass = 'mt-2 w-full border-2 border-charcoal bg-offwhite px-3 py-2';
 
 function ChoiceButtons({ label, options, value, onChange }) {
-  return <div role="group" aria-label={label} className="space-y-2"><p className="font-bold">{label}</p><div className="flex flex-wrap gap-2">{options.map(([key, text]) => <Button key={key} size="sm" variant={value === key ? 'lime' : 'secondary'} aria-pressed={value === key} onClick={() => onChange(key)}>{text}</Button>)}</div></div>;
+  return <div role="group" aria-label={label} className="space-y-2"><p className="font-bold">{label}</p><div className="flex flex-wrap gap-2">{options.map(([key, text]) => <button type="button" key={key} aria-pressed={value === key} onClick={() => onChange(key)} className={`border-2 border-charcoal px-3 py-2 text-sm font-bold ${value === key ? 'bg-mint' : 'bg-surface hover:bg-gray-100'}`}>{text}</button>)}</div></div>;
 }
 
 function HypothesisCard({ item, confirmed, observation, onChanged, onConfirm, onError }) {
@@ -79,16 +79,17 @@ export default function HypothesisSection({ observation, onChanged, composerOpen
   const discarded = observation.hypotheses.filter((item) => item.discarded_at);
   const cardProps = { observation, confirmed: Boolean(observation.species_detail), onChanged, onConfirm: (item) => { setConfirmChoice(item); setError(''); }, onError: (requestError) => setError(observationError(requestError)) };
   return <section id="observation-hypotheses" className="space-y-5 scroll-mt-4" aria-label="Hipóteses de identificação">
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="inline-block border-4 border-charcoal bg-coral px-4 py-2 text-lg font-bold uppercase shadow-hard-sm">Hipóteses de identificação</h2><Button size="sm" variant="lime" aria-expanded={composerOpen} onClick={() => onComposerChange(!composerOpen)}>{composerOpen ? 'Fechar palpite' : 'Novo palpite'}</Button></div>
+    <div className="flex flex-wrap items-end justify-between gap-3 border-b-2 border-charcoal/25 pb-3"><div className="max-w-2xl"><h2 className="text-xl font-bold uppercase">Palpites de identificação</h2><p className="mt-1 text-sm text-charcoal/70">Um palpite é uma identificação provisória baseada no que você já observou. Você pode registrar mais de um, corrigir ou descartar depois; a espécie só muda quando você a confirma.</p></div><Button size="sm" variant="secondary" aria-expanded={composerOpen} onClick={() => onComposerChange(!composerOpen)}>{composerOpen ? 'Fechar palpite' : 'Novo palpite'}</Button></div>
     {observation.species_detail && <div className="border-l-4 border-primary bg-mint p-4"><p className="font-bold">Espécie confirmada: <i>{observation.species_detail.scientific_name}</i></p><Button size="sm" variant="secondary" className="mt-3" onClick={() => reopen.mutate()} disabled={reopen.isPending}>Reabrir identificação</Button></div>}
     {composerOpen && <form onSubmit={submit} className="space-y-4 border-l-4 border-primary bg-surface px-4 py-5">
       <h3 className="font-bold uppercase">Novo palpite</h3>
+      <p className="text-sm text-charcoal/70">Procure no catálogo quando souber o gênero ou a espécie. Use texto livre para anotar uma possibilidade ainda incerta.</p>
       <ChoiceButtons label="Origem" options={SOURCE_OPTIONS} value={source} onChange={(value) => { setSource(value); if (value === 'catalog' && rank === 'unknown') setRank('species'); setSelected(null); setTerm(''); }} />
       <ChoiceButtons label="Nível taxonômico" options={source === 'catalog' ? RANK_OPTIONS.slice(0, 2) : RANK_OPTIONS} value={rank} onChange={(value) => { setRank(value); setSelected(null); }} />
       <label className="block font-bold" htmlFor="hypothesis-name">Nome<input id="hypothesis-name" value={term} onChange={(event) => { setTerm(event.target.value); setSelected(null); }} className={controlClass} autoComplete="off" /></label>
       {source === 'catalog' && term.trim().length > 1 && <div className="max-h-52 space-y-2 overflow-auto border-2 border-charcoal p-2" aria-label="Resultados do catálogo">
-        {rank === 'species' && (local.data?.results || []).map((item) => <button key={`local-${item.id}`} type="button" onClick={() => { setSelected({ species: item.id, name: item.scientific_name, rank: 'species' }); setTerm(item.scientific_name); }} className="block w-full border-2 border-charcoal bg-lime px-3 py-2 text-left">Local · {item.scientific_name}</button>)}
-        {(gbif.data?.results || []).map((item) => <button key={`gbif-${item.key}`} type="button" onClick={() => { setSelected({ gbif_key: item.key, name: item.scientific_name, rank: item.rank }); setTerm(item.scientific_name); }} className="block w-full border-2 border-charcoal bg-offwhite px-3 py-2 text-left">GBIF · {item.scientific_name}</button>)}
+        {rank === 'species' && (local.data?.results || []).map((item) => <button key={`local-${item.id}`} type="button" onClick={() => { setSelected({ species: item.id, name: item.scientific_name, rank: 'species' }); setTerm(item.scientific_name); }} className="block w-full border-2 border-charcoal bg-surface px-3 py-2 text-left hover:bg-mint/40">Local · {item.scientific_name}</button>)}
+        {(gbif.data?.results || []).map((item) => <button key={`gbif-${item.key}`} type="button" onClick={() => { setSelected({ gbif_key: item.key, name: item.scientific_name, rank: item.rank }); setTerm(item.scientific_name); }} className="block w-full border-2 border-charcoal bg-surface px-3 py-2 text-left hover:bg-mint/40">GBIF · {item.scientific_name}</button>)}
         {(local.isFetching || gbif.isFetching) && <p role="status">Buscando táxons…</p>}
         {(local.isError || gbif.isError) && <p role="alert">Falha na consulta ao catálogo. É possível registrar como texto livre.</p>}
       </div>}

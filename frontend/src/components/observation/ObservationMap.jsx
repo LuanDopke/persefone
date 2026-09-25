@@ -14,7 +14,7 @@ export default function ObservationMap({ observation }) {
   if (!points.length) return null;
   const bounds = points.map((item) => [Number(item.latitude), Number(item.longitude)]);
   return <section className="space-y-3" aria-label="Localizações da observação">
-    <h2 className="inline-block border-4 border-charcoal bg-lilac px-4 py-2 text-lg font-bold uppercase shadow-hard-sm">Localizações</h2>
+    <div className="border-b-2 border-charcoal/25 pb-3"><h2 className="text-xl font-bold uppercase">Localizações</h2><p className="mt-1 text-sm text-charcoal/70">Veja onde a planta principal e as evidências vinculadas foram observadas.</p></div>
     <MapContainer bounds={bounds} boundsOptions={{ padding: [24, 24], maxZoom: 14 }} scrollWheelZoom={false} className="h-64 w-full border-2 border-charcoal md:h-80">
       <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {points.map((item) => <CircleMarker key={item.id} center={[Number(item.latitude), Number(item.longitude)]} radius={8} pathOptions={{ color: '#1A1A1A', fillColor: item.id === 'main' ? '#BDFF00' : '#FF6B4A', fillOpacity: 1 }}><Popup>{item.label}</Popup></CircleMarker>)}
